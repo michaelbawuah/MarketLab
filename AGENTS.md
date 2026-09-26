@@ -17,7 +17,8 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   computation or profitability from a backtest.
 - The existing hosted app uses Workers + D1. Node/MongoDB/C++ is a separate service;
   do not describe it as deployed until a staging host is actually verified.
-- GitHub publishing is paused at the user's request. Preparing CI files is allowed;
-  resume GitHub transfer only when the user asks. Sites source saving is separate.
+- The user resumed GitHub publishing on September 26, 2026. The repository is
+  `michaelbawuah/MarketLab`, branch `main`. Preserve remote history and verify the
+  published files and Actions result after a transfer. Sites source saving is separate.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.
