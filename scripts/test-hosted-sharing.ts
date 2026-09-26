@@ -39,7 +39,15 @@ try {
   let base=await start(false);
   const owner={'oai-authenticated-user-id':'hosted-fixture-owner','oai-authenticated-user-email':'owner@marketlab.test'},visitor={'oai-authenticated-user-id':'other-user','oai-authenticated-user-email':'visitor@marketlab.test'};
   let assertions=0;
-  async function request(route:string,status:number,init:RequestInit={}){const r=await fetch(base+route,{...init,signal:AbortSignal.timeout(10000)});assert.equal(r.status,status,`${init.method??'GET'} ${route.split('?')[0]}${r.status!==status?`: ${await r.clone().text()}`:''}`);assertions++;return r;}
+  async function request(route:string,status:number,init:RequestInit={}) {
+    const r=await fetch(base+route,{...init,signal:AbortSignal.timeout(10000)});
+    // Always drain the socket before the next request, including negative-path
+    // assertions whose callers do not otherwise read their response bodies.
+    const body=await r.text();
+    assert.equal(r.status,status,`${init.method??'GET'} ${route.split('?')[0]}${r.status!==status?`: ${body}`:''}`);
+    assertions++;
+    return new Response(body,{status:r.status,statusText:r.statusText,headers:r.headers});
+  }
   for(const route of ['/api/workspace','/api/datasets','/api/actions','/api/portfolio','/api/provider','/api/report','/api/research','/api/research/jobs','/api/research/shares']) {
     await request(route,401);await request(route,403,{headers:visitor});
   }
@@ -51,8 +59,11 @@ try {
   const body={action:'create',id,revision:preview.status.revision,digest:preview.digest,days:7,confirmed:true};
   const post=(payload:unknown,headers:Record<string,string>=owner)=>({method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(payload)});
   assert.equal(preview.enabled,false);assertions++;
+  await request('/example',404);
   await request('/api/research/shares',503,post(body));
   await worker!.dispose();worker=undefined;base=await start(true);
+  const example=await (await request('/example',200)).text();
+  assert.ok(example.includes('PUBLIC FICTIONAL EXAMPLE'));assert.ok(!example.includes('PRIVATE_FIXTURE'));assertions+=2;
   const enabledPreview=await (await request('/api/research/shares?id='+id,200,{headers:owner})).json() as typeof preview;
   assert.equal(enabledPreview.enabled,true);assertions++;
   await request('/api/research/shares',401,post(body,{}));

@@ -355,3 +355,28 @@ it is not claimed complete by these local tests. Event markers are implemented
 for saved Research lab experiments and shared summaries. Existing UI screenshots
 were inspected, and narrow-screen label sizing was corrected. The final chart
 change received type/lint/build and Worker checks, without a new browser session.
+
+## Public sharing activation — September 26, 2026
+
+The user approved public report routing while retaining an owner-only workspace.
+Sites applied public audience revision 2 and deployed the sharing activation flag
+in runtime revision 3. A read-only `/example` page uses the existing deterministic
+XDEMO teaching fixture. It does not read or create personal workspace data and is
+clearly distinguished from an owner's expiring, revocable report link.
+
+Type checking, lint and a fresh build passed for the example. The built Worker
+passed 58 HTTP/header/content assertions, including example activation and
+private fixture exclusion. The HTTP harness now drains every response body,
+including rejected requests, before sending the next request. Captured output:
+`docs/evidence/public-sharing-activation-local.txt`. The unchanged calculation,
+MongoDB and independent replay suites retain their previous 144-test/66,678-field
+checkpoint; the standard remote gate reruns them on the GitHub checkpoint.
+
+Direct anonymous live requests from this workspace returned edge HTTP 403/1010
+for the root and private APIs; web retrieval was also unavailable. This is a
+hosting-side automation restriction, not evidence that the Worker returned its
+expected 401 or that an owner-created link works in a live browser. Actual
+browser verification remains outstanding. No identity bypass, production test
+record or personal report publication was used. Node/MongoDB staging remains
+unprovisioned and requires a real external Node host and persistent authenticated
+MongoDB, TLS and matching server-side signing secrets.

@@ -20,13 +20,15 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
 - The user resumed GitHub publishing on September 26, 2026. The repository is
   `michaelbawuah/MarketLab`, branch `main`. Preserve remote history and verify the
   published files and Actions result after a transfer. Sites source saving is separate.
-- Milestones 6–8 were published together as GitHub `799222d`. The user then asked
-  to finish the next two milestones and send that batch to GitHub. The 9–10 code
-  is implemented and locally verified. Milestone 9 still requires approved
-  anonymous access: preserve the owner-private Site audience until explicitly
-  authorized. `PUBLIC_REPORT_SHARING_ENABLED` is unset/false in production;
-  the reviewed sharing preview works, but link creation and reads fail closed.
-  Do not count live anonymous sharing or Node/MongoDB staging as complete.
+- Milestones 6–8 were published as GitHub `799222d`; the 9–10 implementation
+  checkpoint is `0c3476a`, with passing remote verification. On September 26 the
+  user explicitly approved public report access while keeping the workspace
+  owner-only. The Site audience is now public and production
+  `PUBLIC_REPORT_SHARING_ENABLED=true`; preserve the owner email restriction.
+  `/example` uses only the built-in fictional teaching data, without reading or
+  creating personal records. Automatic requests to the live host returned edge
+  403/1010; do not claim a successful live browser or owner-sharing lifecycle
+  check from local Worker tests. Node/MongoDB staging remains outstanding.
   Keep TypeScript/JavaScript central.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

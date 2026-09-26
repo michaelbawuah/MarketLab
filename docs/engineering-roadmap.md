@@ -26,9 +26,9 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | 6 | Import one real brokerage CSV format without manual cleanup | Implemented: Schwab transaction-history adapter, conversion receipt, explicit fee/cash reconciliation and fail-closed unsupported rows. Native-format fictional file uploaded, previewed and saved in browser; no real customer export supplied. [Acceptance evidence](brokerage-import.md) |
 | 7 | Publish a measured p99 or throughput for a defined workload | Measured and recorded: 3 × 1,000 verified jobs, 39.96 jobs/s aggregate and 319.77 ms combined client p99. Separate Node process, real disposable MongoDB, two workers, eight clients; local closed-loop scope. [Evidence and reproduction](service-performance.md) |
 | 8 | Explain the money representation and show a failing naive-float example | Implemented and verified: runnable payment and half-cent examples fail with naive Number arithmetic and pass with canonical exact helpers. Interactive Methodology demo, six new regressions and full local gate passed. [Representation and evidence](money-arithmetic.md) |
-| 9 | Share a saved experiment through a read-only unauthenticated link | Implemented and locally verified: preview, consent, redaction, expiry, replacement, revocation and owner isolation. Public activation remains pending; the Site is owner-private. [Evidence and activation boundary](research-sharing-and-events.md) |
+| 9 | Share a saved experiment through a read-only unauthenticated link | Public access activated with user approval; private workspace remains owner-only. Preview, consent, redaction, expiry, replacement, revocation and isolation verified in the built Worker. Live browser/owner-link lifecycle check remains outstanding because automated probes were blocked at the host edge. [Evidence and activation boundary](research-sharing-and-events.md) |
 | 10 | Put explanatory event markers directly on the equity curve | Implemented and verified: selectable strategy executions, split/dividend events and fresh-cash starts, with original effective dates, exact amounts and grouped narrow-screen controls. [Evidence and scope](research-sharing-and-events.md) |
-| 11 | Run the background service and recovery test on a real staging host | Pending; local MongoDB tests and the private website are not staging activation of this service |
+| 11 | Run the background service and recovery test on a real staging host | Pending; local MongoDB tests and the hosted website are not staging activation of this service |
 | 12 | Let a second user comment on or fork a shared saved experiment | Pending; depends on sharing and an explicit collaboration model |
 
 Items 1–3 establish the engineering foundation. Items 4–6 improve first use and
@@ -70,10 +70,10 @@ See [architecture-roadmap.md](architecture-roadmap.md) for runtime ownership and
 
 GitHub batching: milestones 6–8 were published as `799222d` on September 26.
 The next requested two-milestone batch covers 9–10 and its GitHub checkpoint.
-Milestone 9 is implemented, but its live anonymous-link criterion requires an
-approved Site audience change and activation; do not label it fully complete
-until observed. Milestones 11–12 remain outstanding. Continue saving and
-publishing the private Site separately. Keep JavaScript/TypeScript central; MongoDB is a
+Milestone 9 public access is approved and activated. Its live owner-created-link
+lifecycle still requires a real browser check; automated host probes were blocked.
+Milestones 11–12 remain outstanding. Preserve public report routing and the
+owner-only private workspace. Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.
 
 For each milestone, record the user problem, implementation, acceptance check,

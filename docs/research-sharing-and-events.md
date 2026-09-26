@@ -20,23 +20,31 @@ experiment and that recipients may retain downloaded copies after revocation.
 
 ## Current activation boundary
 
-The Site remains owner-private. `WORKSPACE_OWNER_EMAIL` is configured separately
-as a runtime secret; production workspace pages and every private API require
+The user approved public report access on September 26, 2026. The Site audience
+is public and `PUBLIC_REPORT_SHARING_ENABLED=true` is deployed as runtime
+revision 3. `WORKSPACE_OWNER_EMAIL` is configured separately as a runtime
+secret; production workspace pages and every private API require
 the Sites dispatcher's authenticated user ID and matching verified email.
 Anonymous and other-user requests cannot access private data. Development-only
 local preview fallback is excluded from the production build.
 
-`PUBLIC_REPORT_SHARING_ENABLED` defaults to disabled. The owner can review the
-redacted summary, while link creation and report reads fail closed. The dialog
-clearly says that public links are not enabled. No production share was created
-by this release. This is not yet a completed live anonymous-sharing milestone.
+The activation flag still defaults to disabled in unconfigured environments.
+The complete reviewed sharing flow is enabled in production. No personal
+experiment was selected or shared during activation.
 
-Activation requires explicit approval to make the Site's routing public while
-the application keeps its workspace and private APIs owner-only. After approval,
-enable the runtime setting, deploy the already-verified implementation, change
-the Site audience, and verify both anonymous report access and private-workspace
-denial through the real dispatcher. Each report still requires its owner's
-preview and consent; changing the audience does not publish saved experiments.
+`/example` is a public, read-only view of the existing deterministic XDEMO
+teaching fixture using illustrative costs. It is computed from built-in fictional
+inputs, carries the same redacted summary and confidence UI, and neither reads
+nor creates workspace data. It is labeled as a permanent example, distinct from
+an owner's expiring/revocable shared report. Each saved report still requires
+its owner's preview and consent; public routing does not publish existing runs.
+
+The native deployment and audience updates succeeded. Direct anonymous requests
+to `/`, `/api/research` and `/api/workspace` from this execution environment
+returned host-edge HTTP 403 with code 1010 before the application could be
+checked. Web retrieval could not access the URL either. These results are not
+successful live authorization tests; a real browser check of a valid owner-made
+link and private-workspace denial remains outstanding. No bypass was added.
 
 ## Link storage and correctness
 
@@ -86,6 +94,14 @@ was checked through type/build validation, not a new browser session.
 
 Full captured output: [local gate](evidence/milestones-9-10-local-gate.txt) and
 [final Worker check](evidence/milestones-9-10-final-worker.txt).
-Local D1 assertions do not verify the live Sites dispatcher or prove public
-access. Node/MongoDB staging activation and collaboration remain milestones
-11 and 12.
+The activation release adds four built-Worker checks for the public fictional
+example: 404 with sharing disabled, 200 when enabled, fictional labeling and no
+private fixture contents. All **58 assertions** passed, alongside type checking,
+lint and a fresh build; see [activation output](evidence/public-sharing-activation-local.txt).
+The unchanged 144 calculation/integration tests and 66,678 comparisons retain
+their passing checkpoint at GitHub `0c3476a`.
+
+Local D1 assertions do not verify the live Sites dispatcher. Node/MongoDB staging
+activation and collaboration remain milestones 11 and 12. Staging requires a
+real Node/container host, TLS, authenticated persistent MongoDB and server-side
+signing secrets; the existing local-only Compose recipe is not that deployment.

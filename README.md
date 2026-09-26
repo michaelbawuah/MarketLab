@@ -4,7 +4,7 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 **Engineering direction:** follow the adopted [engineering roadmap](docs/engineering-roadmap.md), based on Michael's supplied standards. It includes the directory map, ordered milestones and observed status. The first reliability work now has [reproducible clock-race and process-crash evidence](docs/reliability-evidence.md).
 
-**Current release:** a private research workspace opening on provider-backed Stock explorer, with on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
+**Current release:** public read-only report sharing with an owner-only research workspace opening on provider-backed Stock explorer. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
 
 ## What works
 
@@ -13,8 +13,9 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
   [Timeline behavior and evidence](docs/research-sharing-and-events.md).
 
 - Reviewed, redacted read-only experiment summaries with expiring links,
-  replacement and revocation. The implementation is verified locally; public
-  link activation is pending because the deployed Site remains owner-private.
+  replacement and revocation. Public access is activated while private workspace
+  routes remain owner-only. A [fictional public example](https://marketlab-portfolio.michaelbaffour240306.chatgpt.site/example)
+  contains only built-in teaching data. Live browser verification remains outstanding.
   [Sharing boundary and activation](docs/research-sharing-and-events.md).
 
 - Confidence certificates and plain-language takeaways on analytical reports, with source/coverage details, actual per-result consistency checks, assumptions and explicit independent-replay status. JSON/CSV reports carry the certificate. [Scope and evidence](docs/confidence-certificates.md).
