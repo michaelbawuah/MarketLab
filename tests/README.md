@@ -26,8 +26,10 @@ MONGODB_TEST_URI=mongodb://127.0.0.1:27017 pnpm verify:ci
 `verify:ci` runs type checking, lint, native compilation, unit tests, integration
 tests, native parity, Python verifier tests, then fresh TypeScript/Python replay.
 The same command is configured in `.github/workflows/verify.yml` for pushes, pull
-requests and manual runs. The workflow has not run on GitHub while publishing is
-paused; a successful local gate is not evidence of a remote CI run.
+requests and manual runs. Inspect the
+[GitHub Actions runs](https://github.com/michaelbawuah/MarketLab/actions/workflows/verify.yml)
+and [verification records](../docs/verification.md) for observed remote results;
+a successful local gate alone is not evidence of a remote CI run.
 
 ## Focused checks
 

@@ -20,7 +20,7 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | --- | --- | --- |
 | 1 | Fix a real concurrency defect; a regression fails before the fix and passes after it | Implemented and locally proved: three client-clock lease regressions fail on the baseline and pass with MongoDB-clock fencing |
 | 2 | Kill a worker mid-job; recover with one durable final result | Implemented and locally proved: SIGKILL after calculation/before save, natural lease expiry, two competing runners, one saved result |
-| 3 | Label unit/integration/cross-check layers; financial invariants and independent Python/TS verification run in CI | Test layers, CI workflow and full local gate verified: 95 tests plus 61,953 cross-language comparisons. Remote CI execution remains pending GitHub publication |
+| 3 | Label unit/integration/cross-check layers; financial invariants and independent Python/TS verification run in CI | Complete local foundation gate and [GitHub Actions gate](https://github.com/michaelbawuah/MarketLab/actions/runs/36254911641) passed. The remote run includes the later demo/certificate work and 66,678 cross-language comparisons; [execution evidence](verification.md) |
 | 4 | One-click synthetic demo, no setup/import, useful insight in under one minute | Implemented and locally verified: one click shows the calculated effect of costs, with three presets, exact observations and a downloadable report. Desktop and narrow-screen checks passed; [acceptance evidence](quick-demo.md) |
 | 5 | Every report shows a confidence certificate and a plain-language takeaway | Implemented and locally verified across report views, previews and exports. Per-result consistency checks, source/coverage details, assumptions and explicit independent-replay status; [acceptance evidence](confidence-certificates.md) |
 | 6 | Import one real brokerage CSV format without manual cleanup | Pending; current generic ledger CSV does not satisfy this |
@@ -50,7 +50,7 @@ strategies, more asset classes and significance tests remain deferred.
 | `tests/integration/` | Real database, HTTP, worker and crash tests |
 | `tests/cross-check/` | Independent native parity |
 | `tests/fixtures/` | Reproducible synthetic inputs and isolated failure injection |
-| `.github/workflows/verify.yml` | Automated verification gate, prepared for future GitHub publication |
+| `.github/workflows/verify.yml` | Automated verification gate for GitHub pushes, pull requests and manual runs |
 | `docs/reliability-evidence.md` | Reproduction steps, results, mechanism and limits |
 | `docs/evidence/` | Captured test output supporting completed milestones |
 

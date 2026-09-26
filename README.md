@@ -65,8 +65,10 @@ pnpm dev
 installed, `pnpm test:service:local --ci` runs the complete verification gate
 against a disposable database. Set `MONGOD_BIN` when needed. The gate includes
 real HTTP/worker/crash tests and independent Python/C++ comparisons. See the
-[test layers and focused commands](tests/README.md). The prepared GitHub workflow
-has not run remotely while GitHub publishing is paused.
+[test layers and focused commands](tests/README.md). The
+[GitHub workflow](https://github.com/michaelbawuah/MarketLab/actions/workflows/verify.yml)
+runs this same gate on pushes and pull requests; inspect its run result for remote
+verification evidence.
 
 For a standalone local environment, the starter's execution-profile helper configures the development server. This repository was created in the managed Sites environment; managed preview uses `sites-preview start` instead of launching an additional server. Generate database migrations with `pnpm db:generate`, build to generate the local Worker config, and apply pending SQL migrations to the local D1 database using Wrangler. See `docs/runtime.md` for the runtime setup and migration command.
 
@@ -197,7 +199,7 @@ MarketLab is an independent project. The reporting and data-quality components c
 
 ## Next engineering milestones
 
-The [adopted roadmap](docs/engineering-roadmap.md) replaces the earlier provider-expansion-first order. The client-clock lease bug is fixed with failing-before/passing-after evidence; a SIGKILL recovery test proves one durable result after a retry. Unit, integration and cross-check layers pass locally, with CI execution pending GitHub publication.
+The [adopted roadmap](docs/engineering-roadmap.md) replaces the earlier provider-expansion-first order. The client-clock lease bug is fixed with failing-before/passing-after evidence; a SIGKILL recovery test proves one durable result after a retry. The project is published to [GitHub](https://github.com/michaelbawuah/MarketLab) with an automated unit, integration and cross-check gate. See [verification records](docs/verification.md) for observed local and remote results.
 
 The one-click synthetic demo and report confidence certificates are implemented and browser-checked. The next product milestone is one supported brokerage CSV format. Defined-workload performance evidence, explicit floating-point failure evidence, shareable reports, event overlays, staging activation and lightweight collaboration follow in that order. Additional strategies and asset classes remain deferred.
 

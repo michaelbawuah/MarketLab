@@ -1,5 +1,30 @@
 # Release verification
 
+## GitHub publication and remote CI — September 26, 2026
+
+- Published the complete 243-file project to the private
+  [michaelbawuah/MarketLab repository](https://github.com/michaelbawuah/MarketLab),
+  on `main`, preserving its initial README commit.
+- Initial import commit `2e68e2e8fd46660444f13973559827bee1e262bd` matches local
+  source `89b81b7c5c23bad1324c227fc7c0488f92892eff` exactly: every tracked path,
+  blob hash and file mode was checked, including 16 binary documentation files.
+  Both have tree `c6d705ad1515db6d808c5e707266450a9238e81b`. GitHub and Sites
+  retain separate commit histories; this was a complete source snapshot import.
+- The first Actions run exposed a Docker health-command quoting error before
+  tests began. Commit `c9a19253c846b8694650c4e741494d8978f95705` fixes the quoting.
+  [The subsequent run](https://github.com/michaelbawuah/MarketLab/actions/runs/36254911641)
+  completed successfully on GitHub's Ubuntu 24.04 runner with Node 24.19.0,
+  MongoDB 8.0.17 and the locked pnpm dependencies.
+- `pnpm verify:ci` passed type checking, lint and native compilation, followed by
+  80 unit, 10 real MongoDB/HTTP/worker integration, 4 native cross-check and 11
+  Python verifier tests: 105 tests total. Node suites reported zero skips.
+  Independent Python replay matched 66,678 scalar fields in nine fresh reports.
+  Integration checks included the clock regressions and actual SIGKILL recovery
+  through competing runners with one durable saved result.
+- This is remote CI evidence. It does not activate the background service on a
+  staging host or rerun browser QA. Earlier sections describe the evidence and
+  outstanding work at each earlier milestone, before this GitHub publication.
+
 ## Confidence certificates — September 26, 2026
 
 - Certificates and numerical takeaways now appear on Research lab, historical
