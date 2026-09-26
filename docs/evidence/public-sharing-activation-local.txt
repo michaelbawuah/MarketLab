@@ -1,5 +1,18 @@
+Run 1: pnpm test:hosted
 $ node --experimental-strip-types scripts/test-hosted-sharing.ts
-[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+▲ [WARNING] Proxy environment variables detected. We'll use your proxy for fetch requests.
+
+
+[wrangler:info] ✨ Parsed 1 valid header rule.
+[wrangler:info] ✨ Parsed 1 valid header rule.
+[wrangler:info] ✨ Parsed 1 valid header rule.
+[wrangler:info] ✨ Parsed 1 valid header rule.
+Built Worker: 58 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods and revocation verified.
+Isolated local D1 and fictional fixture only; the live Sites dispatcher is outside this test.
+
+Run 2: pnpm test:hosted
+$ node --experimental-strip-types scripts/test-hosted-sharing.ts
+▲ [WARNING] Proxy environment variables detected. We'll use your proxy for fetch requests.
 
 
 [wrangler:info] ✨ Parsed 1 valid header rule.

@@ -40,7 +40,11 @@ try {
   const owner={'oai-authenticated-user-id':'hosted-fixture-owner','oai-authenticated-user-email':'owner@marketlab.test'},visitor={'oai-authenticated-user-id':'other-user','oai-authenticated-user-email':'visitor@marketlab.test'};
   let assertions=0;
   async function request(route:string,status:number,init:RequestInit={}) {
-    const r=await fetch(base+route,{...init,signal:AbortSignal.timeout(10000)});
+    // Rejected POSTs may finish before their incoming body is consumed. Use a
+    // fresh HTTP connection so Wrangler's development proxy cannot reuse a
+    // socket the Worker has closed; do not retry or relax any assertion.
+    const requestHeaders=new Headers(init.headers);requestHeaders.set('Connection','close');
+    const r=await fetch(base+route,{...init,headers:requestHeaders,signal:AbortSignal.timeout(10000)});
     // Always drain the socket before the next request, including negative-path
     // assertions whose callers do not otherwise read their response bodies.
     const body=await r.text();

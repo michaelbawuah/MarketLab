@@ -366,8 +366,12 @@ clearly distinguished from an owner's expiring, revocable report link.
 
 Type checking, lint and a fresh build passed for the example. The built Worker
 passed 58 HTTP/header/content assertions, including example activation and
-private fixture exclusion. The HTTP harness now drains every response body,
-including rejected requests, before sending the next request. Captured output:
+private fixture exclusion. GitHub run `36270031533` exposed an intermittent 503
+from Wrangler's development proxy during a rejected POST. The HTTP harness now
+drains every response body and sends each assertion on a fresh connection, so
+early rejected requests cannot leave a reused connection for the next check.
+No assertions were relaxed and no requests are retried. Two consecutive local
+runs passed all 58 checks after this adjustment. Captured output:
 `docs/evidence/public-sharing-activation-local.txt`. The unchanged calculation,
 MongoDB and independent replay suites retain their previous 144-test/66,678-field
 checkpoint; the standard remote gate reruns them on the GitHub checkpoint.
