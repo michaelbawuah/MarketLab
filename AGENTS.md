@@ -20,10 +20,13 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
 - The user resumed GitHub publishing on September 26, 2026. The repository is
   `michaelbawuah/MarketLab`, branch `main`. Preserve remote history and verify the
   published files and Actions result after a transfer. Sites source saving is separate.
-- After the successful publication through milestone 5, the user asked to batch
-  the next GitHub commit/push until 3–4 additional milestones are complete
-  (milestones 6–8 or 6–9). Continue building and saving the Site in the meantime;
-  do not push each milestone to GitHub. Milestones 6–8 form the current checkpoint;
-  after its publication, resume at milestone 9. Keep TypeScript/JavaScript central.
+- Milestones 6–8 were published together as GitHub `799222d`. The user then asked
+  to finish the next two milestones and send that batch to GitHub. The 9–10 code
+  is implemented and locally verified. Milestone 9 still requires approved
+  anonymous access: preserve the owner-private Site audience until explicitly
+  authorized. `PUBLIC_REPORT_SHARING_ENABLED` is unset/false in production;
+  the reviewed sharing preview works, but link creation and reads fail closed.
+  Do not count live anonymous sharing or Node/MongoDB staging as complete.
+  Keep TypeScript/JavaScript central.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

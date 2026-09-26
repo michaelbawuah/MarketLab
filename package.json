@@ -23,13 +23,15 @@
     "bench:native": "node --experimental-strip-types scripts/benchmark-native.ts",
     "bench:service": "node --experimental-strip-types scripts/benchmark-service.ts",
     "demo:money": "node --experimental-strip-types scripts/demo-money.ts",
+    "test:hosted": "node --experimental-strip-types scripts/test-hosted-sharing.ts",
+    "verify:hosted": "pnpm build && pnpm test:hosted",
     "verify:python": "python3 verification/python/verify_research.py",
     "test:python": "python3 -m unittest discover -s verification/python -p 'test_*.py'",
     "test:parity": "node --experimental-strip-types scripts/test-python-parity.ts",
     "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "test:integration": "node --experimental-strip-types --test tests/integration/*.test.ts",
     "test:cross-check": "pnpm test:native && pnpm test:python && pnpm test:parity",
-    "verify:ci": "pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check"
+    "verify:ci": "pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check && pnpm verify:hosted"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

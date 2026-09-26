@@ -338,3 +338,20 @@ Type checking and lint pass. Desktop preview QA confirmed the updated dialog exp
 - Browser checks used an explicitly fictional 20-observation XCOMPARE dataset in local preview only: zero-run entry, single-run disabled comparison, two saved runs (SMA 3 and SMA 5), selection, full/later period switching and clearing. The full-period comparison displayed +5.35 pp and +$535.36; the later period displayed zero differences. These are fixture outputs, not market-performance claims.
 - Fixed a duplicate React sibling key observed during browser checking. Desktop comparison captured in `docs/experiment-comparison.jpg`. Mobile layout uses wrapping controls and horizontally scrollable tables; device emulation was not performed.
 - No database schema or existing saved experiment was changed. Test datasets and runs remain local and are excluded from published artifacts.
+
+## Read-only summaries and equity-curve events — September 26, 2026
+
+Milestones 9–10 are implemented with [detailed acceptance evidence and current
+activation limits](research-sharing-and-events.md). The complete local gate
+passed 144 tests (113 unit, 16 integration, 4 native, 11 Python), 66,678 independent
+TypeScript/Python comparisons and 54 built-Worker HTTP/header/content assertions.
+The Worker tests use disposable D1 and fictional fixtures, including both enabled
+and disabled public-sharing configuration. No production share was created.
+
+The Site audience remains owner-private, and public report sharing is disabled
+by default. The owner can review the redacted summary. Anonymous live-link
+activation needs approval and verification through the real Sites dispatcher;
+it is not claimed complete by these local tests. Event markers are implemented
+for saved Research lab experiments and shared summaries. Existing UI screenshots
+were inspected, and narrow-screen label sizing was corrected. The final chart
+change received type/lint/build and Worker checks, without a new browser session.

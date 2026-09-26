@@ -8,6 +8,15 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 ## What works
 
+- Selectable buy, sell, split and dividend markers on Research lab equity curves,
+  with exact cash/fee explanations and event dates retained across missing closes.
+  [Timeline behavior and evidence](docs/research-sharing-and-events.md).
+
+- Reviewed, redacted read-only experiment summaries with expiring links,
+  replacement and revocation. The implementation is verified locally; public
+  link activation is pending because the deployed Site remains owner-private.
+  [Sharing boundary and activation](docs/research-sharing-and-events.md).
+
 - Confidence certificates and plain-language takeaways on analytical reports, with source/coverage details, actual per-result consistency checks, assumptions and explicit independent-replay status. JSON/CSV reports carry the certificate. [Scope and evidence](docs/confidence-certificates.md).
 
 - A one-click **Quick experiment**: compare the same fictional rule and prices with three cost settings, inspect exact values and download a reproducible report. No upload or market-data key is required. [Demo inputs and acceptance evidence](docs/quick-demo.md).

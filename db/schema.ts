@@ -24,3 +24,8 @@ export const researchRuns = sqliteTable('research_runs', {
  symbol:text('symbol').notNull(), benchmark:text('benchmark').notNull(), start:text('start').notNull(), end:text('end').notNull(),
  payload:text('payload').notNull(), result:text('result').notNull(),
 }, t=>[primaryKey({columns:[t.owner,t.id]})]);
+export const researchShares = sqliteTable('research_shares', {
+ owner:text('owner').notNull(),runId:text('run_id').notNull(),tokenHash:text('token_hash').notNull(),
+ created:text('created').notNull(),expires:text('expires').notNull(),revoked:text('revoked'),revision:integer('revision').notNull(),
+ report:text('report').notNull(),digest:text('digest').notNull(),
+},t=>[primaryKey({columns:[t.owner,t.runId]}),uniqueIndex('research_shares_token_hash').on(t.tokenHash)]);

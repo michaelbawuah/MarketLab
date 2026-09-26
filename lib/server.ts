@@ -2,13 +2,14 @@ import { env } from 'cloudflare:workers';
 import { headers } from 'next/headers';
 import { analyze, type Quote, type Transaction } from './finance/core';
 import { DATASET, demoQuotes, demoTransactions, type Workspace, type PipelineRun } from './finance/demo';
+import { workspaceOwner, WorkspaceAccessError } from './workspace-access';
 export class HttpError extends Error { constructor(message:string, public status=400){super(message);} }
 export function database(){if(!env.DB)throw new HttpError('Database is temporarily unavailable.',503);return env.DB;}
+export function publicSharingEnabled(){return env.PUBLIC_REPORT_SHARING_ENABLED==='true';}
 export async function identity(){
- const h=await headers();const id=h.get('oai-authenticated-user-id');if(id)return id;
- // The preview identity is compiled out of production builds. Production fails closed.
- if(process.env.NODE_ENV==='development')return 'local-preview';
- throw new HttpError('Sign in to open your saved workspace.',401);
+ const h=await headers();
+ try { return workspaceOwner(h.get('oai-authenticated-user-id'),h.get('oai-authenticated-user-email'),env.WORKSPACE_OWNER_EMAIL,process.env.NODE_ENV==='development'); }
+ catch(e){if(e instanceof WorkspaceAccessError)throw new HttpError(e.message,e.status);throw e;}
 }
 export function json(data:unknown,status=200){return Response.json(data,{status,headers:{'Cache-Control':'no-store'}});}
 export function failure(e:unknown){if(e instanceof HttpError)return json({error:e.message},e.status);console.error('Workspace operation failed',e);return json({error:'The saved workspace is temporarily unavailable. Please retry.'},503);}
