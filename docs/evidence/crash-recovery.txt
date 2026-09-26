@@ -1,0 +1,12 @@
+Running integration checks against a real disposable MongoDB process.
+✔ SIGKILL before finalization recovers through competing runners with one durable result (1461.429687ms)
+ℹ Killed the actual runner process after worker calculation, before MongoDB finalization.
+ℹ Two replacement runners competed; attempts=2, accepted finalizations=1, stored results=1; fresh connection replay matched exactly.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1658.438421

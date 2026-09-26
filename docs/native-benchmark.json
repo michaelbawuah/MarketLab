@@ -1,0 +1,59 @@
+{
+  "measuredAt": "2026-09-25T04:59:43.151Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+    "sharedRuntime": true
+  },
+  "observations": 2500,
+  "kernel": {
+    "typescript": {
+      "medianMs": 0.046322575000000026,
+      "minMs": 0.04428412700000001,
+      "maxMs": 0.048388368500000015,
+      "batches": 9,
+      "callsPerBatch": 2000,
+      "peakProcessRssKiB": 74872
+    },
+    "cpp": {
+      "medianMs": 0.014783785499999993,
+      "minMs": 0.014453778499999998,
+      "maxMs": 0.0173740355,
+      "batches": 9,
+      "callsPerBatch": 2000,
+      "peakProcessRssKiB": 69776
+    },
+    "cpp-packed": {
+      "medianMs": 0.027944225000000017,
+      "minMs": 0.026959345500000013,
+      "maxMs": 0.0359858475,
+      "batches": 9,
+      "callsPerBatch": 2000,
+      "peakProcessRssKiB": 140068
+    }
+  },
+  "fullResearchDirect": {
+    "medianMs": 13.753423000000021,
+    "minMs": 11.795912000000044,
+    "maxMs": 18.588476600000014,
+    "batches": 9
+  },
+  "fullResearchWorker": {
+    "typescript": {
+      "medianMs": 58.28554039999999,
+      "minMs": 54.16468760000007,
+      "maxMs": 67.54576180000004,
+      "batches": 9
+    },
+    "cpp-verify": {
+      "medianMs": 49.18769739999989,
+      "minMs": 47.99712260000015,
+      "maxMs": 69.03916160000009,
+      "batches": 9
+    }
+  },
+  "interpretation": "Kernel timings are warmed single-process microbenchmarks; packed includes conversion from JS arrays. Worker measurements include structured clone, strict input/hash validation, complete TS accounting, and result transport. cpp-verify adds independent native risk checks; it does not replace or accelerate the TS backtest. RSS is peak whole-process RSS from separate fresh processes, not native-only memory. No production latency claim."
+}

@@ -1,0 +1,714 @@
+{
+  "format": "marketlab-research-v1",
+  "id": "19587f6646763b7a51246c0b69cc000cfb6ffa9b2c6810954a04766941405c68",
+  "snapshot": {
+    "method": "observed-close-sma-v1",
+    "config": {
+      "name": "Infrastructure fixture",
+      "assetId": "baec081307b205b292215c786faed358d6b02461e4b7708deddd0c9b31239f99",
+      "benchmarkId": "baec081307b205b292215c786faed358d6b02461e4b7708deddd0c9b31239f99",
+      "start": "2016-01-03",
+      "end": "2016-01-08",
+      "holdoutStart": "2016-01-06",
+      "window": 2,
+      "initialCash": "1200",
+      "feeBps": 0,
+      "slippageBps": 0,
+      "confirmed": true
+    },
+    "asset": {
+      "dataset": {
+        "symbol": "XTEST",
+        "source": "Fictional infrastructure fixture",
+        "basis": "raw",
+        "priceColumn": "close",
+        "kind": "synthetic",
+        "currency": "USD",
+        "observations": [
+          {
+            "date": "2016-01-01",
+            "priceMicros": "90000000"
+          },
+          {
+            "date": "2016-01-02",
+            "priceMicros": "100000000"
+          },
+          {
+            "date": "2016-01-03",
+            "priceMicros": "120000000"
+          },
+          {
+            "date": "2016-01-04",
+            "priceMicros": "60000000"
+          },
+          {
+            "date": "2016-01-05",
+            "priceMicros": "55000000"
+          },
+          {
+            "date": "2016-01-06",
+            "priceMicros": "65000000"
+          },
+          {
+            "date": "2016-01-07",
+            "priceMicros": "50000000"
+          },
+          {
+            "date": "2016-01-08",
+            "priceMicros": "60000000"
+          }
+        ],
+        "id": "baec081307b205b292215c786faed358d6b02461e4b7708deddd0c9b31239f99",
+        "count": 8,
+        "firstDate": "2016-01-01",
+        "lastDate": "2016-01-08",
+        "created": "2026-09-24T00:00:00Z",
+        "origin": "alphavantage",
+        "providerRefreshed": "2016-01-08",
+        "providerTimezone": "US/Eastern"
+      },
+      "actions": {
+        "source": "Fictional fixture events",
+        "complete": true,
+        "events": [
+          {
+            "date": "2016-01-04",
+            "type": "split",
+            "newShares": "2",
+            "oldShares": "1",
+            "amount": ""
+          },
+          {
+            "date": "2016-01-05",
+            "type": "dividend",
+            "newShares": "",
+            "oldShares": "",
+            "amount": "1"
+          }
+        ],
+        "revision": 1,
+        "updated": "2026-09-24T00:00:00Z"
+      }
+    },
+    "benchmark": {
+      "dataset": {
+        "symbol": "XTEST",
+        "source": "Fictional infrastructure fixture",
+        "basis": "raw",
+        "priceColumn": "close",
+        "kind": "synthetic",
+        "currency": "USD",
+        "observations": [
+          {
+            "date": "2016-01-01",
+            "priceMicros": "90000000"
+          },
+          {
+            "date": "2016-01-02",
+            "priceMicros": "100000000"
+          },
+          {
+            "date": "2016-01-03",
+            "priceMicros": "120000000"
+          },
+          {
+            "date": "2016-01-04",
+            "priceMicros": "60000000"
+          },
+          {
+            "date": "2016-01-05",
+            "priceMicros": "55000000"
+          },
+          {
+            "date": "2016-01-06",
+            "priceMicros": "65000000"
+          },
+          {
+            "date": "2016-01-07",
+            "priceMicros": "50000000"
+          },
+          {
+            "date": "2016-01-08",
+            "priceMicros": "60000000"
+          }
+        ],
+        "id": "baec081307b205b292215c786faed358d6b02461e4b7708deddd0c9b31239f99",
+        "count": 8,
+        "firstDate": "2016-01-01",
+        "lastDate": "2016-01-08",
+        "created": "2026-09-24T00:00:00Z",
+        "origin": "alphavantage",
+        "providerRefreshed": "2016-01-08",
+        "providerTimezone": "US/Eastern"
+      },
+      "actions": {
+        "source": "Fictional fixture events",
+        "complete": true,
+        "events": [
+          {
+            "date": "2016-01-04",
+            "type": "split",
+            "newShares": "2",
+            "oldShares": "1",
+            "amount": ""
+          },
+          {
+            "date": "2016-01-05",
+            "type": "dividend",
+            "newShares": "",
+            "oldShares": "",
+            "amount": "1"
+          }
+        ],
+        "revision": 1,
+        "updated": "2026-09-24T00:00:00Z"
+      }
+    }
+  },
+  "analysis": {
+    "full": {
+      "start": "2016-01-03",
+      "end": "2016-01-08",
+      "observations": 6,
+      "longestGapDays": 1,
+      "strategy": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "110000",
+            "receivables": "2000",
+            "shares": "0"
+          },
+          {
+            "date": "2016-01-06",
+            "value": "112000",
+            "cash": "110000",
+            "receivables": "2000",
+            "shares": "0"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "112000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "22"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "134000",
+            "cash": "132000",
+            "receivables": "2000",
+            "shares": "0"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": "2016-01-02",
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          },
+          {
+            "date": "2016-01-05",
+            "signalDate": "2016-01-04",
+            "side": "sell",
+            "shares": "20",
+            "fillMicros": "55000000",
+            "gross": "110000",
+            "fee": "0"
+          },
+          {
+            "date": "2016-01-07",
+            "signalDate": "2016-01-06",
+            "side": "buy",
+            "shares": "22",
+            "fillMicros": "50000000",
+            "gross": "110000",
+            "fee": "0"
+          },
+          {
+            "date": "2016-01-08",
+            "signalDate": "2016-01-07",
+            "side": "sell",
+            "shares": "22",
+            "fillMicros": "60000000",
+            "gross": "132000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": 11.66666666666667,
+        "maxDrawdown": -6.666666666666665
+      },
+      "buyHold": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-06",
+            "value": "132000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "102000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "122000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": 1.6666666666666607,
+        "maxDrawdown": -22.72727272727273
+      },
+      "benchmark": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-06",
+            "value": "132000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "102000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "122000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": 1.6666666666666607,
+        "maxDrawdown": -22.72727272727273
+      },
+      "strategyRisk": {
+        "intervals": 5,
+        "volatilityPct": 9.957534550834646,
+        "sharpe": 0.2606305890267346,
+        "beta": 0.32658471976174275,
+        "correlation": 0.5800868804573638
+      },
+      "buyHoldRisk": {
+        "intervals": 5,
+        "volatilityPct": 17.68678938455569,
+        "sharpe": 0.09126638447457397,
+        "beta": 1,
+        "correlation": 1
+      },
+      "benchmarkRisk": {
+        "intervals": 5,
+        "volatilityPct": 17.68678938455569,
+        "sharpe": 0.09126638447457397,
+        "beta": 1,
+        "correlation": 1
+      },
+      "outperformancePct": 10.000000000000009
+    },
+    "development": {
+      "start": "2016-01-03",
+      "end": "2016-01-05",
+      "observations": 3,
+      "longestGapDays": 1,
+      "strategy": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "110000",
+            "receivables": "2000",
+            "shares": "0"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": "2016-01-02",
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          },
+          {
+            "date": "2016-01-05",
+            "signalDate": "2016-01-04",
+            "side": "sell",
+            "shares": "20",
+            "fillMicros": "55000000",
+            "gross": "110000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": -6.666666666666665,
+        "maxDrawdown": -6.666666666666665
+      },
+      "buyHold": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": -6.666666666666665,
+        "maxDrawdown": -6.666666666666665
+      },
+      "benchmark": {
+        "history": [
+          {
+            "date": "2016-01-03",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "10"
+          },
+          {
+            "date": "2016-01-04",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "20"
+          },
+          {
+            "date": "2016-01-05",
+            "value": "112000",
+            "cash": "0",
+            "receivables": "2000",
+            "shares": "20"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-03",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "10",
+            "fillMicros": "120000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": -6.666666666666665,
+        "maxDrawdown": -6.666666666666665
+      },
+      "strategyRisk": {
+        "intervals": 2,
+        "volatilityPct": 4.714045207910316,
+        "sharpe": -0.7071067811865475,
+        "beta": 1,
+        "correlation": 1
+      },
+      "buyHoldRisk": {
+        "intervals": 2,
+        "volatilityPct": 4.714045207910316,
+        "sharpe": -0.7071067811865475,
+        "beta": 1,
+        "correlation": 1
+      },
+      "benchmarkRisk": {
+        "intervals": 2,
+        "volatilityPct": 4.714045207910316,
+        "sharpe": -0.7071067811865475,
+        "beta": 1,
+        "correlation": 1
+      },
+      "outperformancePct": 0
+    },
+    "holdout": {
+      "start": "2016-01-06",
+      "end": "2016-01-08",
+      "observations": 3,
+      "longestGapDays": 1,
+      "strategy": {
+        "history": [
+          {
+            "date": "2016-01-06",
+            "value": "120000",
+            "cash": "120000",
+            "receivables": "0",
+            "shares": "0"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "24"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "144000",
+            "cash": "144000",
+            "receivables": "0",
+            "shares": "0"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-07",
+            "signalDate": "2016-01-06",
+            "side": "buy",
+            "shares": "24",
+            "fillMicros": "50000000",
+            "gross": "120000",
+            "fee": "0"
+          },
+          {
+            "date": "2016-01-08",
+            "signalDate": "2016-01-07",
+            "side": "sell",
+            "shares": "24",
+            "fillMicros": "60000000",
+            "gross": "144000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": 19.999999999999996,
+        "maxDrawdown": 0
+      },
+      "buyHold": {
+        "history": [
+          {
+            "date": "2016-01-06",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "92308",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "110769",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-06",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "9230769/500000",
+            "fillMicros": "65000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": -7.692500000000003,
+        "maxDrawdown": -23.076666666666668
+      },
+      "benchmark": {
+        "history": [
+          {
+            "date": "2016-01-06",
+            "value": "120000",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          },
+          {
+            "date": "2016-01-07",
+            "value": "92308",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          },
+          {
+            "date": "2016-01-08",
+            "value": "110769",
+            "cash": "0",
+            "receivables": "0",
+            "shares": "9230769/500000"
+          }
+        ],
+        "trades": [
+          {
+            "date": "2016-01-06",
+            "signalDate": null,
+            "side": "buy",
+            "shares": "9230769/500000",
+            "fillMicros": "65000000",
+            "gross": "120000",
+            "fee": "0"
+          }
+        ],
+        "fees": "0",
+        "returnPct": -7.692500000000003,
+        "maxDrawdown": -23.076666666666668
+      },
+      "strategyRisk": {
+        "intervals": 2,
+        "volatilityPct": 14.142135623730947,
+        "sharpe": 0.7071067811865475,
+        "beta": 0.4642954838131665,
+        "correlation": 1
+      },
+      "buyHoldRisk": {
+        "intervals": 2,
+        "volatilityPct": 30.4593434930368,
+        "sharpe": -0.05051515087978671,
+        "beta": 1,
+        "correlation": 1
+      },
+      "benchmarkRisk": {
+        "intervals": 2,
+        "volatilityPct": 30.4593434930368,
+        "sharpe": -0.05051515087978671,
+        "beta": 1,
+        "correlation": 1
+      },
+      "outperformancePct": 27.6925
+    },
+    "synthetic": true
+  }
+}

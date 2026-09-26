@@ -1,0 +1,12 @@
+Running integration checks against a real disposable MongoDB process.
+✔ a fast competing host cannot steal a live lease (74.336936ms)
+✔ skewed claim and heartbeat use database time without extending ownership by an hour (31.45189ms)
+✔ a slow stale host cannot complete, renew or requeue an expired lease (41.521529ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 354.525235

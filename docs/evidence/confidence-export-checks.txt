@@ -1,0 +1,9 @@
+marketlab-XCOMPARE-actions-r1.json: exact analysis and certificate replay passed
+marketlab-fictional-demo-higher.json: exact analysis and certificate replay passed
+marketlab-portfolio-r1 (1).json: exact analysis and certificate replay passed
+marketlab-research-3f1f178f8dc8 (1).json: exact analysis and certificate replay passed
+marketlab-research-3f1f178f8dc8.json: exact analysis and certificate replay passed
+marketlab-portfolio-r1 (1).csv: certificate and all original observation fields match JSON
+marketlab-research-3f1f178f8dc8.csv: certificate and all original observation fields match JSON
+marketlab-research-report.csv: full fictional demo certificate and takeaway present
+Seven report/export paths checked from browser-downloaded files. Service serializer separately covered by unit tests.

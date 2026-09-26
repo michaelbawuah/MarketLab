@@ -1,0 +1,11 @@
+'use client';
+import { useEffect,useState } from 'react';
+import { Button } from '@/components/ui/button';
+type View={available:boolean;job:null|{status:'queued'|'running'|'completed'|'failed';attempts:number;errorMessage?:string;verification?:{comparisons:number}}};
+export default function BackgroundResearch({id}:{id:string}){
+  const [view,setView]=useState<View|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[refresh,setRefresh]=useState(0);
+  useEffect(()=>{const c=new AbortController();let timer:ReturnType<typeof setTimeout>;const load=async()=>{try{const res=await fetch(`/api/research/jobs?id=${id}`,{signal:c.signal,cache:'no-store'}),data=await res.json() as View&{error?:string};if(!res.ok)throw new Error(data.error);if(!c.signal.aborted){setView(data);setError('');if(['queued','running'].includes(data.job?.status??''))timer=setTimeout(()=>void load(),2000);}}catch(e){if(!c.signal.aborted)setError((e as Error).message);}};void load();return()=>{c.abort();clearTimeout(timer);};},[id,refresh]);
+  async function submit(){setBusy(true);setError('');try{const r=await fetch('/api/research/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}),d=await r.json() as View&{error?:string};if(!r.ok)throw new Error(d.error);setView(d);setRefresh(n=>n+1);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+  if(!error&&!view?.available)return null;
+  return <section className="panel background-research"><div><h2>Background verification</h2>{error?<p role="alert">{error}</p>:view?.job?<p>{view.job.status==='completed'?`Recomputed from the saved inputs.${view.job.verification?.comparisons?` All ${view.job.verification.comparisons} native risk comparisons passed.`:''}`:view.job.status==='failed'?view.job.errorMessage??'This calculation could not be completed.':`${view.job.status==='queued'?'Queued':'Calculating'} · attempt ${view.job.attempts} of 3`}</p>:<p>Recompute this experiment in the background and preserve its verification record.</p>}</div>{error?<Button variant="outline" onClick={()=>setRefresh(n=>n+1)}>Retry status</Button>:!view?.job?<Button onClick={()=>void submit()} disabled={busy}>{busy?'Submitting…':'Verify saved experiment'}</Button>:null}</section>;
+}

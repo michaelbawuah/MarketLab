@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:8.0.17
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: marketlab_admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD:?Set a random admin password}
+      MARKETLAB_MONGO_PASSWORD: ${MARKETLAB_MONGO_PASSWORD:?Set a random app password}
+    volumes:
+      - marketlab_mongo:/data/db
+      - ./services/research/mongo-init.js:/docker-entrypoint-initdb.d/marketlab.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  research:
+    build:
+      context: .
+      dockerfile: services/research/Dockerfile
+    environment:
+      MONGODB_URI: mongodb://marketlab_service:${MARKETLAB_MONGO_PASSWORD:?Set app password}@mongo:27017/marketlab?authSource=marketlab
+      MONGODB_DATABASE: marketlab
+      RESEARCH_SERVICE_SECRET: ${RESEARCH_SERVICE_SECRET:?Set a random service secret}
+      RESEARCH_WORKERS: 2
+    ports: ["127.0.0.1:8788:8788"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+volumes:
+  marketlab_mongo:

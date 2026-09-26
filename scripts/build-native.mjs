@@ -1,0 +1,11 @@
+import { createRequire } from 'node:module';
+import { mkdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+const require=createRequire(import.meta.url),root=fileURLToPath(new URL('../',import.meta.url));
+if(!['linux','darwin'].includes(process.platform))throw new Error('Native build currently supports Linux and macOS. Use TypeScript mode elsewhere.');
+mkdirSync(root+'native/build',{recursive:true});
+const flags=['-std=c++17','-O3','-fno-fast-math','-ffp-contract=off','-Wall','-Wextra','-Werror','-fPIC','-shared','-DNAPI_VERSION=8','-DNODE_GYP_MODULE_NAME=marketlab_risk','-I',require('node-api-headers').include_dir,root+'native/risk.cc','-o',root+'native/build/marketlab_risk.node'];
+if(process.platform==='darwin')flags.push('-undefined','dynamic_lookup');
+const result=spawnSync(process.env.CXX||'c++',flags,{stdio:'inherit'});if(result.error)throw result.error;if(result.status!==0)process.exit(result.status??1);
+console.log('Built native/build/marketlab_risk.node');
