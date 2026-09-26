@@ -1,0 +1,163 @@
+$ pnpm demo:money --naive
+MarketLab exact-money demonstration · fictional inputs
+Contract 1: $0.30 must cover $0.10 and $0.20, leaving zero cents.
+Contract 2: 1 share × $1.005, rounded half up to cents, must cost 101 cents.
+{
+  "cash": {
+    "naive": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balance": "0.19999999999999998"
+        },
+        {
+          "payment": "0.20",
+          "accepted": false,
+          "balance": "0.19999999999999998"
+        }
+      ],
+      "accepted": false,
+      "balanceDollars": "0.19999999999999998"
+    },
+    "exact": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balanceCents": "20"
+        },
+        {
+          "payment": "0.20",
+          "accepted": true,
+          "balanceCents": "0"
+        }
+      ],
+      "accepted": true,
+      "balanceCents": "0"
+    }
+  },
+  "price": {
+    "shares": "1",
+    "price": "1.005",
+    "units": "1000000",
+    "priceMicros": "1005000",
+    "naiveCents": "100",
+    "exactCents": "101"
+  }
+}
+Naive arithmetic: FAIL (valid payment rejected; price rounds to 100 cents).
+Canonical exact helpers: PASS.
+naive contract check: FAIL.
+[ELIFECYCLE] Command failed with exit code 1.
+$ node --experimental-strip-types scripts/demo-money.ts --naive
+Observed exit code: 1; expected: 1
+
+$ pnpm demo:money --exact
+MarketLab exact-money demonstration · fictional inputs
+Contract 1: $0.30 must cover $0.10 and $0.20, leaving zero cents.
+Contract 2: 1 share × $1.005, rounded half up to cents, must cost 101 cents.
+{
+  "cash": {
+    "naive": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balance": "0.19999999999999998"
+        },
+        {
+          "payment": "0.20",
+          "accepted": false,
+          "balance": "0.19999999999999998"
+        }
+      ],
+      "accepted": false,
+      "balanceDollars": "0.19999999999999998"
+    },
+    "exact": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balanceCents": "20"
+        },
+        {
+          "payment": "0.20",
+          "accepted": true,
+          "balanceCents": "0"
+        }
+      ],
+      "accepted": true,
+      "balanceCents": "0"
+    }
+  },
+  "price": {
+    "shares": "1",
+    "price": "1.005",
+    "units": "1000000",
+    "priceMicros": "1005000",
+    "naiveCents": "100",
+    "exactCents": "101"
+  }
+}
+Naive arithmetic: FAIL (valid payment rejected; price rounds to 100 cents).
+Canonical exact helpers: PASS.
+exact contract check: PASS.
+$ node --experimental-strip-types scripts/demo-money.ts --exact
+Observed exit code: 0; expected: 0
+
+$ pnpm demo:money --compare
+MarketLab exact-money demonstration · fictional inputs
+Contract 1: $0.30 must cover $0.10 and $0.20, leaving zero cents.
+Contract 2: 1 share × $1.005, rounded half up to cents, must cost 101 cents.
+{
+  "cash": {
+    "naive": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balance": "0.19999999999999998"
+        },
+        {
+          "payment": "0.20",
+          "accepted": false,
+          "balance": "0.19999999999999998"
+        }
+      ],
+      "accepted": false,
+      "balanceDollars": "0.19999999999999998"
+    },
+    "exact": {
+      "steps": [
+        {
+          "payment": "0.10",
+          "accepted": true,
+          "balanceCents": "20"
+        },
+        {
+          "payment": "0.20",
+          "accepted": true,
+          "balanceCents": "0"
+        }
+      ],
+      "accepted": true,
+      "balanceCents": "0"
+    }
+  },
+  "price": {
+    "shares": "1",
+    "price": "1.005",
+    "units": "1000000",
+    "priceMicros": "1005000",
+    "naiveCents": "100",
+    "exactCents": "101"
+  }
+}
+Naive arithmetic: FAIL (valid payment rejected; price rounds to 100 cents).
+Canonical exact helpers: PASS.
+Comparison: PASS — failure reproduced, exact results verified.
+$ node --experimental-strip-types scripts/demo-money.ts --compare
+Observed exit code: 0; expected: 0
+

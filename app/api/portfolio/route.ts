@@ -34,7 +34,7 @@ export async function POST(request:Request) {
     const bindings:PortfolioBinding[]=[];
     for(const binding of d.bindings) bindings.push(await loadBinding(owner,binding.datasetId,binding.symbol));
     const benchmarkBinding=d.benchmarkDatasetId?(bindings.find(b=>b.dataset.id===d.benchmarkDatasetId)??await loadBinding(owner,d.benchmarkDatasetId)):undefined;
-    const snapshot:PortfolioSnapshot={method:PORTFOLIO_METHOD,name:d.name,asOf:d.asOf,transactions:d.transactions,bindings,...(benchmarkBinding?{benchmark:{method:BENCHMARK_METHOD,binding:benchmarkBinding}}:{})},payload=JSON.stringify(snapshot);
+    const snapshot:PortfolioSnapshot={method:PORTFOLIO_METHOD,name:d.name,asOf:d.asOf,transactions:d.transactions,bindings,...(d.importReceipt?{importReceipt:d.importReceipt}:{}),...(benchmarkBinding?{benchmark:{method:BENCHMARK_METHOD,binding:benchmarkBinding}}:{})},payload=JSON.stringify(snapshot);
     if(new TextEncoder().encode(payload).length>1024*1024)throw new HttpError('Combined portfolio snapshots must be 1 MiB or smaller. Choose shorter datasets or fewer symbols.',413);
     let analysis,comparison;try{analysis=analyzePortfolio(snapshot);comparison=comparePortfolio(snapshot,analysis);}catch(e){throw new HttpError((e as Error).message);}
     const fingerprint=await portfolioFingerprint(snapshot),existing=await current(owner);

@@ -19,6 +19,8 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 - A locally verified Node/MongoDB research job service with signed ownership, concurrency-safe quotas, crash recovery, bounded worker threads and C++ risk parity checks. Its hosted connection is optional and currently unconfigured.
 
+- A reproducible TypeScript service load runner with raw timings and correctness checks. Three local 1,000-job runs achieved **39.96 verified jobs/s** and **319.77 ms combined p99**, using two workers and eight concurrent clients with 500 observations per instrument. [Workload, environment and limits](docs/service-performance.md).
+
 - A Research lab with next-close SMA backtests, costs, buy-and-hold and selected benchmark comparisons, observed-interval risk, separate chronological evaluation and immutable JSON/CSV reports.
 
 - An Alpha Vantage daily-price connector with IBM public demo access, request-only API keys, bounded fetching, persisted request history, and source-aware snapshots.
@@ -132,7 +134,9 @@ Financial conventions reference [Investor.gov: stock splits](https://www.investo
 
 ## Historical portfolios
 
-**My portfolio** starts empty. Import a complete USD ledger from cash funding using this exact header:
+**My portfolio** starts empty. Upload a supported Charles Schwab transaction-history CSV directly, or use MarketLab's normalized ledger format. The Schwab adapter handles its native headers, title row, dates, quoted USD values and optional total without manual cleanup. Review exact net cash, explicit fees, same-day ordering and symbol mappings before previewing and saving. Unsupported activity stops the entire import. See [supported actions, limitations and acceptance evidence](docs/brokerage-import.md).
+
+For the normalized ledger, import complete USD history from cash funding using this exact header:
 
 ```csv
 id,date,type,symbol,shares,amount,fee,reference
@@ -141,7 +145,7 @@ fund-1,2026-09-14,deposit,,0,1000,0,
 
 Types are `deposit`, `withdrawal`, `buy`, `sell`, and `dividend_payment`. `amount` is gross USD consideration, not unit price; the fee is separate. Currency amounts support two decimals and shares six decimals. Cash flows use no symbol/reference; dividend payments use a symbol and the original ex-date in `reference`, zero shares and zero fee. Dates are processed chronologically and same-date ledger rows retain file order. IDs must be unique. The import replaces the complete current ledger; repeated identical saves do not create duplicates.
 
-Map each symbol to one owner-held unadjusted close dataset with a saved complete corporate-action record. Instrument identity (including any ticker reuse), currency and event completeness are explicitly user-declared. Historical and fictional data retain their classification; any synthetic input prominently marks the portfolio as containing fictional prices. The sample portfolio's seed ledger is never imported into this workspace.
+Map each symbol to one owner-held unadjusted close dataset with a saved complete corporate-action record. Instrument identity (including any ticker reuse), currency and event completeness are explicitly user-declared. Historical and fictional data retain their classification; a fictional broker file or synthetic price input prominently marks the portfolio as containing fictional inputs. The sample portfolio's seed ledger is never imported into this workspace.
 
 The `historical-close-v1` engine applies splits to carried-in holdings, then accrues dividends on ex-date before that day's trades. Fractional split shares use exact reduced BigInt fractions. Aggregate share count times dividend per post-split share is rounded half up once to USD cents for each entitlement. Entitlements remain tied to those original shares, even if the shares are subsequently sold. A matching `dividend_payment` transfers receivable to cash without additional income. Unpaid dividends cannot fund purchases or withdrawals. The full entitlement must be paid at once; partial payments and withholding are not represented.
 
@@ -201,9 +205,9 @@ MarketLab is an independent project. The reporting and data-quality components c
 
 The [adopted roadmap](docs/engineering-roadmap.md) replaces the earlier provider-expansion-first order. The client-clock lease bug is fixed with failing-before/passing-after evidence; a SIGKILL recovery test proves one durable result after a retry. The project is published to [GitHub](https://github.com/michaelbawuah/MarketLab) with an automated unit, integration and cross-check gate. See [verification records](docs/verification.md) for observed local and remote results.
 
-The one-click synthetic demo and report confidence certificates are implemented and browser-checked. The next product milestone is one supported brokerage CSV format. Defined-workload performance evidence, explicit floating-point failure evidence, shareable reports, event overlays, staging activation and lightweight collaboration follow in that order. Additional strategies and asset classes remain deferred.
+The one-click synthetic demo, report confidence certificates and Schwab CSV import are implemented and browser-checked using fictional fixtures. The service now has a measured local throughput/p99 baseline with raw evidence. The interactive exact-money explanation and runnable floating-point failure examples are also complete; see [representation, rounding and reproduction](docs/money-arithmetic.md). Next are shareable reports, event overlays, staging activation and lightweight collaboration. Additional strategies and asset classes remain deferred. Milestones 6–8 are grouped into one GitHub checkpoint, batching three milestones as requested.
 
-No latency, return, or hiring-outcome claims are made from this demo. See `docs/verification.md` for the checks performed on this release.
+Service performance numbers apply only to their documented local workload. They establish no production SLA, investment return or hiring outcome. See `docs/verification.md` for the checks performed on this release.
 
 ## Research lab
 

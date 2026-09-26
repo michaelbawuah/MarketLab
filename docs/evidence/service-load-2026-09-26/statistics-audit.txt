@@ -1,0 +1,8 @@
+Independent statistics audit (Python standard library)
+Input: three raw trial files; nearest-rank percentiles recomputed independently.
+Trial 1: 1000 unique results, correct boundaries, exact p50/p95/p99 and rate, persistence audit PASS.
+Trial 2: 1000 unique results, correct boundaries, exact p50/p95/p99 and rate, persistence audit PASS.
+Trial 3: 1000 unique results, correct boundaries, exact p50/p95/p99 and rate, persistence audit PASS.
+All recorded source and native binary SHA-256 hashes match the current measured files.
+Aggregate: 3000 verified jobs; pooled p99 319.769474 ms; 39.961588441650825 verified jobs/s; PASS.
+This audits recorded statistics and source identity; it does not independently replay the financial model.

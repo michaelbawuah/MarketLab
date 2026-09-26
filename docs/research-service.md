@@ -104,6 +104,14 @@ Activation requires an actual Node hosting target, MongoDB URI/credentials, TLS 
 
 ## Measurements
 
+The [service load baseline](service-performance.md) measures the signed HTTP,
+MongoDB queue, worker calculation and saved-result journey. Three fresh-database
+runs each verified 1,000 jobs with no failures: 39.96 jobs/s aggregate and 319.77 ms
+combined client-observed p99, using two workers, eight clients and 500 prices per
+instrument. Raw samples, source hashes, environment and limits are included.
+Run `pnpm bench:service --output /path/to/new-directory` with `MONGOD_BIN` set.
+This is local closed-loop evidence; staging and production remain unmeasured.
+
 `pnpm bench:native` writes [native-benchmark.json](native-benchmark.json). In the recorded shared Linux run, the 2,500-observation risk kernel's median was 0.0463 ms in TypeScript, 0.0148 ms in C++, and 0.0279 ms including array packing. This is approximately 3.1× direct / 1.7× packed kernel throughput, not an application speedup.
 
 The full direct TypeScript calculation measured 13.75 ms. Worker measurements include input validation, hashing, structured-clone transport and the full simulation. The C++ verification mode adds work and leaves canonical output unchanged; different worker medians in one shared run reflect timing variability and do not establish an app optimization. Separate fresh-process peak RSS was about 73 MiB (TS), 68 MiB (native prepacked) and 137 MiB (native with repeated packing); these are whole-process measurements, not native-only memory.

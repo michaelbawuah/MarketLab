@@ -1,0 +1,7 @@
+"Transactions  for account FICTIONAL-DEMO as of 09/18/2026 17:00:00 ET"
+"Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount"
+"09/18/2026","MoneyLink Transfer","","Fictional withdrawal","","","","($25.00)"
+"09/17/2026","Sell","XDEMO","Fictional example stock","0.5","$110.00","$0.03","$54.97"
+"09/14/2026","Buy","XDEMO","Fictional example stock","2.5","$100.00","$1.00","-$251.00"
+"09/14/2026","MoneyLink Deposit","","Fictional cash funding","","","","$1,000.00"
+Transactions Total,"","","","","","","$778.97",

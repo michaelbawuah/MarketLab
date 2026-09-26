@@ -20,5 +20,10 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
 - The user resumed GitHub publishing on September 26, 2026. The repository is
   `michaelbawuah/MarketLab`, branch `main`. Preserve remote history and verify the
   published files and Actions result after a transfer. Sites source saving is separate.
+- After the successful publication through milestone 5, the user asked to batch
+  the next GitHub commit/push until 3–4 additional milestones are complete
+  (milestones 6–8 or 6–9). Continue building and saving the Site in the meantime;
+  do not push each milestone to GitHub. Milestones 6–8 form the current checkpoint;
+  after its publication, resume at milestone 9. Keep TypeScript/JavaScript central.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

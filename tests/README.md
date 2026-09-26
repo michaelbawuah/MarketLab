@@ -39,12 +39,19 @@ MONGOD_BIN=/path/to/mongod pnpm test:service:local tests/integration/lease-clock
 MONGOD_BIN=/path/to/mongod pnpm test:service:local tests/integration/crash-recovery.test.ts
 pnpm test:python
 pnpm test:parity
+pnpm demo:money
 ```
 
 Unit examples include cash-flow exclusion from returns, cash/share conservation,
 fee and dividend reconciliation, exact fractional split holdings, rejection of
 overdrafts/shorts, chronological execution and frozen-report identity. These
 assert financial outcomes, not only UI shape or implementation details.
+
+The money demonstration contrasts naive Number calculations with canonical
+exact accounting. `pnpm demo:money --naive` intentionally exits 1; the default
+comparison and `--exact` exit 0 when their contracts hold. Half-cent boundaries,
+overdraft rejection, basis conservation and JSON precision run in the normal
+unit layer. See [money arithmetic](../docs/money-arithmetic.md).
 
 Certificate tests additionally mutate wealth, fees, return values, dates, signal
 timing and benchmark flows to ensure inconsistent reports cannot earn passing
@@ -62,3 +69,14 @@ server, not database failover, network-partition recovery or staging readiness.
 Shared fixture code lives in `tests/fixtures/`; the normal worker has no crash
 barrier or fault-injection environment flag. A worker factory allows the test
 to inject its barrier without altering the production calculation path.
+
+## Service performance evidence
+
+`tests/unit/benchmark-service.test.ts` checks percentile boundaries, failure
+accounting, deterministic input/owner limits and rejection of corrupt results.
+It does not claim a successful load run. The separate `pnpm bench:service` command
+starts real isolated MongoDB and Node processes, gates each result, retains raw
+timings and inspects durable jobs. See [the measured workload and reproduction
+instructions](../docs/service-performance.md). Timings are not CI pass/fail
+thresholds on shared runners. The recorded run and unit output are separate
+artifacts; staging performance remains unmeasured.

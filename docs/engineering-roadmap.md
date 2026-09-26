@@ -23,9 +23,9 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | 3 | Label unit/integration/cross-check layers; financial invariants and independent Python/TS verification run in CI | Complete local foundation gate and [GitHub Actions gate](https://github.com/michaelbawuah/MarketLab/actions/runs/36254911641) passed. The remote run includes the later demo/certificate work and 66,678 cross-language comparisons; [execution evidence](verification.md) |
 | 4 | One-click synthetic demo, no setup/import, useful insight in under one minute | Implemented and locally verified: one click shows the calculated effect of costs, with three presets, exact observations and a downloadable report. Desktop and narrow-screen checks passed; [acceptance evidence](quick-demo.md) |
 | 5 | Every report shows a confidence certificate and a plain-language takeaway | Implemented and locally verified across report views, previews and exports. Per-result consistency checks, source/coverage details, assumptions and explicit independent-replay status; [acceptance evidence](confidence-certificates.md) |
-| 6 | Import one real brokerage CSV format without manual cleanup | Pending; current generic ledger CSV does not satisfy this |
-| 7 | Publish a measured p99 or throughput for a defined workload | Pending; existing native kernel microbenchmarks do not satisfy end-to-end load evidence |
-| 8 | Explain the money representation and show a failing naive-float example | Pending; exact arithmetic already exists, but the explicit comparison/evidence remains |
+| 6 | Import one real brokerage CSV format without manual cleanup | Implemented: Schwab transaction-history adapter, conversion receipt, explicit fee/cash reconciliation and fail-closed unsupported rows. Native-format fictional file uploaded, previewed and saved in browser; no real customer export supplied. [Acceptance evidence](brokerage-import.md) |
+| 7 | Publish a measured p99 or throughput for a defined workload | Measured and recorded: 3 × 1,000 verified jobs, 39.96 jobs/s aggregate and 319.77 ms combined client p99. Separate Node process, real disposable MongoDB, two workers, eight clients; local closed-loop scope. [Evidence and reproduction](service-performance.md) |
+| 8 | Explain the money representation and show a failing naive-float example | Implemented and verified: runnable payment and half-cent examples fail with naive Number arithmetic and pass with canonical exact helpers. Interactive Methodology demo, six new regressions and full local gate passed. [Representation and evidence](money-arithmetic.md) |
 | 9 | Share a saved experiment through a read-only unauthenticated link | Pending; design owner opt-in and report redaction before enabling |
 | 10 | Put explanatory event markers directly on the equity curve | Pending |
 | 11 | Run the background service and recovery test on a real staging host | Pending; local MongoDB tests and the private website are not staging activation of this service |
@@ -43,7 +43,11 @@ strategies, more asset classes and significance tests remain deferred.
 | `lib/finance/` | Canonical TypeScript accounting, validation, portfolio and experiment engines |
 | `app/quick-demo.tsx`, `lib/finance/quick-demo.ts` | One-click fictional cost comparison, using the canonical research engine |
 | `lib/finance/confidence.ts`, `app/confidence-certificate.tsx` | Per-result evidence and takeaways shared by report views and exports |
+| `lib/finance/brokerage-csv.ts`, `app/brokerage-receipt.tsx` | Schwab CSV conversion, exact cash/fee checks and saved import receipt |
+| `public/examples/schwab-transactions.csv`, `tests/unit/brokerage-csv.test.ts` | Fictional native-format example and adapter/accounting regressions |
 | `services/research/` | Standalone Node API, MongoDB job store, worker pool and recovery |
+| `scripts/benchmark-service.ts`, `scripts/benchmark/` | Isolated load runner, deterministic profiles, correctness gates, timings and resource diagnostics |
+| `lib/finance/money-examples.ts`, `app/money-demo.tsx`, `scripts/demo-money.ts` | Interactive and command-line contrasts between naive decimals and exact money |
 | `native/` | C++ risk kernel; supporting verification/measurement |
 | `verification/python/` | Independent report replay and verifier rejection tests |
 | `tests/unit/` | Pure financial and input invariants |
@@ -60,6 +64,12 @@ See [architecture-roadmap.md](architecture-roadmap.md) for runtime ownership and
 [tests/README.md](../tests/README.md) for the layered verification commands.
 
 ## Working rule
+
+GitHub batching: the user requested another commit/push after 3–4 additional
+milestones following milestone 5. Milestones 6–8 are complete and form this checkpoint. After publishing it,
+continue with milestone 9. Continue saving and publishing the private Site
+separately; batch subsequent GitHub checkpoints as requested. Keep JavaScript/TypeScript central; MongoDB is a
+database used by the separate research service, not a GitHub language category.
 
 For each milestone, record the user problem, implementation, acceptance check,
 actual result and remaining limits. A planned feature, written test or configured

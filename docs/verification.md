@@ -1,5 +1,83 @@
 # Release verification
 
+## Exact-money demonstration and milestones 6–8 checkpoint — September 26, 2026
+
+- Added two fictional examples to Methodology: a valid 20¢ payment rejected by
+  naive decimal subtraction, and a $1.005 share price incorrectly rounded to
+  100¢ by `Math.round`. Canonical exact helpers accept both cash payments and
+  round the trade to 101¢. Existing production accounting is unchanged.
+- Executed `pnpm demo:money --naive` (expected exit 1), `--exact` (exit 0), and
+  the default comparison (exit 0). [Captured output](evidence/money-arithmetic.txt).
+  [Representation and rounding policy](money-arithmetic.md) identifies each
+  conversion boundary and separates exact bookkeeping from approximate ratios.
+- The full local `test:service:local --ci` gate passed type checking, lint, native
+  compilation, 104 unit tests, 10 real MongoDB/HTTP/worker integration tests,
+  4 native cross-checks and 11 Python tests: 129 tests total. Node suites report
+  zero skips. Python independently matched 66,678 fields in nine fresh reports.
+  [Complete gate output](evidence/milestones-6-8-local-gate.txt).
+- The six new unit regressions cover the two float failures, half-cent price
+  boundaries, millionth-share quantities, a true one-cent overdraft, allocation
+  of all remaining basis and decimal-string JSON precision.
+- Browser QA switched between both examples on desktop and in a 390px iframe,
+  expanded the explanation and checked the responsive result cards. Expanded
+  modal content had equal client/scroll widths of 373px; the card's were 323px.
+  The mobile menu also responded to keyboard activation. This is browser layout
+  verification, not a physical-device test or a full accessibility audit.
+  [Desktop capture](money-preview.jpg) · [Narrow capture](money-narrow.jpg).
+- This checkpoint includes Schwab import (milestone 6), measured local service
+  performance (7) and the money explanation (8). Local checks do not establish
+  remote CI success; the associated [GitHub Actions run](https://github.com/michaelbawuah/MarketLab/actions/workflows/verify.yml)
+  records that separately. Neither the private website nor local tests deploys
+  the Node/MongoDB service to staging.
+
+
+## Service throughput and p99 — September 26, 2026
+
+- Added a TypeScript load runner for the existing Node/MongoDB service. Each
+  repetition starts fresh local database and service processes, preserves normal
+  auth/quota/validation rules, and measures signed submission through full-result
+  receipt and verification with two native-verifying workers and eight clients.
+- Three repetitions of 1,000 jobs with 500 observations per instrument passed:
+  3,000 canonical result/input checks, 3,000 one-attempt completions and all
+  post-run persistent owner/ID checks. No errors or unstarted jobs occurred.
+  Aggregate throughput was 39.96 jobs/s and combined client-observed p99 319.77 ms.
+- Thirty-two warm-up jobs per repetition and an initial 24-job smoke run are
+  excluded from the published statistics. Every raw measured job timing is
+  retained. Independent Python arithmetic reproduced rates and percentiles and
+  confirmed the recorded source/native-binary hashes; this was a statistics
+  audit, not independent financial-model replay.
+- All 98 unit tests pass, including five load-run accounting/correctness cases.
+  Type checking and lint pass. The pre-existing Mongo crash/lease, native and
+  Python replay suites were not rerun; their runtime source did not change.
+- This is local closed-loop evidence on shared hardware, with loopback traffic
+  and polling included. No saturation capacity, production SLA, browser/gateway
+  latency, staging activation, new remote CI run or GitHub push is claimed.
+
+See [service-performance.md](service-performance.md) for the environment,
+reproduction command, raw reports and scope. The hosted user interface and
+production data were not modified for this milestone.
+
+## Brokerage CSV import — September 26, 2026
+
+- Added the TypeScript Schwab transaction-history adapter, source review and a
+  saved conversion receipt. The server reparses raw input; unsupported activity
+  rejects the entire file. No schema or dependency changes.
+- All 93 unit tests pass, including 13 brokerage cases and serialized JSON/CSV
+  evidence checks. [Captured output](evidence/brokerage-unit-tests.txt).
+- Browser file upload, automatic format detection, price mapping, preview, save,
+  repeated-file idempotency and unsupported-action rejection were observed.
+  The fictional fixture produced $778.97 cash, $1.03 fees and $984.72 wealth.
+  The repeated save kept revision 2. Narrow-layout QA reported a 375-pixel
+  document and scroll width with expanded receipt details.
+- The browser download-event wait timed out; report serialization was instead
+  verified locally. No fresh downloaded-file or independent Python portfolio
+  verification is claimed. Source compatibility references and full boundaries
+  are recorded in [brokerage-import.md](brokerage-import.md).
+- Existing Mongo/worker/native integration suites were not rerun: their runtime
+  code and dependencies did not change. No remote CI run or GitHub push was made
+  for this milestone, following the user's 3–4 milestone batching request.
+
+
 ## GitHub publication and remote CI — September 26, 2026
 
 - Published the complete 243-file project to the private

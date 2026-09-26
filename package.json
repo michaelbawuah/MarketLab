@@ -21,6 +21,8 @@
     "service:start": "node --experimental-strip-types services/research/server.ts",
     "service:submit": "node --experimental-strip-types scripts/research-client.ts",
     "bench:native": "node --experimental-strip-types scripts/benchmark-native.ts",
+    "bench:service": "node --experimental-strip-types scripts/benchmark-service.ts",
+    "demo:money": "node --experimental-strip-types scripts/demo-money.ts",
     "verify:python": "python3 verification/python/verify_research.py",
     "test:python": "python3 -m unittest discover -s verification/python -p 'test_*.py'",
     "test:parity": "node --experimental-strip-types scripts/test-python-parity.ts",

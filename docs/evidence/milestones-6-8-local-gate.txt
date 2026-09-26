@@ -1,0 +1,172 @@
+$ node scripts/test-service-local.mjs --ci
+Running integration checks against a real disposable MongoDB process.
+$ pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check
+$ tsc --noEmit
+$ eslint . --ignore-pattern dist --ignore-pattern .next
+$ node scripts/build-native.mjs
+Built native/build/marketlab_risk.node
+$ node --experimental-strip-types --test tests/unit/*.test.ts
+✔ nearest-rank percentiles retain the slow tail instead of averaging or interpolating it (2.857299ms)
+✔ failed and undispatched jobs reduce goodput and invalidate a run without disappearing (0.445375ms)
+✔ the frozen workload is deterministic, covers eight cost/window profiles and never hits per-owner quota (160.952439ms)
+✔ incorrect inputs, results, completion, attempts or verification cannot pass a fast benchmark (37.726117ms)
+✔ load-run options are bounded and require a new explicit output destination (0.811109ms)
+✔ native Schwab file reconciles quoted USD values, explicit fees, header and footer without cleanup (10.488721ms)
+✔ brokerage import reaches the canonical portfolio with independently expected cash, cost and gains (16.654152ms)
+✔ brokerage report serialization retains evidence and amounts without account titles or descriptions (5.179277ms)
+✔ same-day order is explicit and missing initial funding cannot pass valuation (1.594355ms)
+✔ all unsupported activity stops the whole import instead of producing a partial ledger (1.368283ms)
+✔ cash signs, impossible dates, numeric grouping, currencies and excess precision fail closed (3.30699ms)
+✔ multiple accounts, unknown preambles, malformed footers and mismatched totals are rejected (0.611586ms)
+✔ blank lines, BOM, trailing empty columns and quoted descriptions are handled without storing descriptions (0.202196ms)
+✔ duplicate-looking executions remain distinct and repeated import identities are deterministic (2.321898ms)
+✔ reported net cash and fees remain authoritative when the displayed execution price is rounded (0.504123ms)
+✔ API draft validation re-parses raw broker input, rejects forged receipts and preserves legacy ledger input (1.131955ms)
+✔ conversion certificates detect altered cash, fee and duplicate provenance records (1.74892ms)
+✔ row and byte limits prevent oversized brokerage imports (2.631817ms)
+✔ every demo preset has scoped checks and explicitly lacks an independent report receipt (24.269099ms)
+✔ altered wealth, fees, returns, dates and signal timing cannot earn passing certificates (10.479501ms)
+✔ source labels preserve provenance and do not certify a calendar or source authenticity (1.829122ms)
+✔ portfolio certificate reconciles ledger and benchmark, including failure and cash-only cases (3.645824ms)
+✔ corporate-action JSON carries source, assumptions and actual endpoint checks (2.041944ms)
+✔ demo ledger checks use actual ledger balances and supplied quotes (11.542808ms)
+✔ research and portfolio CSV retain observations and contain the full certificate without formula injection (7.141571ms)
+✔ only completed detailed service reports receive a certificate; risk receipt stays separate (1.98014ms)
+✔ forward and reverse splits preserve wealth and exact fractional shares (16.781074ms)
+✔ cash dividend offsets ex-date drop and is not reinvested (0.473417ms)
+✔ same-day split precedes dividend; prior income does not split (0.511325ms)
+✔ events between supplied observations apply chronologically without invented prices (3.915142ms)
+✔ rejects adjusted inputs, incomplete coverage, invalid dates and duplicate events (0.922037ms)
+✔ explicit no-event coverage and audit export reconcile with original observations (0.827264ms)
+✔ decimal parsing and fractional trade rounding preserve cents (1.141669ms)
+✔ external contributions alone never count as returns (9.131244ms)
+✔ withdrawals are excluded from time-weighted performance (0.516072ms)
+✔ average cost, sale fees, and dividends reconcile to total gain (0.29085ms)
+✔ historical validation prevents overdrafts and short sales (0.418254ms)
+✔ no future quote can be used to value an earlier purchase (0.160634ms)
+✔ daily gain with an end-of-day contribution retains the correct return (0.271371ms)
+✔ fixture replay is deterministic and complete, malformed data is rejected (8.887265ms)
+✔ sample portfolio reconciles and every chart endpoint matches its valuation (1.875352ms)
+✔ API input normalization rejects invalid dates, unknown symbols and extra fields (2.491795ms)
+✔ a large contribution immediately invested does not create a return below -100% (0.676004ms)
+✔ portfolio independently reconciles split, dividend receivable, funding, sale and payment (14.980667ms)
+✔ a dividend is paid to the original entitlement after all shares are sold (4.67265ms)
+✔ ex-date buyers are excluded and sellers retain earned dividends (1.578242ms)
+✔ receivables cannot be spent, and payment cannot duplicate or mismatch an entitlement (3.269714ms)
+✔ missing and stale marks, unsupported price basis and incomplete action coverage stop valuation (4.893795ms)
+✔ reverse split retains rational shares and aggregate dividend rounding is half up (0.597244ms)
+✔ CSV validation preserves same-date order, rejects malformed or duplicate imports, and round-trips exact amounts (3.473322ms)
+✔ frozen action payloads affect identity even when an action revision number is reused (4.612969ms)
+✔ prices preserve six decimals and are ordered by observed date without inventing sessions (14.786663ms)
+✔ canonical identity makes reordered exact replays idempotent and corrections distinct (24.073523ms)
+✔ invalid or future dates, duplicates, non-USD and mixed symbols fail before persistence (0.964381ms)
+✔ invalid prices never round or coerce silently (0.589543ms)
+✔ CSV quoting and aliases are supported while ambiguous structures are rejected (14.195207ms)
+✔ explicit adjusted column selection cannot silently use raw close or claim unadjusted (0.552718ms)
+✔ series metrics match an independent hand calculation with observed date gaps (0.401478ms)
+✔ export keeps exact decimals and metadata and neutralizes spreadsheet formulas (3.994722ms)
+✔ explorer excludes CSV claims, fictional observations and other price bases (2.161795ms)
+✔ explorer chooses newest observation, with stable save-time and ID ties (7.219092ms)
+✔ decimal arithmetic rejects a valid payment while the canonical ledger spends every cent (2.333736ms)
+✔ a six-decimal price rounds exactly at the half-cent boundary (0.434258ms)
+✔ a millionth share crosses the half-cent boundary without losing precision (0.553969ms)
+✔ integer cents still reject a real one-cent overdraft (0.274305ms)
+✔ successive partial sales conserve basis and clear the final holding exactly (0.317652ms)
+✔ decimal integer strings retain cents across JSON without a Number conversion (0.405925ms)
+✔ matched flows reconcile independently through split, dividend and withdrawal (19.495226ms)
+✔ internal trades, trade fees and portfolio dividend payments never fund the benchmark (5.107098ms)
+✔ between-observation actions accrue without inventing portfolio dates (3.968242ms)
+✔ same-date funding order matters and insufficient benchmark withdrawals fail closed (2.272392ms)
+✔ withdrawal of rounded holdings liquidates exactly, and unpaid dividends remain unspendable (1.718283ms)
+✔ missing exact marks, coverage gaps, adjusted prices and unsupported versions reject comparison (2.644377ms)
+✔ sub-cent recoverable holdings cannot silently become a permanent total-loss return (0.82497ms)
+✔ large rational-share audit output stops before exceeding the response budget (207.486285ms)
+✔ legacy portfolio results and fingerprints are unchanged, while frozen benchmark edits change identity (7.314692ms)
+✔ optional benchmark draft validation and CSV export preserve exact cents and matched rows (2.131299ms)
+✔ connection validation fixes demo to IBM and rejects unknown inputs or ambiguous currency (2.23708ms)
+✔ daily parsing preserves exact decimals, source, observed dates and adjustment basis (10.489462ms)
+✔ unexpected symbol, refresh date, timezone and future observations fail closed (0.865592ms)
+✔ upstream notices are classified without leaking provider messages or keys (1.151014ms)
+✔ fetch uses the fixed HTTPS endpoint without redirects and returns normalized data (6.424934ms)
+✔ notice classification distinguishes access failures and incidental quota information (0.348858ms)
+✔ provider rate-limit errors do not imply an app cooldown resets the allowance (0.414518ms)
+✔ HTTP errors, malformed payloads and oversized responses are never imported (2.279584ms)
+✔ network errors redact secret URLs, and bounded timeouts stop the request (8.612608ms)
+✔ demo cost comparisons share valid fictional prices, events, cash, dates and rule (37.002822ms)
+✔ cost lesson uses exact cents and exports a reproducible, explicitly unsaved demo (27.26633ms)
+✔ comparison reads frozen segment results and preserves signed cents and drawdown meaning (18.763018ms)
+✔ same bounds and count do not hide different interior observation dates (3.149451ms)
+✔ matching dataset IDs do not hide changed prices, corporate actions or benchmark records (1.801489ms)
+✔ evaluation boundaries, cash and calculation method prevent matched deltas (1.309765ms)
+✔ intentional fee and slippage variations are identified separately from fixed inputs (1.47205ms)
+✔ names, save timestamps and equivalent dollar notation do not change comparability (1.144584ms)
+✔ export trust boundary validates complete observations and metadata (18.852222ms)
+✔ provider snapshot hashes include frozen provider provenance (9.109391ms)
+✔ independent SMA fixture covers next-close execution, splits, dividends and final pending signal (14.597957ms)
+✔ later period restarts with initial cash, no carried shares or receivables (1.68289ms)
+✔ signals and executions before a cutoff do not change when later prices or events change (2.888376ms)
+✔ trade costs, affordable sizing and drawdown include first-close friction (1.144383ms)
+✔ reverse split fractions sell completely and ex-date buyers receive no entitlement (1.71545ms)
+✔ matched date grid, raw prices, warmup and segment size are required (2.33661ms)
+✔ risk agrees with independent arithmetic, including zero-variance cases (0.294095ms)
+✔ snapshot identity changes with full event payload and JSON reproduces the result; CSV preserves exact cents (2.046731ms)
+ℹ tests 104
+ℹ suites 0
+ℹ pass 104
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.85144
+$ node --experimental-strip-types --test tests/integration/*.test.ts
+✔ persistent workers preserve canonical accounting and verify all nine risk results (151.638378ms)
+✔ timed-out workers are replaced and pool capacity recovers (110.030093ms)
+✔ SIGKILL before finalization recovers through competing runners with one durable result (1501.620528ms)
+ℹ Killed the actual runner process after worker calculation, before MongoDB finalization.
+ℹ Two replacement runners competed; attempts=2, accepted finalizations=1, stored results=1; fresh connection replay matched exactly.
+✔ a fast competing host cannot steal a live lease (126.729373ms)
+✔ skewed claim and heartbeat use database time without extending ownership by an hour (43.548704ms)
+✔ a slow stale host cannot complete, renew or requeue an expired lease (37.586235ms)
+✔ lease finalization preserves dollar-prefixed error and verification values (32.730359ms)
+✔ MongoDB enforces quota and idempotency under concurrent submissions, scopes owners and validates slot bounds (705.835698ms)
+✔ expired leases recover across connections, stale workers cannot commit and retries stop after three attempts (46.84916ms)
+✔ signed HTTP jobs persist real worker results, reject forgery/replay and isolate owners (346.107977ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1717.004725
+$ pnpm test:native && pnpm test:python && pnpm test:parity
+$ node --experimental-strip-types --test tests/cross-check/native.test.ts
+✔ C++ agrees with independent, flat, inverse, short and scaled risk fixtures (1.34009ms)
+✔ C++ agrees across 100 deterministic return paths and offset typed-array views (5.358999ms)
+✔ native boundary rejects malformed, shared and nonfinite inputs (0.347686ms)
+✔ verification rejects nonfinite or missing canonical metrics (14.871501ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147.547198
+$ python3 -m unittest discover -s verification/python -p 'test_*.py'
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.259s
+
+OK
+$ node --experimental-strip-types scripts/test-python-parity.ts
+split-dividend: Python independently matched 366 fields
+costs: Python independently matched 338 fields
+reverse-split: Python independently matched 366 fields
+separate-benchmark: Python independently matched 366 fields
+provider: Python independently matched 366 fields
+2500-observations-window-500: Python independently matched 60151 fields
+quick-demo-illustrative: Python independently matched 1575 fields
+quick-demo-higher: Python independently matched 1575 fields
+quick-demo-zero: Python independently matched 1575 fields
+Verified 9 freshly computed TypeScript reports; 66678 scalar comparisons.
