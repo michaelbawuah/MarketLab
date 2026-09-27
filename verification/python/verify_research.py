@@ -103,12 +103,12 @@ def checked_binding(value: Any, label: str) -> dict:
     require(d["count"] == len(observations) and d["firstDate"] == observations[0]["date"] and d["lastDate"] == observations[-1]["date"], "Dataset observation metadata disagrees")
     base_id = canonical_hash(["marketlab-csv-v1", d["symbol"], d["source"], d["currency"], d["basis"], d["priceColumn"], d["kind"], [[p["date"], p["priceMicros"]] for p in observations]])
     origin = d.get("origin", "csv")
-    require(origin in ("csv", "alphavantage"), "Unsupported dataset origin")
-    if origin == "alphavantage":
+    require(origin in ("csv", "alphavantage", "alphavantage-browser"), "Unsupported dataset origin")
+    if origin in ("alphavantage", "alphavantage-browser"):
         require("providerRefreshed" in d and "providerTimezone" in d, "Missing provider provenance")
         for field in ("providerRefreshed", "providerTimezone"):
             require(d[field] is None or isinstance(d[field], str) and len(d[field]) <= 160, "Invalid provider provenance")
-        base_id = canonical_hash(["marketlab-provider-v1", base_id, {"origin": "alphavantage", "refreshed": d["providerRefreshed"], "timezone": d["providerTimezone"]}])
+        base_id = canonical_hash(["marketlab-provider-v1", base_id, {"origin": origin, "refreshed": d["providerRefreshed"], "timezone": d["providerTimezone"]}])
     require(d["id"] == base_id, "Dataset content ID does not match its prices and metadata")
     actions = exact_keys(binding["actions"], {"source", "complete", "events", "revision", "updated"}, "Actions")
     require(actions["complete"] is True, "Event coverage must be confirmed")

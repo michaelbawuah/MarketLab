@@ -7,6 +7,8 @@ import { analyzeResearch, researchFingerprint, type ResearchSnapshot } from '../
 import { researchFixture } from '../tests/fixtures/research.ts';
 import { researchCertificate } from '../lib/finance/confidence.ts';
 import { DEMO_COSTS,demoSnapshot } from '../lib/finance/quick-demo.ts';
+import { datasetId } from '../lib/finance/market-data.ts';
+import { validateResearchSnapshot } from '../lib/finance/research-input.ts';
 
 const directory=await mkdtemp(join(tmpdir(),'marketlab-python-parity-'));
 try {
@@ -16,6 +18,14 @@ try {
     assert.deepEqual(analyzeResearch(frozen.snapshot),frozen.analysis,`${name}: canonical engine changed from the frozen fixture`);
     snapshots.push({name,snapshot:frozen.snapshot});
   }
+  const browser=structuredClone(snapshots.find(s=>s.name==='provider')!.snapshot);
+  for(const role of ['asset','benchmark'] as const){
+    const d=browser[role].dataset;d.origin='alphavantage-browser';
+    d.id=Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(['marketlab-provider-v1',await datasetId(d),{origin:d.origin,refreshed:d.providerRefreshed,timezone:d.providerTimezone}])))).toString('hex');
+  }
+  browser.config.assetId=browser.asset.dataset.id;browser.config.benchmarkId=browser.benchmark.dataset.id;
+  await validateResearchSnapshot(browser);
+  snapshots.push({name:'browser-provider',snapshot:browser});
   const large=await researchFixture(2500);
   // Use the maximum window with sufficient warmup and two chronological segments.
   large.config.window=500;large.config.start=large.asset.dataset.observations[500].date;

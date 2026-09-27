@@ -15,15 +15,15 @@ export async function validateResearchSnapshot(input:unknown):Promise<ResearchSn
     const fields=['symbol','source','basis','priceColumn','kind','currency','observations','id','count','firstDate','lastDate','created','origin','providerRefreshed','providerTimezone'];
     if(Object.keys(d).some(k=>!fields.includes(k)))throw new Error('Unknown dataset field.');
     if(typeof d.created!=='string'||d.created.length>40||!Number.isFinite(Date.parse(d.created)))throw new Error('Invalid dataset timestamp.');
-    if(d.origin!==undefined&&!['csv','alphavantage'].includes(d.origin))throw new Error('Invalid dataset origin.');
+    if(d.origin!==undefined&&!['csv','alphavantage','alphavantage-browser'].includes(d.origin))throw new Error('Invalid dataset origin.');
     for(const value of [d.providerRefreshed,d.providerTimezone])if(value!==undefined&&value!==null&&(typeof value!=='string'||value.length>80))throw new Error('Invalid provider metadata.');
     const csv='date,close\n'+d.observations.map(p=>{if(!p||Object.keys(p).sort().join(',')!=='date,priceMicros'||typeof p.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(p.date)||typeof p.priceMicros!=='string'||!/^[1-9]\d{0,12}$/.test(p.priceMicros))throw new Error('Invalid observation.');return `${p.date},${priceDecimal(p.priceMicros)}`;}).join('\n');
     const validated=validateImport({symbol:d.symbol,source:d.source,basis:d.basis,priceColumn:d.priceColumn,kind:d.kind,csv});
     if(JSON.stringify(validated.observations)!==JSON.stringify(d.observations)||d.firstDate!==d.observations[0].date||d.lastDate!==d.observations.at(-1)!.date)throw new Error('Snapshot dates must be ordered and match its coverage.');
     let expectedId=await datasetId(validated);
-    if(d.origin==='alphavantage'){
+    if(d.origin==='alphavantage'||d.origin==='alphavantage-browser'){
       if(!d.providerRefreshed||!d.providerTimezone)throw new Error('Provider snapshots require their frozen provenance.');
-      const provenance={origin:'alphavantage',refreshed:d.providerRefreshed,timezone:d.providerTimezone};
+      const provenance={origin:d.origin,refreshed:d.providerRefreshed,timezone:d.providerTimezone};
       const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(['marketlab-provider-v1',expectedId,provenance])));
       expectedId=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
     }

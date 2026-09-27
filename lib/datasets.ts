@@ -2,7 +2,7 @@ import { database, HttpError } from './server';
 import { datasetId, MAX_DATASETS, type DatasetInput, type DatasetSummary } from './finance/market-data';
 import type { ProviderProvenance } from './finance/provider';
 
-export type DatasetRow = { id: string; symbol: string; source: string; basis: DatasetInput['basis']; price_column: DatasetInput['priceColumn']; kind: DatasetInput['kind']; count: number; first_date: string; last_date: string; created: string; observations?: string; origin: 'csv' | 'alphavantage'; provider_refreshed: string | null; provider_timezone: string | null };
+export type DatasetRow = { id: string; symbol: string; source: string; basis: DatasetInput['basis']; price_column: DatasetInput['priceColumn']; kind: DatasetInput['kind']; count: number; first_date: string; last_date: string; created: string; observations?: string; origin: NonNullable<DatasetSummary['origin']>; provider_refreshed: string | null; provider_timezone: string | null };
 export const datasetFields = 'id, symbol, source, basis, price_column, kind, count, first_date, last_date, created, origin, provider_refreshed, provider_timezone';
 export function datasetSummary(row: DatasetRow): DatasetSummary { return { id: row.id, symbol: row.symbol, source: row.source, basis: row.basis, priceColumn: row.price_column, kind: row.kind, currency: 'USD', count: row.count, firstDate: row.first_date, lastDate: row.last_date, created: row.created, origin: row.origin, providerRefreshed: row.provider_refreshed, providerTimezone: row.provider_timezone }; }
 export async function saveDataset(owner: string, d: DatasetInput, provenance?: ProviderProvenance) {

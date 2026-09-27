@@ -399,8 +399,9 @@ fields to the authenticated owner. The submitted key is removed before any
 truncation; links, email addresses, credential assignments and control characters
 are removed too. Arbitrary response fields are excluded. The interface shows
 these details and offers Copy diagnostic. Provider text is not stored in the
-database, application logs or browser storage. The provider's actual explanation
-from this user's failed request remains unknown until a fresh request is made.
+database, application logs or browser storage. At this checkpoint the provider's
+actual explanation still required a fresh request; the next record captures
+the subsequently supplied diagnostic and direct-request result.
 
 All 118 unit tests pass, including 14 provider tests covering key forwarding,
 HTTP-200 notices versus HTTP-429 responses, redaction before truncation, access
@@ -417,3 +418,52 @@ directly in Miniflare/workerd, with real HTTP requests and disposable D1. Its
 Miniflare version is the same version already locked under Wrangler, now declared
 as a direct development dependency. No existing assertion is relaxed or retried.
 Captured output: `docs/evidence/provider-response-diagnostics-local.txt`.
+
+## Direct browser provider connection — September 26, 2026
+
+The user supplied two different observed outcomes. The 9:11 PM New York
+screenshot showed NVDA's hosted request returning HTTP 200 with a `Note` about
+the standard 25-request daily allowance. The 9:20 PM screenshot, after the user
+was instructed to request the same endpoint directly with the same key, showed
+NVDA `Time Series (Daily)`, `Compact`, `US/Eastern`, refreshed September 25.
+This establishes successful direct retrieval at that time, not the exact cause
+of the earlier notice, a remaining quota, or a proven shared-IP restriction.
+
+An actual public IBM demo request with MarketLab's Origin returned HTTP 200,
+`Access-Control-Allow-Origin: *`, and 100 observations refreshed September 25.
+Its captured body passed the production normalizer and browser-transfer
+validator. That is a provider CORS/header and parsing check, not a full browser
+execution or live private-key NVDA save.
+
+The one-time-key interface now reserves an owner request, calls Alpha Vantage
+once directly from the browser, and submits only projected dates, closes and
+refresh metadata. The key never goes to MarketLab's server on this path.
+Cookies/referrers are omitted and redirects rejected. Provider errors retain
+local redacted diagnostics; only a fixed failure marker reaches saved history.
+No automatic retry, hosted fallback, proxy rotation or quota reset is added.
+The existing server/demo path and new browser path share the same atomic
+60-second per-owner cooldown, including failures. Completion is owner-bound,
+expires in five minutes and is claimed atomically against replay/concurrency.
+No schema or production dataset changes are required by deployment.
+
+Server validation assigns `alphavantage-browser` provenance; it cannot verify
+the authenticity of a response supplied by the browser. Stock cards, dataset
+details, CSV exports, confidence certificates and the TypeScript/Python replay
+preserve this distinction. Its origin is included in the frozen dataset hash;
+existing server and CSV identities are unchanged.
+
+Local results: type checking, lint and production build passed; 125 unit tests,
+11 Python verifier tests, 67,044 scalar comparisons across 10 freshly computed
+reports, and 94 built-Worker HTTP/header/content assertions passed. The 28 added
+Worker assertions exercise reservation authorization, a shared cooldown in both
+directions, strict transfer validation, owner isolation, concurrent completion,
+replay rejection, correct saved decimals/origin and expired requests. These
+tests use fictional inputs and isolated D1. Captured output is in
+`docs/evidence/browser-provider-connection-local.txt`.
+
+The managed preview requires a control-browser skill unavailable in this
+session, so no browser UI execution was performed. Final live acceptance remains
+the user's NVDA fetch and save in the updated app; the screenshot alone shows
+direct provider retrieval, not that final integration step. The remote release
+gate is checked separately after the GitHub checkpoint. Node/MongoDB staging
+and the live public-sharing browser lifecycle remain outstanding.

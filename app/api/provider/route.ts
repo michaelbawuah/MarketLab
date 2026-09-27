@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import { identity, database, json, requestBody, failure, HttpError } from '@/lib/server';
 import { saveDataset } from '@/lib/datasets';
 import { fetchDailyPrices, providerRequest, ProviderError, type ProviderRun } from '@/lib/finance/provider';
+import { reserveProviderRun } from '@/lib/provider-runs';
 
 export async function GET() {
   try {
@@ -15,12 +16,7 @@ export async function POST(request: Request) {
   try {
     owner = await identity();
     const { symbol, mode, key } = providerRequest(await requestBody(request), env.ALPHA_VANTAGE_API_KEY);
-    const db = database(), now = new Date(), started = now.toISOString(); id = crypto.randomUUID();
-    // The reservation and cooldown check are one atomic statement. No key is stored.
-    const claim = await db.prepare(`INSERT INTO provider_runs (id, owner, symbol, mode, started, status, records, dataset_id, message)
-      SELECT ?, ?, ?, ?, ?, 'running', 0, NULL, 'Requesting daily prices' WHERE NOT EXISTS (SELECT 1 FROM provider_runs WHERE owner = ? AND started > ?)`)
-      .bind(id, owner, symbol, mode, started, owner, new Date(now.getTime() - 60000).toISOString()).run();
-    if (!claim.meta.changes) { id = ''; throw new ProviderError('cooldown', 'Wait one minute between provider requests. Saved datasets remain available without another request.', 429); }
+    const db = database(); id = await reserveProviderRun(owner, symbol, mode);
     const result = await fetchDailyPrices(symbol, key);
     const saved = await saveDataset(owner, result.dataset, result.provenance);
     try {

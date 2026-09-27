@@ -31,13 +31,18 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   check from local Worker tests. Node/MongoDB staging remains outstanding.
   Keep TypeScript/JavaScript central.
 
-- The immediate user-reported blocker is market-data access: NVDA also failed
-  with a newly acquired one-time Alpha Vantage key on September 26. A configured
-  server key is not required for that path. The app's old generic limit message
-  did not establish the user's remaining quota or the upstream HTTP status.
-  New failures expose bounded, redacted provider diagnostics to the owner only;
-  those details are not persisted in run history. A successful live non-IBM
-  fetch remains unverified. Obtain the new Copy diagnostic output before blaming
-  the account, recommending another key or claiming this blocker resolved.
+- The immediate market-data blocker now has live evidence: the September 26
+  9:11 PM screenshot showed a hosted NVDA HTTP-200 `Note` describing the standard
+  25-request allowance; the 9:20 PM direct-browser screenshot showed NVDA daily
+  prices refreshed September 25. Do not blame the key or assert a proven IP
+  limit. One-time keys now use a direct browser request, followed by a validated
+  server save; configured keys and the public demo retain their server path.
+  Both paths share the atomic owner cooldown, with no automatic provider retries.
+  Keys/raw provider notices never return to the server on the browser path.
+  Preserve distinct `alphavantage-browser` provenance throughout exports,
+  confidence reports and TypeScript/Python verification. The server cannot
+  independently authenticate browser-supplied data. The final live NVDA
+  fetch-and-save inside the updated app still needs user confirmation; local
+  fixtures and a live public-demo CORS response do not prove that final step.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

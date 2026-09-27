@@ -29,7 +29,7 @@ function check(id: string, label: string, predicate: () => boolean, detail: stri
 }
 function coverage(dates: string[]) { return {start:dates[0]??'',end:dates.at(-1)??'',observations:dates.length,longestGapDays:Math.max(0,...dates.slice(1).map((d,i)=>(Date.parse(d)-Date.parse(dates[i]))/86400000))}; }
 function source(d: DatasetInput & Partial<SavedDataset>, role: string, events: string): ConfidenceSource {
-  return {role,symbol:d.symbol,source:d.source,kind:d.kind,basis:d.basis,origin:d.origin==='alphavantage'?`Provider connector · refreshed ${d.providerRefreshed??'not recorded'} (${d.providerTimezone??'timezone not recorded'})`:'Declared by the importer or fixture',firstDate:d.observations[0]?.date??'',lastDate:d.observations.at(-1)?.date??'',observations:d.observations.length,events,...(d.id?{id:d.id}:{})};
+  return {role,symbol:d.symbol,source:d.source,kind:d.kind,basis:d.basis,origin:d.origin==='alphavantage'?`Provider connector · refreshed ${d.providerRefreshed??'not recorded'} (${d.providerTimezone??'timezone not recorded'})`:d.origin==='alphavantage-browser'?`Browser import · source not independently authenticated · refreshed ${d.providerRefreshed??'not recorded'} (${d.providerTimezone??'timezone not recorded'})`:'Declared by the importer or fixture',firstDate:d.observations[0]?.date??'',lastDate:d.observations.at(-1)?.date??'',observations:d.observations.length,events,...(d.id?{id:d.id}:{})};
 }
 function classify(sources: ConfidenceSource[]): ConfidenceCertificate['classification'] {
   if(!sources.length)return 'Recorded cash flows';

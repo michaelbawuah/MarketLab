@@ -3,8 +3,8 @@ import { validateImport, type DatasetInput } from './market-data.ts';
 // Deliberate US/USD universe: this endpoint does not return currency metadata.
 export const providerSymbols = ['AAPL', 'AMZN', 'GOOGL', 'IBM', 'MSFT', 'NVDA', 'SPY'] as const;
 export type ProviderMode = 'demo' | 'key' | 'configured';
-export type ProviderProvenance = { origin: 'alphavantage'; refreshed: string; timezone: string };
-export type ProviderRun = { id: string; symbol: string; mode: ProviderMode; started: string; status: string; records: number; dataset_id: string | null; message: string };
+export type ProviderProvenance = { origin: 'alphavantage' | 'alphavantage-browser'; refreshed: string; timezone: string };
+export type ProviderRun = { id: string; symbol: string; mode: ProviderMode | 'browser'; started: string; status: string; records: number; dataset_id: string | null; message: string };
 export type ProviderStatus = { configured: boolean; runs: ProviderRun[] };
 export type ProviderDiagnostic = { upstreamStatus: number; noticeFields: string[]; providerNotice: string | null };
 export class ProviderError extends Error {

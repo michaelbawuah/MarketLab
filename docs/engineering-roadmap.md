@@ -76,12 +76,16 @@ Milestones 11–12 remain outstanding. Preserve public report routing and the
 owner-only private workspace. Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.
 
-Immediate user-reported blocker before staging: a newly acquired Alpha Vantage
-key still failed for NVDA. The one-time-key path does not require a configured
-server key. Owner-only redacted provider diagnostics now distinguish upstream
-HTTP status from the app's error classification; a fresh live diagnostic and
-successful non-IBM fetch are still required. Do not describe the market-data
-connection as fixed based on mocked provider tests.
+Immediate user-reported blocker before staging: the hosted NVDA request returned
+an HTTP-200 usage-limit `Note`, while the user's direct browser request returned
+NVDA daily history refreshed September 25. A direct browser connection now sends
+one-time keys only to Alpha Vantage and sends a validated price transfer to the
+owner-only server. Both paths retain one shared cooldown. Browser provenance is
+separate from server-fetched data, including its frozen hash and independent
+Python replay. Final acceptance still requires a successful live NVDA fetch and
+save in the updated app; the key itself has already worked in a direct request.
+Do not claim the original restriction was definitively IP-based or resolved
+from fixture tests. See the browser-connection record in `docs/verification.md`.
 
 For each milestone, record the user problem, implementation, acceptance check,
 actual result and remaining limits. A planned feature, written test or configured

@@ -45,6 +45,8 @@ test('source labels preserve provenance and do not certify a calendar or source 
   assert.match(c.sources[0].origin,/2026-02-23.*US\/Eastern/);
   assert.equal(c.coverage.longestGapDays,3);assert.ok(c.limitations.some(v=>v.includes('completeness is not assessed')));
   assert.ok(c.limitations.some(v=>v.includes('not signatures')));
+  run.snapshot.asset.dataset.origin='alphavantage-browser';
+  assert.match(researchCertificate(run).sources[0].origin,/Browser import.*not independently authenticated/);
 });
 
 async function portfolioFixture(){

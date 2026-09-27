@@ -25,3 +25,9 @@ test('explorer chooses newest observation, with stable save-time and ID ties', (
   assert.equal(latestProviderDatasets([{ ...newest, created: '2026-09-17T00:00:00Z' }, tied])[0].id, 'newest');
   assert.equal(candidates[0], snapshot);
 });
+
+test('browser imports appear in the explorer without changing their source classification', () => {
+  const browser = { ...snapshot, origin: 'alphavantage-browser' as const, id: 'browser', lastDate: '2026-09-17' };
+  assert.deepEqual(latestProviderDatasets([snapshot, browser]), [browser]);
+  assert.equal(browser.origin, 'alphavantage-browser');
+});

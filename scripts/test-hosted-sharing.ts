@@ -78,6 +78,46 @@ try {
   const providerHistory=await (await request('/api/provider',200,{headers:owner})).text();
   assert.ok(!providerHistory.includes('CLIENT_DIAGNOSTIC_ONLY')&&!providerHistory.includes(providerKey));assertions++;
   providerFetch.assertNoPendingInterceptors();
+
+  // The direct-browser reservation never receives a key. Price transfers remain
+  // client-supplied, are validated again, and cannot claim server provenance.
+  const browserRoute='/api/provider/browser',browserStart={action:'start',symbol:'NVDA'};
+  await request(browserRoute,401,post(browserStart,{}));
+  await request(browserRoute,403,post(browserStart,visitor));
+  await request(browserRoute,403,post(browserStart,{...owner,origin:'https://unrelated.example.test'}));
+  await request(browserRoute,400,post({...browserStart,apiKey:'SHOULD_NOT_BE_ACCEPTED'}));
+  await request(browserRoute,429,post(browserStart));
+  const localDb=await worker!.getD1Database('DB');
+  // Advance only the fictional fixture's reservation age, never the wall clock.
+  await localDb.prepare('UPDATE provider_runs SET started = ? WHERE owner = ?').bind('2026-01-01T00:00:00Z','hosted-fixture-owner').run();
+  const reservation=await (await request(browserRoute,201,post(browserStart))).json() as {requestId:string};
+  await request(browserRoute,429,post(browserStart));
+  await request('/api/provider',429,post(providerRequest));
+  const browserData={symbol:'NVDA',refreshed:'2026-09-24',timezone:'US/Eastern',observations:[{date:'2026-09-23',close:'100'},{date:'2026-09-24',close:'101.1234'}]};
+  const completion={action:'complete',requestId:reservation.requestId,data:browserData};
+  await request(browserRoute,400,post({...completion,data:{...browserData,symbol:'IBM'}}));
+  await request(browserRoute,400,post({...completion,data:{...browserData,origin:'alphavantage'}}));
+  await request(browserRoute,400,post({...completion,data:{...browserData,observations:[browserData.observations[0],browserData.observations[0]]}}));
+  await request(browserRoute,404,post(completion,{...owner,'oai-authenticated-user-id':'another-owner-fixture'}));
+  const completions=await Promise.all([0,1].map(async()=>{const response=await fetch(base+browserRoute,{...post(completion),signal:AbortSignal.timeout(10000)});return {status:response.status,body:await response.json() as {dataset:{id:string;origin:string};message?:string}};}));
+  assert.deepEqual(completions.map(r=>r.status).sort(),[201,409]);assertions++;
+  const savedBrowser=completions.find(r=>r.status===201)!.body;
+  assert.equal(savedBrowser.dataset.origin,'alphavantage-browser');assertions++;
+  const savedData=await (await request('/api/datasets?id='+savedBrowser.dataset.id,200,{headers:owner})).json() as {origin:string;source:string;observations:{priceMicros:string}[]};
+  assert.equal(savedData.origin,'alphavantage-browser');assert.equal(savedData.observations[1].priceMicros,'101123400');assert.match(savedData.source,/browser import/);assertions+=3;
+  await request(browserRoute,409,post(completion));
+  // A delayed failure callback must never downgrade a completed save.
+  await request(browserRoute,200,post({action:'fail',requestId:reservation.requestId}));
+  const completedRun=await localDb.prepare('SELECT status, dataset_id FROM provider_runs WHERE id = ?').bind(reservation.requestId).first<{status:string;dataset_id:string}>();
+  assert.equal(completedRun?.status,'completed');assert.equal(completedRun?.dataset_id,savedBrowser.dataset.id);assertions+=2;
+  const count=await localDb.prepare("SELECT COUNT(*) AS n FROM market_datasets WHERE owner = ? AND origin = 'alphavantage-browser'").bind('hosted-fixture-owner').first<{n:number}>();assert.equal(count?.n,1);assertions++;
+  const allBrowserHistory=await (await request('/api/provider',200,{headers:owner})).text();
+  assert.ok(!allBrowserHistory.includes('SHOULD_NOT_BE_ACCEPTED')&&!allBrowserHistory.includes(providerKey));assertions++;
+  await localDb.prepare('UPDATE provider_runs SET started = ? WHERE owner = ?').bind('2026-01-01T00:00:00Z','hosted-fixture-owner').run();
+  const expired=await (await request(browserRoute,201,post(browserStart))).json() as {requestId:string};
+  await localDb.prepare('UPDATE provider_runs SET started = ? WHERE id = ?').bind('2026-01-01T00:00:00Z',expired.requestId).run();
+  await request(browserRoute,409,post({...completion,requestId:expired.requestId}));
+  await request(browserRoute,200,post({action:'fail',requestId:expired.requestId}));
   assert.equal(preview.enabled,false);assertions++;
   await request('/example',404);
   await request('/api/research/shares',503,post(body));
@@ -103,7 +143,7 @@ try {
   await request('/api/research/shares',200,post({action:'revoke',id,revision:created.status.revision}));
   await request('/api/shared/'+token,404);
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
-  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation and provider diagnostics verified.`);
+  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics and browser-import reservations/provenance verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {
   await worker?.dispose();

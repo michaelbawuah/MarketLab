@@ -1,0 +1,21 @@
+Local browser connection checks — September 26, 2026 (New York)
+
+Type checking, lint and production build: exit 0.
+
+✔ production workspace requires the verified owner identity and fails closed without its allowlist (0.303688ms)
+ℹ tests 125
+ℹ suites 0
+ℹ pass 125
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 693.392204
+
+$ node --experimental-strip-types scripts/test-hosted-sharing.ts
+Built Worker: 94 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics and browser-import reservations/provenance verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.
+
+Independent Python replay: 10 fresh reports, 67,044 scalar comparisons; 11 verifier tests passed.
+
+Live public IBM demo: HTTP 200; Access-Control-Allow-Origin: * with MarketLab Origin; 100 observations refreshed 2026-09-25. Captured provider body passed both production normalizers. This is not a private-key NVDA fetch-and-save verification.

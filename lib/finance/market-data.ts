@@ -8,7 +8,7 @@ export type PriceBasis = keyof typeof basisLabels;
 export type ImportDraft = { symbol: string; source: string; basis: PriceBasis; priceColumn: 'close' | 'adjusted_close'; kind: 'historical' | 'synthetic'; csv: string };
 export type Observation = { date: string; priceMicros: string };
 export type DatasetInput = Omit<ImportDraft, 'csv'> & { currency: 'USD'; observations: Observation[] };
-export type DatasetSummary = Omit<DatasetInput, 'observations'> & { id: string; count: number; firstDate: string; lastDate: string; created: string; origin?: 'csv' | 'alphavantage'; providerRefreshed?: string | null; providerTimezone?: string | null };
+export type DatasetSummary = Omit<DatasetInput, 'observations'> & { id: string; count: number; firstDate: string; lastDate: string; created: string; origin?: 'csv' | 'alphavantage' | 'alphavantage-browser'; providerRefreshed?: string | null; providerTimezone?: string | null };
 export type SavedDataset = DatasetSummary & { observations: Observation[] };
 
 /** Bounded RFC-style CSV reader. Reject ambiguous quoting instead of repairing data. */
