@@ -8,6 +8,11 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 ## What works
 
+- Invite-only discussion on the same redacted report: single-use invitations
+  bind to a signed-in ChatGPT account, owners revoke access and moderate comments,
+  and database triggers retain an append-only audit trail. No raw-input sharing,
+  workspace access or email sending. [Model and acceptance scope](docs/research-collaboration.md).
+
 - Selectable buy, sell, split and dividend markers on Research lab equity curves,
   with exact cash/fee explanations and event dates retained across missing closes.
   [Timeline behavior and evidence](docs/research-sharing-and-events.md).
@@ -27,7 +32,7 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 - Cash-flow-matched portfolio benchmarks with frozen price/event inputs, exact fractional holdings, observed return comparisons and JSON/CSV exports.
 - A supporting Python verifier that independently replays Research lab reports and checks exact accounting, signals, trades, risk metrics and input fingerprints.
 
-- A locally verified Node/MongoDB research job service with signed ownership, concurrency-safe quotas, crash recovery, bounded worker threads and C++ risk parity checks. Its hosted connection is optional and currently unconfigured.
+- A Node/MongoDB research job service with signed ownership, concurrency-safe quotas, crash recovery, bounded worker threads and C++ risk parity checks. Railway free-trial staging passed remote crash recovery; the owner's September 27 saved-experiment browser flow passed all nine native comparisons. [Evidence and limits](docs/research-staging.md).
 
 - A reproducible TypeScript service load runner with raw timings and correctness checks. Three local 1,000-job runs achieved **39.96 verified jobs/s** and **319.77 ms combined p99**, using two workers and eight concurrent clients with 500 observations per instrument. [Workload, environment and limits](docs/service-performance.md).
 
@@ -215,7 +220,7 @@ MarketLab is an independent project. The reporting and data-quality components c
 
 The [adopted roadmap](docs/engineering-roadmap.md) replaces the earlier provider-expansion-first order. The client-clock lease bug is fixed with failing-before/passing-after evidence; a SIGKILL recovery test proves one durable result after a retry. The project is published to [GitHub](https://github.com/michaelbawuah/MarketLab) with an automated unit, integration and cross-check gate. See [verification records](docs/verification.md) for observed local and remote results.
 
-The one-click synthetic demo, report confidence certificates and Schwab CSV import are implemented and browser-checked using fictional fixtures. The service now has a measured local throughput/p99 baseline with raw evidence. The interactive exact-money explanation and runnable floating-point failure examples are also complete; see [representation, rounding and reproduction](docs/money-arithmetic.md). Next are shareable reports, event overlays, staging activation and lightweight collaboration. Additional strategies and asset classes remain deferred. Milestones 6–8 are grouped into one GitHub checkpoint, batching three milestones as requested.
+The one-click synthetic demo, report confidence certificates and Schwab CSV import are implemented and browser-checked using fictional fixtures. The service now has a measured local throughput/p99 baseline with raw evidence. The interactive exact-money explanation and runnable floating-point failure examples are also complete; see [representation, rounding and reproduction](docs/money-arithmetic.md). Shareable reports, event overlays and Railway free-trial staging are now implemented. Invite-only report discussion follows the approved collaboration model; a real second-user sign-in and conversation remains an adoption check. Additional strategies and asset classes remain deferred. See the engineering roadmap for the latest acceptance evidence.
 
 Service performance numbers apply only to their documented local workload. They establish no production SLA, investment return or hiring outcome. See `docs/verification.md` for the checks performed on this release.
 

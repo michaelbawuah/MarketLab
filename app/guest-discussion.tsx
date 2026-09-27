@@ -1,0 +1,23 @@
+'use client';
+import { useCallback, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import type { GuestDiscussion } from '@/lib/research-discussion';
+import SharedResearchView from './shared-research-view';
+import DiscussionThread, { discussionResponse } from './discussion-thread';
+import './discussion.css';
+export default function GuestDiscussionView({ token }: { token: string }) {
+  const [state, setState] = useState<GuestDiscussion | null>(null), [error, setError] = useState(''), [busy, setBusy] = useState(false);
+  const endpoint = `/api/discussion/${token}`;
+  const reload = useCallback(async () => { try { const s = await fetch(endpoint, { cache: 'no-store' }).then(discussionResponse<GuestDiscussion>); setState(s); setError(''); } catch (e) { const err = e as Error & { status?: number }; if (err.status === 401 || err.status === 404) setState(null); throw e; } }, [endpoint]);
+  useEffect(() => { const refresh = () => { void reload().catch(e => setError(e.message)); }; refresh(); window.addEventListener('focus', refresh); return () => window.removeEventListener('focus', refresh); }, [reload]);
+  async function action(payload: Record<string, unknown>) {
+    setBusy(true); setError('');
+    try { await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(discussionResponse); await reload(); return true; }
+    catch (e) { setError((e as Error).message); return false; } finally { setBusy(false); }
+  }
+  return <>{error && <p className="discussion-error" role="alert">{error}</p>}{!state && !error && <p role="status">Loading invitation…</p>}
+    {state && !state.accepted && <section className="discussion-intro"><h1>Accept this report invitation</h1><p>This invitation will be linked to your signed-in ChatGPT account. You can read the shared summary and comment; you cannot open or change the owner’s workspace.</p><p>Your display name and comments are visible to the owner and active invitees. Comments remain after access is revoked. Removed text is retained in a private audit record.</p><Button disabled={busy} onClick={() => void action({ action: 'accept' })}>{busy ? 'Accepting…' : 'Accept invitation'}</Button></section>}
+    {state?.accepted && <><section className="discussion-guest"><DiscussionThread comments={state.comments} busy={busy} action={action}/></section><SharedResearchView report={state.report} expires={state.expires} invited/></>}
+    <Button variant="outline" disabled={busy} onClick={() => void reload().catch(e => setError(e.message))}>Refresh discussion</Button>
+  </>;
+}

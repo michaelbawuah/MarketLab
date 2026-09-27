@@ -28,14 +28,14 @@ export async function createShare(db:D1Database,owner:string,input:{id:string;re
   const statement=input.revision===0
     ?db.prepare('INSERT INTO research_shares (owner,run_id,token_hash,created,expires,revoked,revision,report,digest) VALUES (?,?,?,?,?,NULL,1,?,?) ON CONFLICT(owner,run_id) DO NOTHING').bind(owner,input.id,hash,created,expires,JSON.stringify(preview.report),preview.digest)
     :db.prepare('UPDATE research_shares SET token_hash=?,created=?,expires=?,revoked=NULL,revision=revision+1,report=?,digest=? WHERE owner=? AND run_id=? AND revision=?').bind(hash,created,expires,JSON.stringify(preview.report),preview.digest,owner,input.id,input.revision);
-  if((await statement.run()).meta.changes!==1)throw new ShareError('The link changed in another session. Reload the sharing preview.',409);
+  if((await statement.run()).meta.changes<1)throw new ShareError('The link changed in another session. Reload the sharing preview.',409);
   return {path:`/share/${token}`,status:{revision:input.revision+1,active:true,created,expires}};
 }
 export async function revokeShare(db:D1Database,owner:string,id:string,revision:number,now=new Date()) {
   await ownedResearch(db,owner,id);
   if(!Number.isSafeInteger(revision)||revision<1)throw new ShareError('Reload the current link before revoking it.',409);
   const r=await db.prepare('UPDATE research_shares SET revoked=?,revision=revision+1 WHERE owner=? AND run_id=? AND revision=?').bind(now.toISOString(),owner,id,revision).run();
-  if(r.meta.changes!==1)throw new ShareError('The link changed in another session. Reload the sharing preview.',409);
+  if(r.meta.changes<1)throw new ShareError('The link changed in another session. Reload the sharing preview.',409);
   return {revision:revision+1,active:false,created:null,expires:null} satisfies ShareStatus;
 }
 export async function readShare(db:D1Database,token:string,now=new Date()) {

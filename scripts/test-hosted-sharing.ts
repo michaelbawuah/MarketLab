@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { Miniflare, Log, LogLevel, createFetchMock } from 'miniflare';
 import { researchFixture } from '../tests/fixtures/research.ts';
 import { analyzeResearch,researchFingerprint } from '../lib/finance/research.ts';
+import { testDiscussion } from './test-hosted-discussion.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),temporary=await mkdtemp(path.join(tmpdir(),'marketlab-hosted-'));
 const config=path.join(temporary,'dist/server/wrangler.json'),wrangler=path.join(root,'node_modules/wrangler/bin/wrangler.js'),persist=path.join(temporary,'db');
@@ -143,7 +144,9 @@ try {
   await request('/api/research/shares',200,post({action:'revoke',id,revision:created.status.revision}));
   await request('/api/shared/'+token,404);
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
-  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics and browser-import reservations/provenance verified.`);
+  const discussionChecks = await testDiscussion({request,db:await worker!.getD1Database('DB') as unknown as D1Database,base,owner,visitor,runId:id});
+  assertions += discussionChecks;
+  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance and invite-only discussion verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {
   await worker?.dispose();

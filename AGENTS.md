@@ -53,8 +53,15 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   The 500 MB trial volume uses a 50 MB index-build free-space reserve.
   CI, runner-crash recovery, database failover and owner-browser checks remain
   distinct. Gateway variables were configured only after remote acceptance;
-  the owner's saved-experiment browser flow still needs observed confirmation.
-  Milestone 12 requires an explicit collaboration model. Before future runtime
+  the owner's September 27 8:52 AM screenshots confirm saved NVDA experiment
+  background recomputation with nine native comparisons. This is separate from
+  the independent Python replay receipt, which remains unattached.
+  Milestone 12 uses the approved invite-only comments model in
+  `docs/research-collaboration.md`: same redacted report, ChatGPT account-bound
+  single-use invitations, retained comments on revocation, private append-only
+  audit trail. Do not expand to forks, raw-input sharing or workspace access.
+  Actual second-person sign-in/adoption must remain distinct from local tests.
+  Before future runtime
   deploys, keep Railway SOURCE_COMMIT synchronized with the exact GitHub source.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

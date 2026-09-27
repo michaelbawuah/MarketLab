@@ -1,0 +1,5 @@
+September 27, 2026. Local production-built Worker; disposable D1; emulated dispatcher identities.
+TypeScript and ESLint passed before build.
+Discussion: 28 additional content/audit/concurrency assertions passed; HTTP checks included in Worker total.
+Built Worker: 174 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance and invite-only discussion verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.

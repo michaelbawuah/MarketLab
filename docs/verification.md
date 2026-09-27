@@ -544,4 +544,20 @@ in Site environment revision 4 for publication. The owner's live Background
 verification click remains pending. This proves a hosted runner-process crash
 recovery, not exactly-once computation, backup restore, replica failover,
 database-host-loss recovery or indefinite trial availability. Milestone 11 is
-complete within that scope; milestone 12 still needs a collaboration decision.
+complete within that scope. The subsequent browser result and collaboration
+decision are recorded below.
+
+## Live saved-experiment browser result — September 27, 2026
+
+The owner's 8:48–8:52 AM America/New_York screenshots show the saved
+`NVDA SMA 20 verification` experiment and then successful Background verification:
+"Recomputed from the saved inputs. All 9 native risk comparisons passed."
+The report covers 80 observations from June 3 through September 25 and reports
+five internal consistency checks passed. This confirms the owner's live
+save → server gateway → Railway recomputation → status display flow. It does
+not attach an independent Python replay receipt to the confidence certificate;
+that separate status still reads "No receipt attached."
+
+The user subsequently approved invite-only comments for milestone 12. The
+four explicit visibility, revocation, identity and audit rules are documented
+in [research collaboration](research-collaboration.md).
