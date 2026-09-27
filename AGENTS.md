@@ -60,7 +60,10 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   `docs/research-collaboration.md`: same redacted report, ChatGPT account-bound
   single-use invitations, retained comments on revocation, private append-only
   audit trail. Do not expand to forks, raw-input sharing or workspace access.
-  Actual second-person sign-in/adoption must remain distinct from local tests.
+  On September 27 at 9:38 AM America/New_York, the user reported completing the
+  fresh-invitation, separate-account comment and revocation checklist. Milestone
+  12 is accepted within that scope. Keep this user-reported result distinct from
+  agent-observed screenshots, automated checks and broader adoption evidence.
   Before future runtime
   deploys, keep Railway SOURCE_COMMIT synchronized with the exact GitHub source.
 

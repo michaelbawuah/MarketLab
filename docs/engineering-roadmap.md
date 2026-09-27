@@ -29,7 +29,7 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | 9 | Share a saved experiment through a read-only unauthenticated link | Public access activated with user approval; private workspace remains owner-only. Preview, consent, redaction, expiry, replacement, revocation and isolation verified in the built Worker. Live browser/owner-link lifecycle check remains outstanding because automated probes were blocked at the host edge. [Evidence and activation boundary](research-sharing-and-events.md) |
 | 10 | Put explanatory event markers directly on the equity curve | Implemented and verified: selectable strategy executions, split/dividend events and fresh-cash starts, with original effective dates, exact amounts and grouped narrow-screen controls. [Evidence and scope](research-sharing-and-events.md) |
 | 11 | Run the background service and recovery test on a real staging host | Complete on Railway free trial: public HTTPS, private persistent MongoDB, 60-second lease, two attempts, one durable finalization and nine native comparisons. [Remote receipt and limits](research-staging.md) |
-| 12 | Let a second user comment on or fork a shared saved experiment | Invite-only comments implemented; 174 built-Worker assertions passed, including authorization, concurrent acceptance, moderation and append-only audit checks. Actual second-user sign-in/adoption still requires a live check. [Explicit model](research-collaboration.md) |
+| 12 | Let a second user comment on or fork a shared saved experiment | Complete for invite-only comments: 174 built-Worker assertions and both GitHub gates passed. On September 27 the user reported completing the separate-account comment and revocation check. [Model and evidence scope](research-collaboration.md) |
 
 Items 1–3 establish the engineering foundation. Items 4–6 improve first use and
 adoption. Items 7–12 extend evidence, distribution and collaboration. Extra
@@ -76,7 +76,8 @@ lifecycle still requires a real browser check; automated host probes were blocke
 Milestone 11 passed on September 27; the owner's 8:52 AM screenshots also confirm
 the live saved-experiment Background verification flow with nine native comparisons.
 Milestone 12 follows the explicitly approved invite-only comments model in
-`research-collaboration.md`. Preserve public report routing and the
+`research-collaboration.md`; the user's September 27 confirmation closes its
+two-person acceptance check as user-reported evidence. Preserve public report routing and the
 owner-only private workspace. Railway is authorized for the free trial only.
 Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.

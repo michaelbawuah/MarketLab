@@ -11,7 +11,8 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 - Invite-only discussion on the same redacted report: single-use invitations
   bind to a signed-in ChatGPT account, owners revoke access and moderate comments,
   and database triggers retain an append-only audit trail. No raw-input sharing,
-  workspace access or email sending. [Model and acceptance scope](docs/research-collaboration.md).
+  workspace access or email sending. The user reported a successful two-person
+  comment and revocation check on September 27. [Model and acceptance scope](docs/research-collaboration.md).
 
 - Selectable buy, sell, split and dividend markers on Research lab equity curves,
   with exact cash/fee explanations and event dates retained across missing closes.
@@ -64,7 +65,7 @@ The first portfolio is intentionally a paper account. The built-in ledger is imm
 | Validation | Zod request validation plus historical ledger replay |
 | Verification | Node finance/integration tests, independent Python replay, TypeScript checking, ESLint and browser workflow checks |
 
-Node runs local tooling and tests. A separate signed Node research service now persists jobs and results in MongoDB, computes through worker threads, and verifies risk metrics with a compiled C++ Node-API module. It is locally verified; its production host/database are not configured. The live website continues to use Workers + D1. See `docs/research-service.md` for setup, deployment boundaries and benchmarks.
+Node runs local tooling and tests. A separate signed Node research service persists jobs and results in MongoDB, computes through worker threads, and verifies risk metrics with a compiled C++ Node-API module. It runs on Railway free-trial staging, with remote crash-recovery evidence and an owner-confirmed saved-experiment verification flow. The live website continues to use Workers + D1. See [staging evidence](docs/research-staging.md) and `docs/research-service.md` for the deployment boundary and setup.
 
 ## Run and check
 
@@ -220,7 +221,7 @@ MarketLab is an independent project. The reporting and data-quality components c
 
 The [adopted roadmap](docs/engineering-roadmap.md) replaces the earlier provider-expansion-first order. The client-clock lease bug is fixed with failing-before/passing-after evidence; a SIGKILL recovery test proves one durable result after a retry. The project is published to [GitHub](https://github.com/michaelbawuah/MarketLab) with an automated unit, integration and cross-check gate. See [verification records](docs/verification.md) for observed local and remote results.
 
-The one-click synthetic demo, report confidence certificates and Schwab CSV import are implemented and browser-checked using fictional fixtures. The service now has a measured local throughput/p99 baseline with raw evidence. The interactive exact-money explanation and runnable floating-point failure examples are also complete; see [representation, rounding and reproduction](docs/money-arithmetic.md). Shareable reports, event overlays and Railway free-trial staging are now implemented. Invite-only report discussion follows the approved collaboration model; a real second-user sign-in and conversation remains an adoption check. Additional strategies and asset classes remain deferred. See the engineering roadmap for the latest acceptance evidence.
+The one-click synthetic demo, report confidence certificates and Schwab CSV import are implemented and browser-checked using fictional fixtures. The service now has a measured local throughput/p99 baseline with raw evidence. The interactive exact-money explanation and runnable floating-point failure examples are also complete; see [representation, rounding and reproduction](docs/money-arithmetic.md). Shareable reports, event overlays and Railway free-trial staging are now implemented. Invite-only report discussion is accepted within its approved scope: automated authorization checks passed, and the user reported completing the separate-account comment and revocation flow. Additional strategies and asset classes remain deferred. See the engineering roadmap for the latest acceptance evidence and remaining checks.
 
 Service performance numbers apply only to their documented local workload. They establish no production SLA, investment return or hiring outcome. See `docs/verification.md` for the checks performed on this release.
 

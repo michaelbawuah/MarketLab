@@ -561,3 +561,26 @@ that separate status still reads "No receipt attached."
 The user subsequently approved invite-only comments for milestone 12. The
 four explicit visibility, revocation, identity and audit rules are documented
 in [research collaboration](research-collaboration.md).
+
+## Collaboration acceptance checkpoint — September 27, 2026
+
+The invite-only comments implementation passed 174 built-Worker assertions,
+including account binding, concurrent acceptance, revoked access, moderation
+and append-only audit behavior. The simplified invitation/discussion release
+`67b51bc` passed both remote gates:
+[Engineering verification](https://github.com/michaelbawuah/MarketLab/actions/runs/36322756945)
+and [Research container acceptance](https://github.com/michaelbawuah/MarketLab/actions/runs/36322756985).
+It is live as Site version 25.
+
+The owner's earlier mobile screenshots confirm their own sign-in and comment.
+At 9:38 AM America/New_York, after being given the fresh-invitation,
+separate-account comment and revocation checklist, the user replied,
+"done, looks good." Milestone 12 is accepted on this user-reported two-person
+check plus the automated evidence. No second-account screenshot or production
+audit extract was supplied for independent inspection. See the
+[collaboration record](research-collaboration.md) for the precise scope.
+
+This checkpoint updates documentation only. The existing public-link lifecycle
+check, real customer brokerage-import evidence and unattached independent Python
+receipt retain their separate recorded status. No financial calculation,
+authorization rule, runtime configuration or service deployment changed.

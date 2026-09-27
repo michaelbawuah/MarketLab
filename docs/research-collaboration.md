@@ -59,9 +59,10 @@ also exercises stale share revisions, so audit logging does not weaken fencing.
 See [captured local output](evidence/invite-only-discussion-local.txt).
 The untouched financial calculation/recovery suites retain their earlier
 passing evidence; they were not rerun locally for this UI/authorization change.
-Production dispatcher sign-in and an actual second-person conversation require
-a real user check. Local emulated identities are not live identity verification
-or adoption. No invitation was distributed and no email was sent during testing.
+At that automated-test checkpoint, production dispatcher sign-in and an actual
+second-person conversation still required a real user check. Local emulated
+identities are not live identity verification or adoption. The automated checks
+did not distribute invitations or send email. Subsequent user checks are below.
 
 
 ## Owner mobile check and copy refinement
@@ -73,3 +74,21 @@ establish a distinct second-person account. The owner requested concise guest
 copy without explanations of private inputs or inaccessible workspace areas.
 The guest introduction, acceptance text, discussion helper and report footer
 were simplified accordingly. Authorization and audit behavior are unchanged.
+
+## User-reported two-person acceptance — September 27, 2026
+
+After the mobile owner check, the user was asked to create a fresh invitation,
+have another person sign in with their own ChatGPT account and post a comment,
+then revoke the invitation and confirm that the person could no longer comment.
+At 9:38 AM America/New_York, the user replied, "done, looks good."
+
+Milestone 12 is accepted for the approved invite-only comments scope on this
+user-reported result, together with the automated authorization checks above.
+The final two-person check was not independently observed by the agent, and no
+second-account identity, comment text or production audit records were collected.
+This records one reported acceptance flow, not broader adoption or load evidence.
+
+The published implementation and copy checkpoint `67b51bc` passed both
+[Engineering verification](https://github.com/michaelbawuah/MarketLab/actions/runs/36322756945)
+and [Research container acceptance](https://github.com/michaelbawuah/MarketLab/actions/runs/36322756985).
+The acceptance-record update changes documentation only.
