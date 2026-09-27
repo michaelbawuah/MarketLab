@@ -1,0 +1,101 @@
+{
+  "format": "marketlab-railway-staging-deployment-v1",
+  "observedDate": "2026-09-27",
+  "provider": "Railway",
+  "project": {
+    "id": "b47a7b9d-df61-400b-af22-dde41a5a2e9d",
+    "name": "MarketLab staging"
+  },
+  "environment": {
+    "id": "496a6c9c-56f0-439e-bfc2-2b229150f01e",
+    "name": "production",
+    "purpose": "staging"
+  },
+  "authorization": {
+    "plan": "free trial only",
+    "paidUpgradeAuthorized": false,
+    "trialDashboardObserved": "30 days or $4.98 left",
+    "trialDashboardEvidence": "User-provided Railway screenshot, September 27, 2026"
+  },
+  "source": {
+    "repository": "michaelbawuah/MarketLab",
+    "revision": "84bd1a86c50b27e55195c3c0b9221c1edd84d83d"
+  },
+  "research": {
+    "serviceId": "381c7bf8-5d61-4630-86f4-894b83e0c4f2",
+    "origin": "https://research-production-a92f.up.railway.app",
+    "acceptanceDeploymentId": "6b3af02f-a130-4edd-8053-1f62158013d0",
+    "normalStartupDeploymentId": "fcecb36c-708e-429a-a732-c0b1d9ab9aeb",
+    "status": "SUCCESS",
+    "imageDigest": "sha256:4b7edd99da7acbd0d33e936ed0ad9c931080035442cd3cf6310e24b8f7583776",
+    "imageConfigDigest": "sha256:6dad062adac8d495d5d7a91b5a2c7ad7ca50118c2d840b6d6d2f089b49bae8f9",
+    "nodeBaseDigest": "sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+    "engine": "cpp-verify",
+    "workers": 2,
+    "replicas": 1,
+    "region": "sfo",
+    "startCommand": "node --experimental-strip-types services/research/server.ts",
+    "healthcheck": {
+      "path": "/healthz",
+      "deadlineSeconds": 120,
+      "result": "succeeded"
+    },
+    "runtimeSourceHashesMatchCheckout": true
+  },
+  "database": {
+    "serviceId": "2fce6df6-46c4-4479-9bf9-3de3f822df92",
+    "imageTag": "mongo:8.0.17",
+    "deploymentId": "63a8fc75-aff0-4134-962c-c36617743a15",
+    "status": "SUCCESS",
+    "privateOnly": true,
+    "volumeId": "f065b9f5-ab6e-4d2e-bb23-2f768b3c4f65",
+    "volumeSizeMB": 500,
+    "mountPath": "/data/db",
+    "region": "sfo",
+    "indexBuildMinAvailableDiskSpaceMB": 50,
+    "diagnosticDataCollectionEnabled": false,
+    "observedFilesystemMiB": {
+      "total": 434,
+      "used": 201,
+      "available": 224
+    },
+    "appRole": {
+      "user": "marketlab_service",
+      "database": "marketlab",
+      "role": "readWrite"
+    }
+  },
+  "acceptance": {
+    "receipt": "research-staging-2026-09-27-receipt.json",
+    "execution": "Temporary operator start-command wrapper inside the deployed research image; production HTTP server ran concurrently. Receipt copied from provider runtime log. Normal startup restored after success.",
+    "scope": "staging",
+    "result": "passed",
+    "leaseMs": 60000,
+    "temporaryCrashEndpoint": false
+  },
+  "priorCI": {
+    "engineering": {
+      "runId": 36287597610,
+      "jobId": 108531196425,
+      "conclusion": "success"
+    },
+    "container": {
+      "runId": 36287597512,
+      "jobId": 108531196155,
+      "conclusion": "success",
+      "scope": "ci",
+      "leaseMs": 1000
+    }
+  },
+  "siteGateway": {
+    "environmentRevision": 4,
+    "configuredAfterStagingReceipt": true,
+    "ownerBrowserFlowVerified": false
+  },
+  "limits": [
+    "Trial availability is temporary.",
+    "Persistent single MongoDB volume; no tested backup, replica failover or database-host-loss recovery.",
+    "One durable fenced finalization; a calculation can run again.",
+    "Owner's saved-experiment browser flow remains to be verified."
+  ]
+}

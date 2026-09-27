@@ -501,3 +501,47 @@ workflow remains required. These are separate from a real persistent staging
 deployment, which is not yet provisioned. The [runbook](research-staging.md)
 records deployment settings, remote acceptance and remaining account/cost access.
 No website UI change or gateway activation is included in this checkpoint.
+
+## Real staging recovery — September 27, 2026
+
+The preparation checkpoint `84bd1a86c50b27e55195c3c0b9221c1edd84d83d` passed
+both remote gates: [engineering](https://github.com/michaelbawuah/MarketLab/actions/runs/36287597610)
+and [container acceptance](https://github.com/michaelbawuah/MarketLab/actions/runs/36287597512).
+The container CI result has a one-second lease and remains distinct from the
+subsequent real host run.
+
+Railway's `MarketLab staging` project now runs the research image and MongoDB
+8.0.17 with authenticated private networking and a 500 MB `/data/db` volume.
+The default environment is named `production`; its actual purpose is staging.
+The user authorized the free trial only. GitHub App access was repaired in the
+user's own browser after the cloud browser failed. The initial image built
+successfully but startup hit Mongo error 14031 (`OutOfDiskSpace`): the default
+500 MB index-build reserve exceeded the mounted volume's available 224 MiB.
+A staging-only 50 MB reserve resolved startup without a plan upgrade.
+
+The [staging receipt](evidence/research-staging-2026-09-27-receipt.json) was
+produced inside Railway deployment `6b3af02f-a130-4edd-8053-1f62158013d0`, using
+the unchanged production image and operator acceptance command. The temporary
+start wrapper ran the ordinary API alongside the check and printed the passing
+receipt for retrieval; it did not add a public testing endpoint. The run lasted
+60,977 ms and passed public HTTPS, unsigned rejection, signed synthetic
+submission, owner isolation, idempotent replay and all nine native comparisons.
+SIGKILL after calculation was followed by natural 60-second lease expiry and
+two competing replacement runners. Attempt two produced one accepted durable
+finalization and one stored result. Stale mutations were rejected, a fresh
+Mongo client read the same result, and all isolated test data was cleaned up.
+
+The [deployment record](evidence/research-staging-2026-09-27-deployment.json)
+preserves the image/config/base digests, source revision, service/volume IDs,
+safe configuration and limits. Five TypeScript hashes in the remote receipt
+match this checkout. Normal startup was restored in successful deployment
+`fcecb36c-708e-429a-a732-c0b1d9ab9aeb`; its resolved image digest is unchanged.
+No runtime application code changed to obtain this result. Documentation and
+evidence are the only source edits in this checkpoint.
+
+After acceptance, the matching server-only gateway variables were configured
+in Site environment revision 4 for publication. The owner's live Background
+verification click remains pending. This proves a hosted runner-process crash
+recovery, not exactly-once computation, backup restore, replica failover,
+database-host-loss recovery or indefinite trial availability. Milestone 11 is
+complete within that scope; milestone 12 still needs a collaboration decision.

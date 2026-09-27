@@ -15,8 +15,8 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   remote CI runs, hosted deployment and actual adoption distinct.
 - Computations may retry. Claim one durable fenced finalization, never exactly-once
   computation or profitability from a backtest.
-- The existing hosted app uses Workers + D1. Node/MongoDB/C++ is a separate service;
-  do not describe it as deployed until a staging host is actually verified.
+- The hosted app uses Workers + D1. Node/MongoDB/C++ is a separate service;
+  Railway staging was verified September 27. Keep its scope and limits explicit.
 - The user resumed GitHub publishing on September 26, 2026. The repository is
   `michaelbawuah/MarketLab`, branch `main`. Preserve remote history and verify the
   published files and Actions result after a transfer. Sites source saving is separate.
@@ -28,7 +28,7 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   `/example` uses only the built-in fictional teaching data, without reading or
   creating personal records. Automatic requests to the live host returned edge
   403/1010; do not claim a successful live browser or owner-sharing lifecycle
-  check from local Worker tests. Node/MongoDB staging remains outstanding.
+  check from local Worker tests. That checkpoint did not include Node/MongoDB staging.
   Keep TypeScript/JavaScript central.
 
 - The immediate market-data blocker now has live evidence: the September 26
@@ -44,10 +44,17 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   independently authenticate browser-supplied data. The September 26 9:43 PM
   screenshot and the user's "finally" confirm the live NVDA save: browser-import
   provenance, May 5–September 25 history, latest saved close $225.07.
-- Milestone 11 preparation now includes the production Docker image, isolated
-  operator-only crash acceptance command and a separate container CI gate.
-  See `docs/research-staging.md`. A passing CI container run is not staging:
-  host/account access and a real persistent deployment's 60-second-lease
-  acceptance receipt remain required. Do not activate the Site gateway early.
+- Milestone 11 passed on Railway September 27: scope=staging, public HTTPS,
+  private persistent MongoDB, a 60-second lease, two attempts, one durable
+  finalization and nine native comparisons. See `docs/research-staging.md` and
+  its checked-in receipt/deployment evidence. The temporary remote acceptance
+  start command was removed; the normal service is healthy on the same image.
+  The user authorized free trial only, no paid upgrade. Keep Mongo private.
+  The 500 MB trial volume uses a 50 MB index-build free-space reserve.
+  CI, runner-crash recovery, database failover and owner-browser checks remain
+  distinct. Gateway variables were configured only after remote acceptance;
+  the owner's saved-experiment browser flow still needs observed confirmation.
+  Milestone 12 requires an explicit collaboration model. Before future runtime
+  deploys, keep Railway SOURCE_COMMIT synchronized with the exact GitHub source.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

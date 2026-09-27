@@ -1,0 +1,35 @@
+{
+  "format": "marketlab-staging-acceptance-v1",
+  "scope": "staging",
+  "started": "2026-09-27T09:56:19.801Z",
+  "finished": "2026-09-27T09:57:20.778Z",
+  "elapsedMs": 60977,
+  "serviceOrigin": "https://research-production-a92f.up.railway.app",
+  "publicHttpsChecked": true,
+  "revision": "84bd1a86c50b27e55195c3c0b9221c1edd84d83d",
+  "node": "v24.19.0",
+  "leaseMs": 60000,
+  "attempts": 2,
+  "acceptedFinalizations": 1,
+  "storedResults": 1,
+  "nativeComparisons": 9,
+  "checks": [
+    "readiness-and-unsigned-rejection",
+    "signed-submit-native-parity-owner-isolation-and-replay",
+    "sigkill-after-calculation",
+    "natural-database-lease-recovery",
+    "two-competing-runners",
+    "one-durable-result",
+    "stale-token-rejection",
+    "fresh-connection-replay"
+  ],
+  "sourceHashes": {
+    "services/research/server.ts": "b03419b241f01129fe1f93caf434e7897ede85ee795fa6eaad3b1b4e5745303c",
+    "services/research/store.ts": "079379dd8e88cbdae3fad26594915ee628cb216e721f50a01cca86f32a187b2b",
+    "services/research/runner.ts": "f2230e572d0fc2893a526d3fa3df3f79d8dce60331289f08f52b2b2b303607c3",
+    "services/research/pool.ts": "7c051baadcc7ead6c390f24f2678f196d3446ca11f3b98bb88bfed848a0f8584",
+    "lib/finance/research.ts": "114e40d6035fa493921f1556a195972f408b0ea62f7182f3a696a3c447a0f435",
+    "native/build/marketlab_risk.node": "15a5b2bcd7338290f58b4e425fa803bdf845b1b97a8b26fc47a81be5f66d9c0e"
+  },
+  "cleanup": "only-this-run-test-records-removed"
+}

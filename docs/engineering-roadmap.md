@@ -28,7 +28,7 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | 8 | Explain the money representation and show a failing naive-float example | Implemented and verified: runnable payment and half-cent examples fail with naive Number arithmetic and pass with canonical exact helpers. Interactive Methodology demo, six new regressions and full local gate passed. [Representation and evidence](money-arithmetic.md) |
 | 9 | Share a saved experiment through a read-only unauthenticated link | Public access activated with user approval; private workspace remains owner-only. Preview, consent, redaction, expiry, replacement, revocation and isolation verified in the built Worker. Live browser/owner-link lifecycle check remains outstanding because automated probes were blocked at the host edge. [Evidence and activation boundary](research-sharing-and-events.md) |
 | 10 | Put explanatory event markers directly on the equity curve | Implemented and verified: selectable strategy executions, split/dividend events and fresh-cash starts, with original effective dates, exact amounts and grouped narrow-screen controls. [Evidence and scope](research-sharing-and-events.md) |
-| 11 | Run the background service and recovery test on a real staging host | Prepared: deployment image, container CI gate and isolated remote crash check. Host/account access and an actual staging receipt remain pending. [Runbook](research-staging.md) |
+| 11 | Run the background service and recovery test on a real staging host | Complete on Railway free trial: public HTTPS, private persistent MongoDB, 60-second lease, two attempts, one durable finalization and nine native comparisons. [Remote receipt and limits](research-staging.md) |
 | 12 | Let a second user comment on or fork a shared saved experiment | Pending; depends on sharing and an explicit collaboration model |
 
 Items 1–3 establish the engineering foundation. Items 4–6 improve first use and
@@ -63,7 +63,7 @@ strategies, more asset classes and significance tests remain deferred.
 | `docs/evidence/` | Captured test output supporting completed milestones |
 
 The local checkout is the existing MarketLab Site repository. The deployed
-website still uses Workers + D1; Node/MongoDB/C++ is a separate local service.
+website uses Workers + D1; Node/MongoDB/C++ is a separate Railway staging service.
 See [architecture-roadmap.md](architecture-roadmap.md) for runtime ownership and
 [tests/README.md](../tests/README.md) for the layered verification commands.
 
@@ -73,8 +73,11 @@ GitHub batching: milestones 6–8 were published as `799222d` on September 26,
 followed by the 9–10 implementation checkpoint `0c3476a` and market-data fixes.
 Milestone 9 public access is approved and activated. Its live owner-created-link
 lifecycle still requires a real browser check; automated host probes were blocked.
-Milestones 11–12 remain outstanding. Preserve public report routing and the
-owner-only private workspace. Keep JavaScript/TypeScript central; MongoDB is a
+Milestone 11 passed on September 27; the owner's live Background verification
+click remains a separate integration check. Milestone 12 is next and requires
+an explicit collaboration model. Preserve public report routing and the
+owner-only private workspace. Railway is authorized for the free trial only.
+Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.
 
 Resolved user-reported blocker before staging: the hosted NVDA request returned
