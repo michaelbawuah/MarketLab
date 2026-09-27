@@ -1,0 +1,13 @@
+Provider diagnostics — local verification
+
+118 unit tests passed (14 provider tests). Type checking, lint and build passed.
+
+Built Worker run 1
+$ node --experimental-strip-types scripts/test-hosted-sharing.ts
+Built Worker: 66 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation and provider diagnostics verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.
+
+Built Worker run 2
+$ node --experimental-strip-types scripts/test-hosted-sharing.ts
+Built Worker: 66 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation and provider diagnostics verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.

@@ -91,8 +91,12 @@ redaction and exact event explanations, including splits before dividends,
 between-close dates, fresh holdout funds and dense marker grouping.
 
 `pnpm verify:hosted` builds the actual Worker, seeds fictional inputs into a
-disposable D1 database and runs 58 HTTP/header/content assertions. It covers
+disposable D1 database and runs 66 HTTP/header/content assertions directly in
+Miniflare/workerd, without Wrangler's development HTTP proxy. It covers
 activation disabled/enabled, anonymous report reads, private API denials,
 consent, cross-origin rejection, stale updates, immutable reads and revoked
-pages, plus the activation-gated fictional public example. Trusted identity headers are simulated locally; this does not prove
-the live Sites dispatcher's authentication or anonymous reachability.
+pages, plus the activation-gated fictional public example and owner-only,
+redacted provider diagnostics that are excluded from saved request history.
+Only the external provider is stubbed, using a fictional key. Trusted identity
+headers are simulated locally; this does not prove real provider access or the
+live Sites dispatcher's authentication or anonymous reachability.

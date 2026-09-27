@@ -71,3 +71,76 @@ test('network errors redact secret URLs, and bounded timeouts stop the request',
   const stalled = (async (_input: URL | RequestInfo, init?: RequestInit) => new Promise<Response>((_resolve, reject) => { init?.signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true }); })) as typeof fetch;
   await assert.rejects(fetchDailyPrices('IBM', 'demo', stalled, 5), code('timeout'));
 });
+
+test('a one-time NVDA key is forwarded without requiring a configured server key', async () => {
+  const request = providerRequest({ mode: 'key', symbol: 'nvda', apiKey: '  fictional_private_key  ' });
+  const fake = (async (input: URL | RequestInfo) => {
+    const url = new URL(String(input));
+    assert.equal(url.searchParams.get('symbol'), 'NVDA');
+    assert.equal(url.searchParams.get('apikey'), 'fictional_private_key');
+    const data = payload(); data['Meta Data']['2. Symbol'] = 'NVDA';
+    return Response.json(data);
+  }) as typeof fetch;
+  const result = await fetchDailyPrices(request.symbol, request.key, fake);
+  assert.equal(result.dataset.symbol, 'NVDA');
+  assert.equal(result.dataset.observations.length, 2);
+  assert.ok(!JSON.stringify(result).includes(request.key));
+});
+
+test('diagnostics distinguish a JSON usage notice from an upstream HTTP 429', async () => {
+  for (const status of [200, 429]) {
+    await assert.rejects(fetchDailyPrices('NVDA', 'fictional_private_key', (async () => Response.json({ Information: 'Our standard API rate limit is 25 requests per day.' }, { status })) as typeof fetch), (e: unknown) => {
+      assert.ok(e instanceof ProviderError);
+      assert.equal(e.code, 'rate_limited');
+      assert.equal(e.diagnostic?.upstreamStatus, status);
+      assert.deepEqual(e.diagnostic?.noticeFields, ['Information']);
+      assert.match(e.diagnostic?.providerNotice ?? '', /25 requests per day/);
+      assert.match(e.message, /does not establish your key’s remaining allowance/);
+      return true;
+    });
+  }
+});
+
+test('provider diagnostics remove repeated keys, links and email and exclude arbitrary fields', async () => {
+  const key = 'SENSITIVE_TEST_KEY';
+  const data = {
+    Information: `Rate limit for ${key} and ${key.toLowerCase()}. Contact owner@example.test at https://example.test/?apikey=${key}.`,
+    Note: 'token=SECONDARY_TEST_VALUE',
+    arbitrary: 'PRIVATE_FIELD_MUST_NOT_APPEAR',
+  };
+  await assert.rejects(fetchDailyPrices('NVDA', key, (async () => Response.json(data)) as typeof fetch), (e: unknown) => {
+    assert.ok(e instanceof ProviderError);
+    const diagnostic = JSON.stringify(e.diagnostic);
+    for (const secret of [key, key.toLowerCase(), 'SECONDARY_TEST_VALUE', 'owner@example.test', 'https://example.test', data.arbitrary]) assert.ok(!diagnostic.includes(secret), secret);
+    assert.match(diagnostic, /key removed/);
+    assert.deepEqual(e.diagnostic?.noticeFields, ['Information', 'Note']);
+    return true;
+  });
+});
+
+test('notice redaction precedes truncation and control characters are removed', async () => {
+  const key = 'BOUNDARY_PRIVATE_KEY';
+  const notice = 'Rate limit reached.\n\u202e' + 'a'.repeat(770) + key + 'b'.repeat(1000);
+  await assert.rejects(fetchDailyPrices('NVDA', key, (async () => Response.json({ Note: notice })) as typeof fetch), (e: unknown) => {
+    assert.ok(e instanceof ProviderError);
+    const safe = e.diagnostic?.providerNotice ?? '';
+    assert.equal(safe.length, 801);
+    assert.ok(!safe.includes('BOUNDARY'));
+    assert.ok(!safe.includes('\n'));
+    assert.ok(!safe.includes('\u202e'));
+    assert.ok(safe.endsWith('…'));
+    return true;
+  });
+});
+
+test('HTTP denial diagnostics preserve status without exposing an unstructured response body', async () => {
+  for (const status of [403, 429]) {
+    await assert.rejects(fetchDailyPrices('NVDA', 'fictional_private_key', (async () => new Response('private page with fictional_private_key', { status })) as typeof fetch), (e: unknown) => {
+      assert.ok(e instanceof ProviderError);
+      assert.equal(e.code, status === 403 ? 'provider_access' : 'rate_limited');
+      assert.deepEqual(e.diagnostic, { upstreamStatus: status, noticeFields: [], providerNotice: null });
+      assert.ok(!JSON.stringify(e).includes('fictional_private_key'));
+      return true;
+    });
+  }
+});

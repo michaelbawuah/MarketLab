@@ -76,6 +76,13 @@ Milestones 11–12 remain outstanding. Preserve public report routing and the
 owner-only private workspace. Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.
 
+Immediate user-reported blocker before staging: a newly acquired Alpha Vantage
+key still failed for NVDA. The one-time-key path does not require a configured
+server key. Owner-only redacted provider diagnostics now distinguish upstream
+HTTP status from the app's error classification; a fresh live diagnostic and
+successful non-IBM fetch are still required. Do not describe the market-data
+connection as fixed based on mocked provider tests.
+
 For each milestone, record the user problem, implementation, acceptance check,
 actual result and remaining limits. A planned feature, written test or configured
 workflow is not a successful execution. Preserve failing-before evidence for

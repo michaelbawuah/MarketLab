@@ -31,4 +31,13 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   check from local Worker tests. Node/MongoDB staging remains outstanding.
   Keep TypeScript/JavaScript central.
 
+- The immediate user-reported blocker is market-data access: NVDA also failed
+  with a newly acquired one-time Alpha Vantage key on September 26. A configured
+  server key is not required for that path. The app's old generic limit message
+  did not establish the user's remaining quota or the upstream HTTP status.
+  New failures expose bounded, redacted provider diagnostics to the owner only;
+  those details are not persisted in run history. A successful live non-IBM
+  fetch remains unverified. Obtain the new Copy diagnostic output before blaming
+  the account, recommending another key or claiming this blocker resolved.
+
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

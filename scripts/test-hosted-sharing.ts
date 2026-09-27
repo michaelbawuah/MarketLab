@@ -6,6 +6,7 @@ import { mkdtemp,readFile,readdir,writeFile,rm,cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Miniflare, Log, LogLevel, createFetchMock } from 'miniflare';
 import { researchFixture } from '../tests/fixtures/research.ts';
 import { analyzeResearch,researchFingerprint } from '../lib/finance/research.ts';
 
@@ -14,12 +15,20 @@ const config=path.join(temporary,'dist/server/wrangler.json'),wrangler=path.join
 const env={...process.env,CLOUDFLARE_CF_FETCH_ENABLED:'false',WRANGLER_SEND_METRICS:'false',WRANGLER_WRITE_LOGS:'false',WRANGLER_LOG_PATH:path.join(temporary,'wrangler.log')};
 const sqlString=(value:string)=>"'"+value.replaceAll("'","''")+"'";
 Object.assign(process.env,env);
-const {unstable_startWorker}=await import('wrangler');
-let worker:Awaited<ReturnType<typeof unstable_startWorker>>|undefined;
+// Only the external provider is stubbed, using a deliberately fictional key.
+// All application requests still pass through the built Worker and real local D1.
+const providerKey='HOSTED_FICTIONAL_KEY',providerFetch=createFetchMock();
+providerFetch.disableNetConnect();
+providerFetch.get('https://www.alphavantage.co').intercept({path:`/query?function=TIME_SERIES_DAILY&symbol=NVDA&apikey=${providerKey}`}).reply(200,{Information:`Rate limit notice for ${providerKey}. CLIENT_DIAGNOSTIC_ONLY`});
+let worker:Miniflare|undefined;
 try {
   // Freeze the build under test away from the active preview/build watchers.
   await cp(path.join(root,'dist'),path.join(temporary,'dist'),{recursive:true});
-  await readFile(config);
+  const build=JSON.parse(await readFile(config,'utf8')) as {name:string;main:string;compatibility_date:string;compatibility_flags:string[];d1_databases:{binding:string;database_id:string}[];assets:{directory:string}};
+  const databaseId=build.d1_databases.find(database=>database.binding==='DB')?.database_id;
+  assert.ok(databaseId,'The production build must declare its D1 binding');
+  const serverRoot=path.dirname(config),moduleFiles=(await readdir(serverRoot,{recursive:true})).filter(file=>/\.(?:mjs|js)$/.test(file)&&file!==build.main);
+  const modules=[build.main,...moduleFiles].map(file=>({type:'ESModule' as const,path:path.join(serverRoot,file)}));
   const snapshot=await researchFixture();snapshot.config.name='PRIVATE_FIXTURE_NAME';snapshot.asset.dataset.source='PRIVATE_FIXTURE_SOURCE';snapshot.asset.actions.source='PRIVATE_FIXTURE_EVENTS';
   const id=await researchFingerprint(snapshot),analysis=analyzeResearch(snapshot);
   const migrations=(await readdir(path.join(root,'drizzle'))).filter(v=>v.endsWith('.sql')).sort();
@@ -29,22 +38,19 @@ try {
   const seeded=spawnSync(process.execPath,[wrangler,'d1','execute','DB','--local','--config',config,'--persist-to',persist,'--file',migrationFile],{cwd:root,env,encoding:'utf8',timeout:45000});
   if(seeded.status!==0)throw new Error(`Local schema setup failed: ${seeded.stderr}\n${seeded.stdout}`);
   async function start(sharingEnabled:boolean) {
-    // Isolate Wrangler's service-discovery registry too. Another local preview
-    // with the same Worker name must not reload this verification process.
-    worker=await unstable_startWorker({config,bindings:{WORKSPACE_OWNER_EMAIL:{type:'plain_text',value:'owner@marketlab.test'},...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:{type:'plain_text' as const,value:'true'}}:{})},sendMetrics:false,dev:{remote:false,persist,registry:path.join(temporary,'registry'),watch:false,inspector:false,logLevel:'error',server:{hostname:'127.0.0.1',port:0}}});
+    // Run the exact production modules in workerd directly. Wrangler's extra
+    // development proxy can return a spurious "restarted mid-request" 503 for
+    // early rejected POSTs. No assertions or application/D1 responses are mocked.
+    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
     let startupTimer:ReturnType<typeof setTimeout>|undefined;
     try{await Promise.race([worker.ready,new Promise<never>((_,reject)=>{startupTimer=setTimeout(()=>reject(new Error('Worker did not start in 45 seconds')),45000);})]);}finally{clearTimeout(startupTimer);}
-    return (await worker.url).origin;
+    return (await worker.ready).origin;
   }
   let base=await start(false);
   const owner={'oai-authenticated-user-id':'hosted-fixture-owner','oai-authenticated-user-email':'owner@marketlab.test'},visitor={'oai-authenticated-user-id':'other-user','oai-authenticated-user-email':'visitor@marketlab.test'};
   let assertions=0;
   async function request(route:string,status:number,init:RequestInit={}) {
-    // Rejected POSTs may finish before their incoming body is consumed. Use a
-    // fresh HTTP connection so Wrangler's development proxy cannot reuse a
-    // socket the Worker has closed; do not retry or relax any assertion.
-    const requestHeaders=new Headers(init.headers);requestHeaders.set('Connection','close');
-    const r=await fetch(base+route,{...init,headers:requestHeaders,signal:AbortSignal.timeout(10000)});
+    const r=await fetch(base+route,{...init,signal:AbortSignal.timeout(10000)});
     // Always drain the socket before the next request, including negative-path
     // assertions whose callers do not otherwise read their response bodies.
     const body=await r.text();
@@ -62,6 +68,16 @@ try {
   assert.ok(!JSON.stringify(preview.report).includes('PRIVATE_FIXTURE'));assertions++;
   const body={action:'create',id,revision:preview.status.revision,digest:preview.digest,days:7,confirmed:true};
   const post=(payload:unknown,headers:Record<string,string>=owner)=>({method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(payload)});
+  const providerRequest={symbol:'NVDA',mode:'key',apiKey:providerKey};
+  await request('/api/provider',401,post(providerRequest,{}));
+  await request('/api/provider',403,post(providerRequest,{...owner,origin:'https://unrelated.example.test'}));
+  const providerFailure=await (await request('/api/provider',429,post(providerRequest))).json() as {diagnostic:{upstreamStatus:number;providerNotice:string}};
+  assert.equal(providerFailure.diagnostic.upstreamStatus,200);
+  assert.equal(providerFailure.diagnostic.providerNotice,'Rate limit notice for [key removed]. CLIENT_DIAGNOSTIC_ONLY');
+  assert.ok(!JSON.stringify(providerFailure).includes(providerKey));assertions+=3;
+  const providerHistory=await (await request('/api/provider',200,{headers:owner})).text();
+  assert.ok(!providerHistory.includes('CLIENT_DIAGNOSTIC_ONLY')&&!providerHistory.includes(providerKey));assertions++;
+  providerFetch.assertNoPendingInterceptors();
   assert.equal(preview.enabled,false);assertions++;
   await request('/example',404);
   await request('/api/research/shares',503,post(body));
@@ -87,9 +103,10 @@ try {
   await request('/api/research/shares',200,post({action:'revoke',id,revision:created.status.revision}));
   await request('/api/shared/'+token,404);
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
-  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods and revocation verified.`);
-  console.log('Isolated local D1 and fictional fixture only; the live Sites dispatcher is outside this test.');
+  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation and provider diagnostics verified.`);
+  console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {
   await worker?.dispose();
+  await providerFetch.close();
   await rm(temporary,{recursive:true,force:true});
 }

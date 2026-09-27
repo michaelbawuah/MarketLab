@@ -384,3 +384,36 @@ browser verification remains outstanding. No identity bypass, production test
 record or personal report publication was used. Node/MongoDB staging remains
 unprovisioned and requires a real external Node host and persistent authenticated
 MongoDB, TLS and matching server-side signing secrets.
+
+## Provider response diagnostics — September 26, 2026
+
+The user reported that a new Alpha Vantage key still failed for NVDA. Production
+logs confirm an application HTTP 429 at `2026-09-27T00:42:19.340Z` (September 26
+in New York), but contain no upstream body or upstream status. That application
+status cannot prove the account's remaining allowance. The request-only key is
+forwarded independently of the optional server key; missing server configuration
+is not the cause of a valid one-time-key request.
+
+New provider failures return the observed upstream status and bounded notice
+fields to the authenticated owner. The submitted key is removed before any
+truncation; links, email addresses, credential assignments and control characters
+are removed too. Arbitrary response fields are excluded. The interface shows
+these details and offers Copy diagnostic. Provider text is not stored in the
+database, application logs or browser storage. The provider's actual explanation
+from this user's failed request remains unknown until a fresh request is made.
+
+All 118 unit tests pass, including 14 provider tests covering key forwarding,
+HTTP-200 notices versus HTTP-429 responses, redaction before truncation, access
+denials and malformed bodies. Type checking, lint and the app build pass. Two
+consecutive built-Worker runs pass 66 HTTP/header/content assertions. Eight new
+assertions cover owner-only provider diagnostics, cross-origin rejection,
+submitted-key exclusion and absence of provider text from saved history. The
+external provider response in this test is stubbed with a fictional key; this
+is not successful live Alpha Vantage access.
+
+The earlier connection-close workaround did not eliminate Wrangler's intermittent
+development-proxy 503. The harness now runs the same compiled modules and assets
+directly in Miniflare/workerd, with real HTTP requests and disposable D1. Its
+Miniflare version is the same version already locked under Wrangler, now declared
+as a direct development dependency. No existing assertion is relaxed or retried.
+Captured output: `docs/evidence/provider-response-diagnostics-local.txt`.

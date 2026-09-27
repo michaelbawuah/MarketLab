@@ -33,7 +33,9 @@ export async function POST(request: Request) {
   } catch (e) {
     const message = e instanceof ProviderError || e instanceof HttpError ? e.message : 'Could not save provider data. Check saved datasets before retrying.';
     if (id) try { await database().prepare('UPDATE provider_runs SET status = ?, message = ? WHERE owner = ? AND id = ?').bind('failed', message, owner, id).run(); } catch { /* Keep errors and credentials out of logs. */ }
-    if (e instanceof ProviderError) return json({ error: e.message, code: e.code }, e.status);
+    // Diagnostics are returned only to the authenticated owner. Provider text is
+    // redacted at the fetch boundary and is never saved to run history or logs.
+    if (e instanceof ProviderError) return json({ error: e.message, code: e.code, diagnostic: e.diagnostic, requestId: id || undefined }, e.status);
     if (e instanceof HttpError) return json({ error: e.message }, e.status);
     return json({ error: message }, 503);
   }
