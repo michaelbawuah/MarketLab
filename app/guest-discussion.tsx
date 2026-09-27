@@ -16,7 +16,7 @@ export default function GuestDiscussionView({ token }: { token: string }) {
     catch (e) { setError((e as Error).message); return false; } finally { setBusy(false); }
   }
   return <>{error && <p className="discussion-error" role="alert">{error}</p>}{!state && !error && <p role="status">Loading invitation…</p>}
-    {state && !state.accepted && <section className="discussion-intro"><h1>Accept this report invitation</h1><p>This invitation will be linked to your signed-in ChatGPT account. You can read the shared summary and comment; you cannot open or change the owner’s workspace.</p><p>Your display name and comments are visible to the owner and active invitees. Comments remain after access is revoked. Removed text is retained in a private audit record.</p><Button disabled={busy} onClick={() => void action({ action: 'accept' })}>{busy ? 'Accepting…' : 'Accept invitation'}</Button></section>}
+    {state && !state.accepted && <section className="discussion-intro"><h1>Accept this report invitation</h1><p>Join the conversation to ask questions and share your thoughts on this report.</p><Button disabled={busy} onClick={() => void action({ action: 'accept' })}>{busy ? 'Accepting…' : 'Accept invitation'}</Button></section>}
     {state?.accepted && <><section className="discussion-guest"><DiscussionThread comments={state.comments} busy={busy} action={action}/></section><SharedResearchView report={state.report} expires={state.expires} invited/></>}
     <Button variant="outline" disabled={busy} onClick={() => void reload().catch(e => setError(e.message))}>Refresh discussion</Button>
   </>;

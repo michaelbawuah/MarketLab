@@ -62,3 +62,14 @@ passing evidence; they were not rerun locally for this UI/authorization change.
 Production dispatcher sign-in and an actual second-person conversation require
 a real user check. Local emulated identities are not live identity verification
 or adoption. No invitation was distributed and no email was sent during testing.
+
+
+## Owner mobile check and copy refinement
+
+The September 27 9:23 and 9:25 AM mobile screenshots show the live sign-in
+landing page followed by the signed-in owner’s posted comment. This confirms
+the owner exercised invitation acceptance and posting on mobile; it does not
+establish a distinct second-person account. The owner requested concise guest
+copy without explanations of private inputs or inaccessible workspace areas.
+The guest introduction, acceptance text, discussion helper and report footer
+were simplified accordingly. Authorization and audit behavior are unchanged.
