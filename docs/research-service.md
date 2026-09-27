@@ -37,7 +37,7 @@ pnpm service:start
 
 For a real disposable database test, build the addon, install `mongod` and run `pnpm test:service:local`. Set `MONGOD_BIN` if it is outside PATH. This starts a loopback-only Mongo process in a temporary directory, runs the integration layer and removes only its own temporary data. `pnpm test:service:local --ci` also compiles the addon and runs type checking, lint, unit and independent cross-check layers. Alternatively, `MONGODB_TEST_URI=... pnpm test:service` creates unique `marketlab_test_...` databases and deletes them afterward. Do not point integration tests at a deployment where creating disposable databases is inappropriate. See [the labeled suite](../tests/README.md) and [recorded reliability evidence](reliability-evidence.md).
 
-The optional `compose.research.yml` supplies authenticated MongoDB, a persistent named volume and a Node container bound only to loopback. It is a local deployment recipe, not a public HTTPS deployment. Docker is not available in the build workspace, so the container build/Compose path has not been executed here; native compilation and the standalone process path have been tested directly.
+The optional `compose.research.yml` supplies authenticated MongoDB, a persistent named volume and a Node container bound only to loopback. It is a local deployment recipe, not a public HTTPS deployment. Docker is unavailable in the build workspace. A separate GitHub Actions gate now builds and checks this container; its execution evidence is recorded in [verification](verification.md). See the [staging runbook](research-staging.md) for the remote acceptance boundary.
 
 ```sh
 export MONGO_ADMIN_PASSWORD="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("hex"))')"
@@ -46,7 +46,7 @@ export RESEARCH_SERVICE_SECRET="$(node -e 'process.stdout.write(require("node:cr
 docker compose -f compose.research.yml up --build -d
 ```
 
-Store these generated values securely if reusing the Compose volume; changing environment variables does not rotate an existing MongoDB user's password. The example uses hex passwords so URI escaping is unambiguous. The pinned Mongo version matches local verification; review supported security updates before production deployment. The Node image uses the current Node 24 image tag, so record its resolved digest when deploying.
+Store these generated values securely if reusing the Compose volume; changing environment variables does not rotate an existing MongoDB user's password. The example uses hex passwords so URI escaping is unambiguous. The pinned Mongo version matches local verification; review supported security updates before production deployment. The Node image pins 24.19.0; also record its resolved digest when deploying.
 
 ## Export and import a research experiment
 

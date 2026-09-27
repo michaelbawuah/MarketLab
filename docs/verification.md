@@ -467,3 +467,37 @@ the user's NVDA fetch and save in the updated app; the screenshot alone shows
 direct provider retrieval, not that final integration step. The remote release
 gate is checked separately after the GitHub checkpoint. Node/MongoDB staging
 and the live public-sharing browser lifecycle remain outstanding.
+
+## Live NVDA acceptance and staging preparation — September 27, 2026
+
+The user's September 26 9:43 PM New York screenshot and "finally" confirm the
+missing application step: NVDA is saved and visible in the market card/chart,
+with May 5–September 25 history, a $225.07 latest saved close and
+`Alpha Vantage · browser import` provenance. This supersedes the pending NVDA
+acceptance above. It establishes that observed fetch/save, not the cause of the
+earlier provider restriction or future quota availability. The deployed browser
+fix is Site v22, source `b5e5da9`, corresponding GitHub checkpoint `3f21641`.
+[Actions run 36285974577](https://github.com/michaelbawuah/MarketLab/actions/runs/36285974577)
+passed 125 unit, 16 integration, four native and 11 Python tests, 67,044 scalar
+comparisons across 10 reports, and 94 built-Worker assertions.
+
+For milestone 11, the service image now pins Node 24.19.0, preserves the project's
+dependency-install policy, records its source revision, runs as `node`, includes
+an HTTP health check and honors the host's `PORT`. Compose now uses an init
+process. An operator-only acceptance command tests authenticated HTTP/native
+parity, owner isolation and idempotent replay, then kills a separate runner
+after calculation and verifies recovery through Mongo's natural lease expiry.
+Randomly prefixed collections prevent the live runner from claiming the crash
+fixture; cleanup is limited to those collections and that run's random owner.
+Staging requires HTTPS and the real 60-second lease; CI uses a one-second lease.
+Passing receipts include source/addon hashes, revision, result counts and scope.
+
+Local type checking, lint and all 127 unit tests pass, including hosting-port
+precedence and acceptance collection isolation. Docker and MongoDB executables
+are unavailable in this workspace. The new `Research container acceptance`
+workflow will build and exercise the image with authenticated MongoDB in CI;
+its remote result is checked after publication. The existing full engineering
+workflow remains required. These are separate from a real persistent staging
+deployment, which is not yet provisioned. The [runbook](research-staging.md)
+records deployment settings, remote acceptance and remaining account/cost access.
+No website UI change or gateway activation is included in this checkpoint.

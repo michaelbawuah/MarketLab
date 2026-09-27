@@ -41,8 +41,13 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   Keys/raw provider notices never return to the server on the browser path.
   Preserve distinct `alphavantage-browser` provenance throughout exports,
   confidence reports and TypeScript/Python verification. The server cannot
-  independently authenticate browser-supplied data. The final live NVDA
-  fetch-and-save inside the updated app still needs user confirmation; local
-  fixtures and a live public-demo CORS response do not prove that final step.
+  independently authenticate browser-supplied data. The September 26 9:43 PM
+  screenshot and the user's "finally" confirm the live NVDA save: browser-import
+  provenance, May 5–September 25 history, latest saved close $225.07.
+- Milestone 11 preparation now includes the production Docker image, isolated
+  operator-only crash acceptance command and a separate container CI gate.
+  See `docs/research-staging.md`. A passing CI container run is not staging:
+  host/account access and a real persistent deployment's 60-second-lease
+  acceptance receipt remain required. Do not activate the Site gateway early.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.

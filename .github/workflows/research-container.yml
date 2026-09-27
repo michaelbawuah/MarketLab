@@ -1,0 +1,52 @@
+name: Research container acceptance
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: research-container-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  container:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      COMPOSE_PROJECT_NAME: marketlab-ci-${{ github.run_id }}-${{ github.run_attempt }}
+      SOURCE_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Generate ephemeral CI credentials
+        shell: bash
+        run: |
+          for key in MONGO_ADMIN_PASSWORD MARKETLAB_MONGO_PASSWORD RESEARCH_SERVICE_SECRET; do
+            value=$(openssl rand -hex 32)
+            echo "::add-mask::$value"
+            echo "$key=$value" >> "$GITHUB_ENV"
+          done
+      - name: Build the production image and wait for readiness
+        run: docker compose -f compose.research.yml up --build --detach --wait --wait-timeout 120
+      - name: Verify authenticated HTTP, native parity and process-crash recovery
+        run: |
+          docker compose -f compose.research.yml exec -T -e RESEARCH_DEPLOYMENT_STAGE=ci research node --experimental-strip-types scripts/staging/check.ts ci /tmp/marketlab-ci-acceptance.json
+          mkdir -p outputs/research-container
+          docker compose -f compose.research.yml cp research:/tmp/marketlab-ci-acceptance.json outputs/research-container/receipt.json
+          docker inspect --format '{{.Image}}' "$(docker compose -f compose.research.yml ps -q research)" > outputs/research-container/image-id.txt
+          cat outputs/research-container/receipt.json
+          cat outputs/research-container/image-id.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: research-container-acceptance
+          path: outputs/research-container/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Stop only this job's disposable services and volume
+        if: always()
+        run: docker compose -f compose.research.yml down --volumes --remove-orphans

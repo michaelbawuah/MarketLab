@@ -14,9 +14,12 @@ services:
       timeout: 3s
       retries: 12
   research:
+    init: true
     build:
       context: .
       dockerfile: services/research/Dockerfile
+      args:
+        SOURCE_COMMIT: ${SOURCE_COMMIT:-unknown}
     environment:
       MONGODB_URI: mongodb://marketlab_service:${MARKETLAB_MONGO_PASSWORD:?Set app password}@mongo:27017/marketlab?authSource=marketlab
       MONGODB_DATABASE: marketlab

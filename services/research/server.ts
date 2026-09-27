@@ -8,7 +8,7 @@ import { JobRunner } from './runner.ts';
 import { loadNative } from './native.ts';
 export type ServiceConfig={uri:string;database:string;secret:string;host:string;port:number;workers:number;mode:'typescript'|'cpp-verify'};
 export function configFromEnv():ServiceConfig {
-  const uri=process.env.MONGODB_URI??'',database=process.env.MONGODB_DATABASE??'marketlab',secret=process.env.RESEARCH_SERVICE_SECRET??'',host=process.env.RESEARCH_HOST??'127.0.0.1',port=Number(process.env.RESEARCH_PORT??8788),workers=Number(process.env.RESEARCH_WORKERS??2),mode=process.env.RESEARCH_ENGINE??'cpp-verify';
+  const uri=process.env.MONGODB_URI??'',database=process.env.MONGODB_DATABASE??'marketlab',secret=process.env.RESEARCH_SERVICE_SECRET??'',host=process.env.RESEARCH_HOST??'127.0.0.1',port=Number(process.env.RESEARCH_PORT??process.env.PORT??8788),workers=Number(process.env.RESEARCH_WORKERS??2),mode=process.env.RESEARCH_ENGINE??'cpp-verify';
   if(!/^mongodb(\+srv)?:\/\//.test(uri)||!/^[a-zA-Z0-9_-]{1,60}$/.test(database)||secret.length<32||!/^\S+$/.test(secret)||!Number.isSafeInteger(port)||port<1||port>65535||!Number.isSafeInteger(workers)||workers<1||workers>8||!['typescript','cpp-verify'].includes(mode))throw new Error('Invalid service configuration. Set MongoDB URI and a random service secret of at least 32 characters.');
   return {uri,database,secret,host,port,workers,mode:mode as ServiceConfig['mode']};
 }

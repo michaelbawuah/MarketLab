@@ -10,11 +10,16 @@ export class ServiceError extends Error {status:number;constructor(message:strin
 const duplicate=(e:unknown)=>e instanceof MongoServerError&&e.code===11000;
 export class JobStore {
   client:MongoClient;jobs:Collection<Job>;nonces:Collection<{owner:string;nonce:string;expires:Date}>;
-  constructor(uri:string,name:string){this.client=new MongoClient(uri,{timeoutMS:5000,serverSelectionTimeoutMS:5000,connectTimeoutMS:5000,maxPoolSize:10,writeConcern:{w:'majority'}});const db=this.client.db(name);this.jobs=db.collection<Job>('research_jobs');this.nonces=db.collection('request_nonces');}
+  constructor(uri:string,name:string,acceptancePrefix=''){
+    // Operator-only acceptance checks may use isolated collections with the
+    // existing database role. HTTP callers never control this prefix.
+    if(acceptancePrefix&&!/^acceptance_[a-f0-9]{32}_$/.test(acceptancePrefix))throw new Error('Invalid acceptance collection prefix.');
+    this.client=new MongoClient(uri,{timeoutMS:5000,serverSelectionTimeoutMS:5000,connectTimeoutMS:5000,maxPoolSize:10,writeConcern:{w:'majority'}});const db=this.client.db(name);this.jobs=db.collection<Job>(acceptancePrefix+'research_jobs');this.nonces=db.collection(acceptancePrefix+'request_nonces');
+  }
   async initialize(){
     await this.client.connect();const db=this.jobs.dbName;
     const validator={$jsonSchema:{bsonType:'object',required:['owner','id','slot','status','snapshot','attempts'],properties:{owner:{bsonType:'string',minLength:1,maxLength:128},id:{bsonType:'string',pattern:'^[a-f0-9]{64}$'},slot:{bsonType:'int',minimum:0,maximum:29},status:{enum:['queued','running','completed','failed']},snapshot:{bsonType:'string'},attempts:{bsonType:'int',minimum:0,maximum:3}}}};
-    try{await this.client.db(db).createCollection('research_jobs',{validator});}catch(e){if(!(e instanceof MongoServerError&&e.code===48))throw e;const existing=await this.client.db(db).listCollections({name:'research_jobs'}).next();if(JSON.stringify(existing&&'options' in existing?existing.options?.validator:undefined)!==JSON.stringify(validator))throw new Error('Research collection schema requires an explicit migration.');}
+    try{await this.client.db(db).createCollection(this.jobs.collectionName,{validator});}catch(e){if(!(e instanceof MongoServerError&&e.code===48))throw e;const existing=await this.client.db(db).listCollections({name:this.jobs.collectionName}).next();if(JSON.stringify(existing&&'options' in existing?existing.options?.validator:undefined)!==JSON.stringify(validator))throw new Error('Research collection schema requires an explicit migration.');}
     await this.jobs.createIndex({owner:1,id:1},{unique:true});await this.jobs.createIndex({owner:1,slot:1},{unique:true});await this.jobs.createIndex({status:1,leaseUntil:1,created:1});
     await this.nonces.createIndex({owner:1,nonce:1},{unique:true});await this.nonces.createIndex({expires:1},{expireAfterSeconds:0});
   }

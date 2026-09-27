@@ -16,7 +16,7 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 
 ## Ordered milestones
 
-| # | Milestone and acceptance evidence | Status on September 26 |
+| # | Milestone and acceptance evidence | Status on September 27 |
 | --- | --- | --- |
 | 1 | Fix a real concurrency defect; a regression fails before the fix and passes after it | Implemented and locally proved: three client-clock lease regressions fail on the baseline and pass with MongoDB-clock fencing |
 | 2 | Kill a worker mid-job; recover with one durable final result | Implemented and locally proved: SIGKILL after calculation/before save, natural lease expiry, two competing runners, one saved result |
@@ -28,7 +28,7 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 | 8 | Explain the money representation and show a failing naive-float example | Implemented and verified: runnable payment and half-cent examples fail with naive Number arithmetic and pass with canonical exact helpers. Interactive Methodology demo, six new regressions and full local gate passed. [Representation and evidence](money-arithmetic.md) |
 | 9 | Share a saved experiment through a read-only unauthenticated link | Public access activated with user approval; private workspace remains owner-only. Preview, consent, redaction, expiry, replacement, revocation and isolation verified in the built Worker. Live browser/owner-link lifecycle check remains outstanding because automated probes were blocked at the host edge. [Evidence and activation boundary](research-sharing-and-events.md) |
 | 10 | Put explanatory event markers directly on the equity curve | Implemented and verified: selectable strategy executions, split/dividend events and fresh-cash starts, with original effective dates, exact amounts and grouped narrow-screen controls. [Evidence and scope](research-sharing-and-events.md) |
-| 11 | Run the background service and recovery test on a real staging host | Pending; local MongoDB tests and the hosted website are not staging activation of this service |
+| 11 | Run the background service and recovery test on a real staging host | Prepared: deployment image, container CI gate and isolated remote crash check. Host/account access and an actual staging receipt remain pending. [Runbook](research-staging.md) |
 | 12 | Let a second user comment on or fork a shared saved experiment | Pending; depends on sharing and an explicit collaboration model |
 
 Items 1–3 establish the engineering foundation. Items 4–6 improve first use and
@@ -46,6 +46,7 @@ strategies, more asset classes and significance tests remain deferred.
 | `lib/finance/brokerage-csv.ts`, `app/brokerage-receipt.tsx` | Schwab CSV conversion, exact cash/fee checks and saved import receipt |
 | `public/examples/schwab-transactions.csv`, `tests/unit/brokerage-csv.test.ts` | Fictional native-format example and adapter/accounting regressions |
 | `services/research/` | Standalone Node API, MongoDB job store, worker pool and recovery |
+| `scripts/staging/`, `.github/workflows/research-container.yml` | Deployable-container gate and isolated remote crash acceptance |
 | `scripts/benchmark-service.ts`, `scripts/benchmark/` | Isolated load runner, deterministic profiles, correctness gates, timings and resource diagnostics |
 | `lib/finance/money-examples.ts`, `app/money-demo.tsx`, `scripts/demo-money.ts` | Interactive and command-line contrasts between naive decimals and exact money |
 | `lib/research-sharing.ts`, `lib/finance/shared-research.ts`, `app/share/` | Owner-reviewed public-summary projection, fenced link lifecycle and read-only report page |
@@ -68,24 +69,24 @@ See [architecture-roadmap.md](architecture-roadmap.md) for runtime ownership and
 
 ## Working rule
 
-GitHub batching: milestones 6–8 were published as `799222d` on September 26.
-The next requested two-milestone batch covers 9–10 and its GitHub checkpoint.
+GitHub batching: milestones 6–8 were published as `799222d` on September 26,
+followed by the 9–10 implementation checkpoint `0c3476a` and market-data fixes.
 Milestone 9 public access is approved and activated. Its live owner-created-link
 lifecycle still requires a real browser check; automated host probes were blocked.
 Milestones 11–12 remain outstanding. Preserve public report routing and the
 owner-only private workspace. Keep JavaScript/TypeScript central; MongoDB is a
 database used by the separate research service, not a GitHub language category.
 
-Immediate user-reported blocker before staging: the hosted NVDA request returned
+Resolved user-reported blocker before staging: the hosted NVDA request returned
 an HTTP-200 usage-limit `Note`, while the user's direct browser request returned
 NVDA daily history refreshed September 25. A direct browser connection now sends
 one-time keys only to Alpha Vantage and sends a validated price transfer to the
 owner-only server. Both paths retain one shared cooldown. Browser provenance is
 separate from server-fetched data, including its frozen hash and independent
-Python replay. Final acceptance still requires a successful live NVDA fetch and
-save in the updated app; the key itself has already worked in a direct request.
-Do not claim the original restriction was definitively IP-based or resolved
-from fixture tests. See the browser-connection record in `docs/verification.md`.
+Python replay. The user's September 26 9:43 PM screenshot confirms NVDA saved
+inside the updated app, with May 5–September 25 history, a $225.07 latest saved
+close and browser-import provenance. Do not claim the original restriction was
+definitively IP-based. See the browser-connection record in `docs/verification.md`.
 
 For each milestone, record the user problem, implementation, acceptance check,
 actual result and remaining limits. A planned feature, written test or configured
