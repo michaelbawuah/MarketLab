@@ -1,0 +1,43 @@
+MarketLab email session issuer regression — September 27, 2026
+
+Scope: actual built Worker, official WorkOS SDK crypto/JWT validation, disposable
+local D1, generated RSA signing key, and fictional provider responses only.
+
+Before implementation fix:
+  node --experimental-strip-types scripts/test-hosted-sharing.ts
+  Exit: 1
+  Fixture changed to the WorkOS API reference format:
+    iss = https://api.workos.com (no trailing slash)
+    client_id = configured fictional application
+    aud absent
+  Discussion email callback failed at session-validation.
+  AssertionError: expected redirect to /discussion/<fictional-invitation>
+  Actual redirect: /discussion/<fictional-invitation>?email_error=1
+  Failure at scripts/test-hosted-email-discussion.ts:48.
+
+After implementation fix and production rebuild:
+  TypeScript --noEmit: exit 0
+  ESLint on changed TypeScript files: exit 0
+  Focused discussion-email unit tests: 3 passed, 0 failed
+  Production Sites build: exit 0
+  node --experimental-strip-types scripts/test-hosted-sharing.ts
+  Exit: 0
+  Discussion: 28 additional content/audit/concurrency assertions passed;
+    HTTP checks included in Worker total.
+  Email discussion: 15 additional AuthKit/identity assertions passed;
+    no live email or real accounts used.
+  Built Worker: 229 HTTP/header/content assertions passed.
+
+Added contract cases: exact default issuers with and without trailing slash;
+signed client_id mismatch; optional audience match/mismatch; HTTP issuer,
+extra issuer path, and hostname lookalike rejection.
+
+Production observation, separate from the regression test:
+  2026-09-27T18:14:27.437Z
+  GET /api/discussion-auth/callback, HTTP 303
+  Request: f0703cd56bd35e21ba0501bdaab7ff88
+  Warning: Discussion email callback failed at session-validation.
+  Code exchange completed, but the exact rejected claim was not logged.
+
+Live email delivery, successful return to MarketLab, invitation acceptance,
+commenting, refresh, sign-out, and revocation remain pending user verification.

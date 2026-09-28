@@ -1,0 +1,48 @@
+MarketLab client-specific WorkOS issuer correction — September 27, 2026
+
+Production failure after version 28:
+  2026-09-27T18:36:58.639Z
+  GET /api/discussion-auth/callback, HTTP 303
+  Request: 09e3af8ba1bc50e5b8a2d6be6203cf9c
+  Warning: Discussion email callback rejected session: issuer_mismatch.
+  No tokens, user identities or decoded production claims were inspected.
+
+Read-only public provider configuration, HTTP 200:
+  URL: https://api.workos.com/user_management/client_01M3HQ3HZMG7DXMPSKX8BRT6WV/.well-known/openid-configuration
+  issuer: https://api.workos.com/user_management/client_01M3HQ3HZMG7DXMPSKX8BRT6WV
+  jwks_uri: https://api.workos.com/sso/jwks/client_01M3HQ3HZMG7DXMPSKX8BRT6WV
+  No API key, cookie, code, state or invitation was sent in this request.
+
+Before implementation correction:
+  Fictional signed fixture changed to issuer:
+    https://api.workos.com/user_management/<configured-fictional-client-id>
+  node --experimental-strip-types scripts/test-hosted-sharing.ts
+  Exit: 1
+  Discussion email callback rejected session: issuer_mismatch.
+  AssertionError: expected redirect to /discussion/<fictional-invitation>
+  Actual redirect: /discussion/<fictional-invitation>?email_error=1
+
+After implementation correction and production rebuild:
+  TypeScript --noEmit: exit 0
+  ESLint on changed TypeScript files: exit 0
+  Focused discussion-email unit tests: 3 passed, 0 failed
+  Production Sites build: exit 0
+  node --experimental-strip-types scripts/test-hosted-sharing.ts
+  Exit: 0
+  Discussion: 28 additional content/audit/concurrency assertions passed;
+    HTTP checks included in Worker total.
+  Discussion email callback established a verified session.
+  Email discussion: 15 additional AuthKit/identity assertions passed;
+    no live email or real accounts used.
+  Built Worker: 234 HTTP/header/content assertions passed.
+
+Callback and refresh use the advertised client-specific issuer format.
+Both documented legacy issuer values remain accepted. Another client's issuer,
+extra trailing slash, extra path and extra query are rejected, alongside the
+existing wrong-host, HTTP, client/audience, unverified and tampered-session checks.
+Existing invitation acceptance, comment, revocation and owner isolation pass.
+
+Limits: real compiled Worker, official SDK crypto/JWT verification and disposable
+local D1; provider responses remain fictional and RSA keys are test-generated.
+The live Sites dispatcher and a real-provider session are outside this test.
+Live email invitation lifecycle acceptance remains pending the owner's retry.

@@ -31,6 +31,11 @@ async function tokenHash(token: string) {
   if (!/^[a-f0-9]{64}$/.test(token)) throw unavailable();
   return shareDigest(token);
 }
+// Used before starting external sign-in. No report or discussion content is read.
+export async function invitationAvailable(db: D1Database, token: string): Promise<boolean> {
+  return !!await db.prepare(`SELECT i.id FROM discussion_invites i JOIN research_shares s ON s.owner=i.owner AND s.run_id=i.run_id
+    WHERE i.token_hash=? AND ${invitationAccess}`).bind(await tokenHash(token)).first();
+}
 
 export async function ownerDiscussion(db: D1Database, owner: string, id: string): Promise<OwnerDiscussion> {
   await ownedResearch(db, owner, id);

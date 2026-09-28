@@ -8,11 +8,13 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 ## What works
 
-- Invite-only discussion on the same redacted report: single-use invitations
-  bind to a signed-in ChatGPT account, owners revoke access and moderate comments,
-  and database triggers retain an append-only audit trail. No raw-input sharing,
-  workspace access or email sending. The user reported a successful two-person
-  comment and revocation check on September 27. [Model and acceptance scope](docs/research-collaboration.md).
+- Invite-only report discussions with ChatGPT or verified email sign-in:
+  single-use invitations bind to the chosen account, owners revoke access and
+  moderate comments, and database triggers retain an append-only audit trail.
+  The ChatGPT two-person comment/revocation check passed as user-reported evidence.
+  Email sign-in through WorkOS Staging is confirmed by the user and live callback
+  log; the email-account comment/revocation check remains outstanding.
+  [Discussion model](docs/research-collaboration.md) · [Email sign-in and evidence](docs/discussion-email-sign-in.md).
 
 - Selectable buy, sell, split and dividend markers on Research lab equity curves,
   with exact cash/fee explanations and event dates retained across missing closes.

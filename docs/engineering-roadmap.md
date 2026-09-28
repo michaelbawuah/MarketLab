@@ -35,6 +35,21 @@ Items 1–3 establish the engineering foundation. Items 4–6 improve first use 
 adoption. Items 7–12 extend evidence, distribution and collaboration. Extra
 strategies, more asset classes and significance tests remain deferred.
 
+## Next approved extension: email sign-in
+
+On September 27, the user selected email sign-in for **invited discussions**.
+The WorkOS AuthKit integration is implemented and locally verified (three focused
+tests and 234 built-Worker assertions) with the existing ChatGPT option and
+invitation controls. WorkOS Staging is enabled for acceptance testing. The first
+live callback failed session validation, and version 28 still rejected the issuer.
+The application's live WorkOS discovery document identifies a client-specific
+issuer; that exact value is now supported and tested. On September 27 at 23:42
+America/New_York, the user confirmed sign-in worked; a live callback log also
+confirms a verified session. The email-account comment, refresh, sign-out and
+revocation checks remain outstanding. Guest access does not expand to the owner
+workspace. See
+[activation and evidence boundaries](discussion-email-sign-in.md).
+
 ## Directory map
 
 | Path from repository root | Responsibility |

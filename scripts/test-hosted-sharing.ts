@@ -10,6 +10,7 @@ import { Miniflare, Log, LogLevel, createFetchMock } from 'miniflare';
 import { researchFixture } from '../tests/fixtures/research.ts';
 import { analyzeResearch,researchFingerprint } from '../lib/finance/research.ts';
 import { testDiscussion } from './test-hosted-discussion.ts';
+import { emailTestBindings, testEmailDiscussion } from './test-hosted-email-discussion.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),temporary=await mkdtemp(path.join(tmpdir(),'marketlab-hosted-'));
 const config=path.join(temporary,'dist/server/wrangler.json'),wrangler=path.join(root,'node_modules/wrangler/bin/wrangler.js'),persist=path.join(temporary,'db');
@@ -38,11 +39,11 @@ try {
   const migrationFile=path.join(temporary,'schema-fixture.sql');await writeFile(migrationFile,sql);
   const seeded=spawnSync(process.execPath,[wrangler,'d1','execute','DB','--local','--config',config,'--persist-to',persist,'--file',migrationFile],{cwd:root,env,encoding:'utf8',timeout:45000});
   if(seeded.status!==0)throw new Error(`Local schema setup failed: ${seeded.stderr}\n${seeded.stdout}`);
-  async function start(sharingEnabled:boolean) {
+  async function start(sharingEnabled:boolean,emailEnabled=false) {
     // Run the exact production modules in workerd directly. Wrangler's extra
     // development proxy can return a spurious "restarted mid-request" 503 for
     // early rejected POSTs. No assertions or application/D1 responses are mocked.
-    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
+    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{}),...(emailEnabled?emailTestBindings:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
     let startupTimer:ReturnType<typeof setTimeout>|undefined;
     try{await Promise.race([worker.ready,new Promise<never>((_,reject)=>{startupTimer=setTimeout(()=>reject(new Error('Worker did not start in 45 seconds')),45000);})]);}finally{clearTimeout(startupTimer);}
     return (await worker.ready).origin;
@@ -146,6 +147,10 @@ try {
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
   const discussionChecks = await testDiscussion({request,db:await worker!.getD1Database('DB') as unknown as D1Database,base,owner,visitor,runId:id});
   assertions += discussionChecks;
+  await request('/api/discussion-auth/start?return_to=' + encodeURIComponent('/discussion/' + 'a'.repeat(64)),404);
+  await worker!.dispose();worker=undefined;base=await start(true,true);
+  const emailChecks = await testEmailDiscussion({request,providerFetch,owner,runId:id});
+  assertions += emailChecks;
   console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance and invite-only discussion verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {

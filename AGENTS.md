@@ -68,3 +68,16 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   deploys, keep Railway SOURCE_COMMIT synchronized with the exact GitHub source.
 
 Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.
+
+- September 27 email-login scope: the user explicitly selected invited discussions,
+  not separate user workspaces. See `docs/discussion-email-sign-in.md`. WorkOS
+  Staging is configured and enabled for live acceptance. The first live callback
+  failed session validation. Version 28 still rejected `issuer_mismatch`; the
+  application's live WorkOS OIDC discovery identifies a client-specific issuer.
+  That exact configured-client issuer is now supported, with 234 built-Worker
+  checks passing. On September 27 at 23:42 America/New_York, the user confirmed
+  sign-in worked. The live callback at 2026-09-28T03:42:20.107Z independently
+  logged a verified email session. Email-account comment, refresh, sign-out and
+  revocation acceptance remain distinct and unconfirmed. Do not treat mocked
+  AuthKit tests as actual email delivery or completed live lifecycle checks.
+  Preserve ChatGPT identity binding, owner isolation, and the $0 paid-spend limit.

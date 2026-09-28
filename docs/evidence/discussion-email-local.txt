@@ -1,0 +1,24 @@
+MarketLab invited-discussion email integration — September 27, 2026
+
+Scope: local production build, disposable D1, fictional provider responses and
+locally generated RSA keys. No live email sent or actual WorkOS account used.
+
+TypeScript: tsc --noEmit — exit 0
+ESLint on changed TypeScript source/test files — exit 0
+Production build: bundled build-site.mjs — exit 0
+
+Focused authentication tests:
+  email login stays disabled until explicitly enabled with complete HTTPS callback configuration
+  email return paths cannot leave an invitation or redirect to another site
+  PKCE callback binds state, browser cookie, password, invitation and ten-minute expiry
+  tests 3; pass 3; fail 0; skipped 0
+
+Final compiled-Worker output:
+Discussion: 28 additional content/audit/concurrency assertions passed; HTTP checks included in Worker total.
+Email discussion: 15 additional AuthKit/identity assertions passed; no live email or real accounts used.
+Built Worker: 222 HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance and invite-only discussion verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.
+
+No fresh browser visual QA, actual WorkOS configuration, email delivery, GitHub
+Actions or Railway deployment is claimed. Earlier financial/native/MongoDB
+evidence remains separate; those unchanged suites were not rerun for this update.
