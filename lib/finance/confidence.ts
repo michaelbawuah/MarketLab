@@ -6,6 +6,7 @@ import type { PortfolioComparison } from './portfolio-benchmark.ts';
 import type { ResearchAnalysis, ResearchSnapshot } from './research.ts';
 import type { Workspace } from './demo.ts';
 import { brokerageCashMatches } from './brokerage-csv.ts';
+import type { ReplayReceipt } from './replay-receipt.ts';
 
 export type EvidenceCheck = { id: string; label: string; status: 'passed' | 'failed' | 'not_run'; detail: string };
 export type ConfidenceSource = { role: string; symbol: string; source: string; kind: string; basis: string; origin: string; firstDate: string; lastDate: string; observations: number; events: string; id?: string };
@@ -14,6 +15,7 @@ export type ConfidenceCertificate = {
   classification: 'Fictional inputs' | 'Contains fictional inputs' | 'Declared historical inputs' | 'Recorded cash flows';
   takeaway: string; coverage: { start: string; end: string; observations: number; longestGapDays: number };
   sources: ConfidenceSource[]; checks: EvidenceCheck[]; assumptions: string[]; limitations: string[];
+  independentReplay?:Pick<ReplayReceipt,'verifiedAt'|'verifierVersion'|'verifierSha256'|'comparedFields'>;
 };
 export type EvaluationPeriod = 'full' | 'development' | 'holdout';
 const periods = { full: 'Full period', development: 'Earlier period', holdout: 'Later period · fresh cash' };
@@ -43,12 +45,14 @@ function finish(c: Omit<ConfidenceCertificate,'version'|'classification'>): Conf
 export function confidenceStatus(c: ConfidenceCertificate) {
   return c.checks.some(v=>v.status==='failed')?'Needs review':c.checks.some(v=>v.status==='passed')?'Listed checks passed':'Not checked';
 }
-export function researchCertificate(run: { id: string; snapshot: ResearchSnapshot; analysis: ResearchAnalysis }, period: EvaluationPeriod='full'): ConfidenceCertificate {
-  const s=run.snapshot,p=run.analysis[period],cfg=s.config;
+// Hosted callers attach only receipts revalidated against the full stored report.
+export function researchCertificate(run: { id: string; snapshot: ResearchSnapshot; analysis: ResearchAnalysis; replayReceipt?:ReplayReceipt }, period: EvaluationPeriod='full'): ConfidenceCertificate {
+  const s=run.snapshot,p=run.analysis[period],cfg=s.config,r=run.replayReceipt?.reportId===run.id?run.replayReceipt:undefined;
   const dates=s.asset.dataset.observations.filter(v=>v.date>=cfg.start&&v.date<=cfg.end&&(period==='full'||(period==='development'?v.date<cfg.holdoutStart:v.date>=cfg.holdoutStart))).map(v=>v.date);
   const paths=[{data:s.asset.dataset,model:p.strategy},{data:s.asset.dataset,model:p.buyHold},{data:s.benchmark.dataset,model:p.benchmark}];
   const ending=BigInt(p.strategy.history.at(-1)!.value),delta=ending-BigInt(p.benchmark.history.at(-1)!.value);
   return finish({subject:`Strategy experiment · ${periods[period]}`,reference:run.id,method:s.method,coverage:coverage(dates),
+    ...(r?{independentReplay:{verifiedAt:r.verifiedAt,verifierVersion:r.verifierVersion,verifierSha256:r.verifierSha256,comparedFields:r.comparedFields}}:{}),
     takeaway:`The strategy ended at ${money(ending)} from ${money(parseDecimal(cfg.initialCash))}, a ${pct(p.strategy.returnPct)} return after modeled costs. It finished ${money(delta<0n?-delta:delta)} ${delta===0n?'apart from':delta>0n?'above':'below'} the selected benchmark over these ${dates.length} observations.`,
     sources:([['Strategy asset',s.asset],['Benchmark',s.benchmark]] as const).map(([role,b])=>source(b.dataset,role,`${b.actions.source} · revision ${b.actions.revision} · ${b.actions.events.length} declared events; completeness is user-declared`)),
     checks:[
@@ -56,9 +60,9 @@ export function researchCertificate(run: { id: string; snapshot: ResearchSnapsho
       check('wealth','Exact wealth reconciliation',()=>paths.every(({data,model})=>{const prices=new Map(data.observations.map(v=>[v.date,BigInt(v.priceMicros)]));return model.history.every(v=>{const [n,d=1n]=v.shares.split('/').map(BigInt);return d>0n&&n>=0n&&BigInt(v.cash)>=0n&&BigInt(v.receivables)>=0n&&BigInt(v.value)===BigInt(v.cash)+BigInt(v.receivables)+rounded(n*prices.get(v.date)!,d*10000n);});}),'Every observed value equals cash + receivables + shares marked at the supplied close, with exact cent rounding.'),
       check('fees','Trade fee totals',()=>paths.every(({model})=>model.trades.every(t=>BigInt(t.fee)>=0n)&&model.trades.reduce((n,t)=>n+BigInt(t.fee),0n)===BigInt(model.fees)),'Each path’s reported fees equal the sum of its execution fees.'),
       check('timing','Prior-close signal timing',()=>{const index=new Map(s.asset.dataset.observations.map((v,i)=>[v.date,i]));return p.strategy.trades.every(t=>dates.includes(t.date)&&t.signalDate===s.asset.dataset.observations[(index.get(t.date)??0)-1]?.date);},'Each recorded strategy signal precedes its execution at the next supplied close. This checks timing, not whether every signal is correct.'),
-      check('returns','Ending-return arithmetic',()=>paths.every(({model})=>Number.isFinite(model.returnPct)&&Math.abs(model.returnPct-(Number(model.history.at(-1)!.value)/Number(parseDecimal(cfg.initialCash))-1)*100)<=1e-10),'Returns match ending wealth and starting cash within 1e-10 percentage points.'),independent()],
+      check('returns','Ending-return arithmetic',()=>paths.every(({model})=>Number.isFinite(model.returnPct)&&Math.abs(model.returnPct-(Number(model.history.at(-1)!.value)/Number(parseDecimal(cfg.initialCash))-1)*100)<=1e-10),'Returns match ending wealth and starting cash within 1e-10 percentage points.'),r?{id:'independent-replay',label:'Independent Python replay',status:'passed',detail:`Replayed all 3 periods and 9 simulations; ${r.comparedFields} scalar comparisons passed on ${r.verifiedAt}. Cash, shares and trades match exactly; floating metrics use absolute/relative tolerance 1e-10. The receipt is bound to the full saved inputs and results.`}:independent()],
     assumptions:[`${cfg.window}-observation moving average; long or cash; previous-close signals execute at the next supplied close.`,`${(cfg.feeBps/100).toFixed(2)}% fee and ${(cfg.slippageBps/100).toFixed(2)}% adverse slippage per trade.`, 'No borrowing, shorting, cash interest, taxes, forced final sale or dividend reinvestment. Dividends remain nonspendable receivables.', 'Earlier and later periods each restart with initial cash. Repeated trials can overfit the later period.'],
-    limitations:[boundary,calendar,'Source labels and fingerprints are references, not signatures or independent authentication. These checks do not replay the trading strategy.','Risk describes supplied observation intervals without annualization, liquidity, market-impact or survivorship corrections.']});
+    limitations:[boundary,calendar,'Source labels and fingerprints are references, not signatures or independent authentication.'+(r?' The independent replay checks the saved calculation; it does not authenticate prices or corporate-action completeness.':' These checks do not replay the trading strategy.'),'Risk describes supplied observation intervals without annualization, liquidity, market-impact or survivorship corrections.']});
 }
 
 export function costDemoCertificate(run: Parameters<typeof researchCertificate>[0]): ConfidenceCertificate {

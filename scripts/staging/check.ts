@@ -11,6 +11,7 @@ import { configFromEnv } from '../../services/research/server.ts';
 import { researchFixture } from '../../tests/fixtures/research.ts';
 import { analyzeResearch, researchFingerprint } from '../../lib/finance/research.ts';
 import { signResearchRequest } from '../../lib/research-signing.ts';
+import { REPLAY_VERSION,replayReportJSON,replayDigest,checkedReplayReceipt } from '../../lib/finance/replay-receipt.ts';
 
 let phase = 'configuration';
 async function run() {
@@ -40,7 +41,7 @@ try {
   phase = 'signed HTTP and native verification';
   await main.ping();
   const health = await fetch(origin.origin + '/healthz', { redirect: 'error', signal: AbortSignal.timeout(10000) });
-  assert.equal(health.status, 200); assert.deepEqual(await health.json(), { status: 'ready', service: 'marketlab-research', engine: 'cpp-verify' });
+  assert.equal(health.status, 200); assert.deepEqual(await health.json(), { status: 'ready', service: 'marketlab-research', engine: 'cpp-verify', pythonReplay:REPLAY_VERSION });
   const anonymous = await fetch(origin.origin + '/v1/jobs', { redirect: 'error', signal: AbortSignal.timeout(10000) });
   assert.equal(anonymous.status, 401); await anonymous.arrayBuffer(); checks.push('readiness-and-unsigned-rejection');
   await call('POST', '/v1/jobs', { snapshot }, owner, 202);
@@ -51,6 +52,15 @@ try {
   await call('GET', `/v1/jobs/${id}`, undefined, owner + ':other', 404);
   const replay = await call('POST', '/v1/jobs', { snapshot }); assert.equal(replay?.id, id);
   assert.equal(await main.jobs.countDocuments({ owner }), 1); checks.push('signed-submit-native-parity-owner-isolation-and-replay');
+  phase='independent Python replay';
+  const reportRaw=replayReportJSON({id,snapshot,analysis:expected});
+  const pythonHeaders=await signResearchRequest(config.secret,owner,'POST','/v1/replay',reportRaw);
+  const pythonResponse=await fetch(origin.origin+'/v1/replay',{method:'POST',headers:{...pythonHeaders,'Content-Type':'application/json'},body:reportRaw,redirect:'error',signal:AbortSignal.timeout(10000)});
+  assert.equal(pythonResponse.status,200);
+  const pythonReceipt=checkedReplayReceipt((await pythonResponse.json() as {receipt:unknown}).receipt,id,await replayDigest(reportRaw));
+  assert.ok(pythonReceipt);assert.equal(pythonReceipt.simulations,9);checks.push('independent-python-replay-bound-to-full-report');
+  const tampered=structuredClone(expected);tampered.full.strategyRisk.volatilityPct=999;
+  await call('POST','/v1/replay',JSON.parse(replayReportJSON({id,snapshot,analysis:tampered})),owner,422);checks.push('python-rejects-altered-result');
 
   // A separate collection pair prevents the live server from claiming the
   // controlled crash fixture or participating in its shortened CI lease.
@@ -88,9 +98,9 @@ try {
   const reopened = new JobStore(config.uri, config.database, prefix);
   try { const durable = await reopened.get(owner, id); assert.equal(durable?.status, 'completed'); assert.deepEqual(JSON.parse(durable!.result!), expected); } finally { await reopened.close(); }
   checks.push('sigkill-after-calculation', 'natural-database-lease-recovery', 'two-competing-runners', 'one-durable-result', 'stale-token-rejection', 'fresh-connection-replay');
-  const sources = ['services/research/server.ts', 'services/research/store.ts', 'services/research/runner.ts', 'services/research/pool.ts', 'lib/finance/research.ts', 'native/build/marketlab_risk.node'];
+  const sources = ['services/research/server.ts', 'services/research/store.ts', 'services/research/runner.ts', 'services/research/pool.ts', 'services/research/python-replay.ts', 'verification/python/verify_research.py', 'lib/finance/research.ts', 'native/build/marketlab_risk.node'];
   const sourceHashes = Object.fromEntries(await Promise.all(sources.map(async file => [file, createHash('sha256').update(await readFile(new URL('../../' + file, import.meta.url))).digest('hex')])));
-  result = { format: 'marketlab-staging-acceptance-v1', scope, started, finished: new Date().toISOString(), elapsedMs: Math.round(performance.now() - startClock), serviceOrigin: origin.origin, publicHttpsChecked: origin.protocol === 'https:', revision: process.env.RESEARCH_BUILD_REVISION ?? 'unknown', node: process.version, leaseMs, attempts: saved!.attempts, acceptedFinalizations: finalizations, storedResults: 1, nativeComparisons: 9, checks, sourceHashes };
+  result = { format: 'marketlab-staging-acceptance-v1', scope, started, finished: new Date().toISOString(), elapsedMs: Math.round(performance.now() - startClock), serviceOrigin: origin.origin, publicHttpsChecked: origin.protocol === 'https:', revision: process.env.RESEARCH_BUILD_REVISION ?? 'unknown', node: process.version, leaseMs, attempts: saved!.attempts, acceptedFinalizations: finalizations, storedResults: 1, nativeComparisons: 9, pythonReceipt, checks, sourceHashes };
 } finally {
   if (child?.pid && child.exitCode === null && child.signalCode === null) { child.kill('SIGKILL'); await childExited; }
   await Promise.all(runners.map(runner => runner.close()));

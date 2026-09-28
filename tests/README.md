@@ -59,6 +59,12 @@ timing and benchmark flows to ensure inconsistent reports cannot earn passing
 checks. They distinguish project tests from independent per-report receipts and
 round-trip full certificate metadata through rectangular CSV exports.
 
+Report replay checks also run the real bounded Python process, reject altered
+metrics and input IDs, exercise capacity/timeouts, and persist bound receipts
+through generated SQLite migrations. Built-Worker HTTP checks verify the
+owner-only action, cache reuse, exports and removal of stale evidence. Container
+acceptance calls the signed Python endpoint; see `docs/independent-replay.md`.
+
 The crash fixture calculates through the real TypeScript engine, then blocks on
 a test-only worker barrier before returning the result. The test sends SIGKILL
 to its entire runner process, waits for natural database lease expiry and starts

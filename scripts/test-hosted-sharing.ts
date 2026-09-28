@@ -9,8 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { Miniflare, Log, LogLevel, createFetchMock } from 'miniflare';
 import { researchFixture } from '../tests/fixtures/research.ts';
 import { analyzeResearch,researchFingerprint } from '../lib/finance/research.ts';
+import { datasetId } from '../lib/finance/market-data.ts';
 import { testDiscussion } from './test-hosted-discussion.ts';
 import { emailTestBindings, testEmailDiscussion } from './test-hosted-email-discussion.ts';
+import { replayTestBindings,testHostedReplay } from './test-hosted-replay.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),temporary=await mkdtemp(path.join(tmpdir(),'marketlab-hosted-'));
 const config=path.join(temporary,'dist/server/wrangler.json'),wrangler=path.join(root,'node_modules/wrangler/bin/wrangler.js'),persist=path.join(temporary,'db');
@@ -32,6 +34,9 @@ try {
   const serverRoot=path.dirname(config),moduleFiles=(await readdir(serverRoot,{recursive:true})).filter(file=>/\.(?:mjs|js)$/.test(file)&&file!==build.main);
   const modules=[build.main,...moduleFiles].map(file=>({type:'ESModule' as const,path:path.join(serverRoot,file)}));
   const snapshot=await researchFixture();snapshot.config.name='PRIVATE_FIXTURE_NAME';snapshot.asset.dataset.source='PRIVATE_FIXTURE_SOURCE';snapshot.asset.actions.source='PRIVATE_FIXTURE_EVENTS';
+  // Private-label redaction fixtures must retain valid dataset provenance.
+  snapshot.asset.dataset.id=await datasetId(snapshot.asset.dataset);
+  snapshot.config.assetId=snapshot.asset.dataset.id;snapshot.config.benchmarkId=snapshot.benchmark.dataset.id;
   const id=await researchFingerprint(snapshot),analysis=analyzeResearch(snapshot);
   const migrations=(await readdir(path.join(root,'drizzle'))).filter(v=>v.endsWith('.sql')).sort();
   let sql='';for(const migration of migrations)sql+=await readFile(path.join(root,'drizzle',migration),'utf8')+'\n';
@@ -43,7 +48,7 @@ try {
     // Run the exact production modules in workerd directly. Wrangler's extra
     // development proxy can return a spurious "restarted mid-request" 503 for
     // early rejected POSTs. No assertions or application/D1 responses are mocked.
-    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{}),...(emailEnabled?emailTestBindings:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
+    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{...replayTestBindings,WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{}),...(emailEnabled?emailTestBindings:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
     let startupTimer:ReturnType<typeof setTimeout>|undefined;
     try{await Promise.race([worker.ready,new Promise<never>((_,reject)=>{startupTimer=setTimeout(()=>reject(new Error('Worker did not start in 45 seconds')),45000);})]);}finally{clearTimeout(startupTimer);}
     return (await worker.ready).origin;
@@ -151,7 +156,9 @@ try {
   await worker!.dispose();worker=undefined;base=await start(true,true);
   const emailChecks = await testEmailDiscussion({request,providerFetch,owner,runId:id});
   assertions += emailChecks;
-  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance and invite-only discussion verified.`);
+  const replayChecks = await testHostedReplay({request,providerFetch,db:await worker!.getD1Database('DB') as unknown as D1Database,owner,visitor,runId:id});
+  assertions += replayChecks;
+  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance, invite-only discussion and bound Python replay receipts verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {
   await worker?.dispose();

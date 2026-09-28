@@ -6,25 +6,28 @@ import { validateResearchSnapshot } from '../../lib/finance/research-input.ts';
 import { ComputePool } from './pool.ts';
 import { JobRunner } from './runner.ts';
 import { loadNative } from './native.ts';
+import { PythonReplay } from './python-replay.ts';
+import { REPLAY_MAX_BYTES, REPLAY_VERSION } from '../../lib/finance/replay-receipt.ts';
 export type ServiceConfig={uri:string;database:string;secret:string;host:string;port:number;workers:number;mode:'typescript'|'cpp-verify'};
 export function configFromEnv():ServiceConfig {
   const uri=process.env.MONGODB_URI??'',database=process.env.MONGODB_DATABASE??'marketlab',secret=process.env.RESEARCH_SERVICE_SECRET??'',host=process.env.RESEARCH_HOST??'127.0.0.1',port=Number(process.env.RESEARCH_PORT??process.env.PORT??8788),workers=Number(process.env.RESEARCH_WORKERS??2),mode=process.env.RESEARCH_ENGINE??'cpp-verify';
   if(!/^mongodb(\+srv)?:\/\//.test(uri)||!/^[a-zA-Z0-9_-]{1,60}$/.test(database)||secret.length<32||!/^\S+$/.test(secret)||!Number.isSafeInteger(port)||port<1||port>65535||!Number.isSafeInteger(workers)||workers<1||workers>8||!['typescript','cpp-verify'].includes(mode))throw new Error('Invalid service configuration. Set MongoDB URI and a random service secret of at least 32 characters.');
   return {uri,database,secret,host,port,workers,mode:mode as ServiceConfig['mode']};
 }
-async function body(request:IncomingMessage){const chunks:Buffer[]=[];let size=0;for await(const chunk of request){size+=chunk.length;if(size>1024*1024+4096)throw new ServiceError('Request exceeds the snapshot limit.',413);chunks.push(Buffer.from(chunk));}return Buffer.concat(chunks);}
+async function body(request:IncomingMessage,max=1024*1024+4096){const chunks:Buffer[]=[];let size=0;for await(const chunk of request){size+=chunk.length;if(size>max)throw new ServiceError('Request exceeds the input limit.',413);chunks.push(Buffer.from(chunk));}return Buffer.concat(chunks);}
 function send(response:ServerResponse,status:number,value:unknown){response.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});response.end(JSON.stringify(value));}
 export async function createResearchService(config:ServiceConfig){
   if(config.mode==='cpp-verify')loadNative();
   const store=new JobStore(config.uri,config.database);try{await store.initialize();}catch(e){await store.close();throw e;}
-  const pool=new ComputePool(config.workers,config.mode),runner=new JobRunner(store,pool);
+  const pool=new ComputePool(config.workers,config.mode),runner=new JobRunner(store,pool),python=new PythonReplay();
   const server=createServer({maxHeaderSize:8192,requestTimeout:15000,headersTimeout:10000},async(request,response)=>{
     try{
       const method=request.method??'',target=request.url??'';
-      if(method==='GET'&&target==='/healthz'){await store.ping();send(response,200,{status:'ready',service:'marketlab-research',engine:config.mode});return;}
+      if(method==='GET'&&target==='/healthz'){await store.ping();send(response,200,{status:'ready',service:'marketlab-research',engine:config.mode,pythonReplay:REPLAY_VERSION});return;}
       if(!['GET','POST'].includes(method)||target.length>256)throw new ServiceError('Unsupported request.',405);
       if(method==='POST'&&!request.headers['content-type']?.startsWith('application/json'))throw new ServiceError('Expected JSON.',415);
-      const raw=await body(request),owner=await authenticate(config.secret,request.headers,method,target,raw,store);
+      const raw=await body(request,target==='/v1/replay'?REPLAY_MAX_BYTES:undefined),owner=await authenticate(config.secret,request.headers,method,target,raw,store);
+      if(method==='POST'&&target==='/v1/replay'){send(response,200,{receipt:await python.verify(raw)});return;}
       if(method==='POST'&&target==='/v1/jobs'){
         let snapshot;try{const input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw));if(!input||typeof input!=='object'||Object.keys(input).join(',')!=='snapshot')throw new Error('Expected one snapshot field.');snapshot=await validateResearchSnapshot(input.snapshot);}catch(e){throw new ServiceError((e as Error).message);}
         const job=await store.submit(owner,snapshot);send(response,job.status==='completed'?200:202,{job:publicJob(job)});void runner.tick();return;

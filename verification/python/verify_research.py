@@ -345,6 +345,10 @@ def read_report(path: Path) -> Any:
     with path.open("rb") as stream:
         raw = stream.read(MAX_BYTES + 1)
     require(len(raw) <= MAX_BYTES, "Report exceeds 16 MiB")
+    return parse_report(raw)
+
+
+def parse_report(raw: bytes) -> Any:
     try:
         return json.loads(raw.decode("utf-8"), object_pairs_hook=unique_object, parse_constant=reject_constant)
     except (UnicodeError, ValueError, RecursionError) as error:
@@ -353,10 +357,24 @@ def read_report(path: Path) -> Any:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("report", type=Path, help="Full report JSON exported from Research lab or the completed service job CLI")
+    parser.add_argument("report", type=Path, nargs="?", help="Full report JSON exported from Research lab or the completed service job CLI")
+    parser.add_argument("--stdin", action="store_true", help="Bounded service protocol; read one full report from stdin")
     args = parser.parse_args()
+    if bool(args.report) == args.stdin:
+        parser.error("Choose either a report file or --stdin")
     try:
-        summary = verify_report(read_report(args.report))
+        if args.stdin:
+            # Service runs on Linux. Bound memory/CPU even if the parent dies.
+            import resource
+            resource.setrlimit(resource.RLIMIT_AS, (256 * 1024 * 1024, 256 * 1024 * 1024))
+            resource.setrlimit(resource.RLIMIT_CPU, (6, 6))
+            resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
+            raw = sys.stdin.buffer.read(1_950_001)
+            require(len(raw) <= 1_950_000, "Report exceeds service replay limit")
+            summary = verify_report(parse_report(raw))
+            summary["inputDigest"] = hashlib.sha256(raw).hexdigest()
+        else:
+            summary = verify_report(read_report(args.report))
     except (VerificationError, OSError, RecursionError) as error:
         print(f"Verification failed: {error}", file=sys.stderr)
         return 1

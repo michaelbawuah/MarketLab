@@ -55,7 +55,9 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   distinct. Gateway variables were configured only after remote acceptance;
   the owner's September 27 8:52 AM screenshots confirm saved NVDA experiment
   background recomputation with nine native comparisons. This is separate from
-  the independent Python replay receipt, which remains unattached.
+  the independent Python replay receipt. The September 28 extension adds
+  owner-triggered report-bound receipts; see `docs/independent-replay.md` for
+  digest validation, sharing consent and observed acceptance boundaries.
   Milestone 12 uses the approved invite-only comments model in
   `docs/research-collaboration.md`: same redacted report, ChatGPT account-bound
   single-use invitations, retained comments on revocation, private append-only
@@ -77,7 +79,9 @@ Directory map and commands: `docs/engineering-roadmap.md` and `tests/README.md`.
   That exact configured-client issuer is now supported, with 234 built-Worker
   checks passing. On September 27 at 23:42 America/New_York, the user confirmed
   sign-in worked. The live callback at 2026-09-28T03:42:20.107Z independently
-  logged a verified email session. Email-account comment, refresh, sign-out and
-  revocation acceptance remain distinct and unconfirmed. Do not treat mocked
-  AuthKit tests as actual email delivery or completed live lifecycle checks.
+  logged a verified email session. At 23:59 America/New_York, after the explicit
+  invitation acceptance, comment, refresh, sign-out and revocation checklist,
+  the user replied "worked out." The email discussion extension is accepted
+  within that user-reported scope. Keep the observed callback and user-reported
+  lifecycle evidence distinct from automated fixtures and broader adoption.
   Preserve ChatGPT identity binding, owner isolation, and the $0 paid-spend limit.

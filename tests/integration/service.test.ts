@@ -11,6 +11,7 @@ import { createResearchService } from '../../services/research/server.ts';
 import { signResearchRequest } from '../../lib/research-signing.ts';
 import { analyzeResearch,researchFingerprint } from '../../lib/finance/research.ts';
 import { researchFixture } from '../fixtures/research.ts';
+import { replayReportJSON,replayDigest,checkedReplayReceipt } from '../../lib/finance/replay-receipt.ts';
 const uri=process.env.MONGODB_TEST_URI;if(!uri)throw new Error('MONGODB_TEST_URI is required: these tests use a real disposable MongoDB database.');
 const databaseName=()=>`marketlab_test_${randomUUID().replaceAll('-','')}`;
 test('MongoDB enforces quota and idempotency under concurrent submissions, scopes owners and validates slot bounds',async()=>{
@@ -59,6 +60,11 @@ test('signed HTTP jobs persist real worker results, reject forgery/replay and is
       let errors='';client.stderr.on('data',chunk=>{errors+=chunk;});const code=await new Promise((resolve,reject)=>{client.once('error',reject);client.once('exit',resolve);});assert.equal(code,0,errors);assert.deepEqual(JSON.parse(await readFile(output,'utf8')).analysis,analyzeResearch(snapshot));
     }finally{await rm(directory,{recursive:true,force:true});}
     const malformed=structuredClone(snapshot);malformed.asset.dataset.observations[0].priceMicros='-1';assert.equal((await request('http-owner','POST','/v1/jobs',JSON.stringify({snapshot:malformed}))).status,400);
+    const fullReport={id:submitted.job.id,snapshot,analysis:analyzeResearch(snapshot)},fullRaw=replayReportJSON(fullReport);
+    const unsigned=await fetch(origin+'/v1/replay',{method:'POST',headers:{'Content-Type':'application/json'},body:fullRaw});assert.equal(unsigned.status,401);await unsigned.arrayBuffer();
+    const verified=await request('http-owner','POST','/v1/replay',fullRaw);assert.equal(verified.status,200);
+    const receipt=(await verified.json() as {receipt:unknown}).receipt;assert.ok(checkedReplayReceipt(receipt,fullReport.id,await replayDigest(fullRaw)));
+    fullReport.analysis.full.strategy.fees='999999';const failed=await request('http-owner','POST','/v1/replay',replayReportJSON(fullReport));assert.equal(failed.status,422);assert.equal((await failed.json() as {receipt?:unknown}).receipt,undefined);
     assert.equal((await fetch(origin+'/healthz')).status,200);
   }finally{await service.close();const cleanup=new JobStore(uri,name);await cleanup.client.connect();await cleanup.client.db(name).dropDatabase();await cleanup.close();}
 });

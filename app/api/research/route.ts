@@ -1,4 +1,5 @@
 import { researchCertificate, withConfidenceCSV } from '@/lib/finance/confidence';
+import { attachReplayReceipt } from '@/lib/research-replay';
 import { database, identity, json, failure, requestBody, HttpError } from '@/lib/server';
 import { datasetFields, datasetSummary, type DatasetRow } from '@/lib/datasets';
 import type { PortfolioBinding } from '@/lib/finance/historical-portfolio';
@@ -19,7 +20,7 @@ export async function GET(request:Request) {
     if(!id){const r=await database().prepare(`SELECT ${fields} FROM research_runs WHERE owner = ? ORDER BY created DESC, id DESC`).bind(owner).all<RunSummary>();return json({runs:r.results,limit:MAX_RESEARCH_RUNS});}
     if(!/^[a-f0-9]{64}$/.test(id))throw new HttpError('Invalid research run.');
     const row=await database().prepare(`SELECT ${fields}, payload, result FROM research_runs WHERE owner = ? AND id = ?`).bind(owner,id).first<Row>();if(!row)throw new HttpError('Research run not found.',404);
-    const run=saved(row),download=url.searchParams.get('download');
+    const run=await attachReplayReceipt(database(),owner,saved(row)),download=url.searchParams.get('download');
     if(download==='json'||download==='csv')return new Response(download==='csv'?withConfidenceCSV(researchCSV(run),researchCertificate(run)):JSON.stringify({format:'marketlab-research-v1',...run,assumptions:RESEARCH_ASSUMPTIONS,confidence:researchCertificate(run)},null,2),{headers:{'Content-Type':download==='csv'?'text/csv; charset=utf-8':'application/json','Content-Disposition':`attachment; filename="marketlab-research-${id.slice(0,12)}.${download}"`,'Cache-Control':'no-store'}});
     return json({run});
   }catch(e){return failure(e);}
@@ -43,6 +44,6 @@ export async function POST(request:Request) {
     await database().prepare(`INSERT OR IGNORE INTO research_runs (owner,id,name,created,symbol,benchmark,start,end,payload,result) SELECT ?,?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM research_runs WHERE owner = ?) < ?`).bind(owner,id,config.name,created,asset.dataset.symbol,benchmark.dataset.symbol,config.start,config.end,payload,result,owner,MAX_RESEARCH_RUNS).run();
     const row=await database().prepare(`SELECT ${fields}, payload, result FROM research_runs WHERE owner = ? AND id = ?`).bind(owner,id).first<Row>();
     if(!row)throw new HttpError(`This workspace has reached its ${MAX_RESEARCH_RUNS}-run limit.`,409);
-    return json({run:saved(row),message:'Research run saved with frozen inputs and results.'});
+    return json({run:await attachReplayReceipt(database(),owner,saved(row)),message:'Research run saved with frozen inputs and results.'});
   }catch(e){return failure(e);}
 }

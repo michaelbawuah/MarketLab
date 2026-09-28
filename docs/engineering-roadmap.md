@@ -35,7 +35,7 @@ Items 1–3 establish the engineering foundation. Items 4–6 improve first use 
 adoption. Items 7–12 extend evidence, distribution and collaboration. Extra
 strategies, more asset classes and significance tests remain deferred.
 
-## Next approved extension: email sign-in
+## Completed extension: email sign-in
 
 On September 27, the user selected email sign-in for **invited discussions**.
 The WorkOS AuthKit integration is implemented and locally verified (three focused
@@ -45,12 +45,19 @@ live callback failed session validation, and version 28 still rejected the issue
 The application's live WorkOS discovery document identifies a client-specific
 issuer; that exact value is now supported and tested. On September 27 at 23:42
 America/New_York, the user confirmed sign-in worked; a live callback log also
-confirms a verified session. The email-account comment, refresh, sign-out and
-revocation checks remain outstanding. Guest access does not expand to the owner
-workspace. See
+confirms a verified session. At 23:59, the user confirmed the email-account
+invitation acceptance, comment, refresh, sign-out and revocation checklist.
+The extension is accepted on that user-reported lifecycle result plus the
+automated checks. Guest access does not expand to the owner workspace. See
 [activation and evidence boundaries](discussion-email-sign-in.md).
 
 ## Directory map
+
+The September 28 approved extension attaches independent Python verification
+to exact saved Research lab experiments. It preserves the $0 paid-spend limit,
+owner-only workspace and reviewed public summaries. See
+[implementation and acceptance boundaries](independent-replay.md). This does
+not close the outstanding public-link browser lifecycle or pilot adoption work.
 
 | Path from repository root | Responsibility |
 | --- | --- |

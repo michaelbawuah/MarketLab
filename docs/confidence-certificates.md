@@ -45,12 +45,13 @@ inputs. Provider connector provenance preserves its recorded refresh date and
 timezone. Event sources and revisions are listed; event completeness remains
 user-declared. A source label or content fingerprint is not a signature.
 
-The independent Python replay check is **Not run / No receipt attached** because
-the application does not store a per-report Python verification receipt. A
-passing project test suite is never promoted into a receipt. QA independently
-replayed two actual downloads, but did not attach those offline receipts to the
-application. Existing C++ risk comparisons in service reports retain their own
-limited scope; they are not an independent accounting replay.
+At the September 26 milestone, the independent Python check was **Not run / No
+receipt attached**. The September 28 extension adds an owner-triggered replay
+and receipt for an exact saved Research lab report. See
+[independent replay](independent-replay.md). Reports without a matching stored
+receipt still show no receipt; project tests and earlier offline QA downloads
+never become individual report evidence. Existing C++ risk comparisons retain
+their own limited scope, separate from independent accounting replay.
 
 Assumptions describe execution timing, fees/slippage, rounding, dividends,
 external flows and model exclusions as appropriate. Limitations explain that

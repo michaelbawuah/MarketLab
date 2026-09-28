@@ -9,6 +9,7 @@ COPY scripts/build-native.mjs ./scripts/build-native.mjs
 RUN node scripts/build-native.mjs && pnpm prune --prod --ignore-scripts
 
 FROM node:24.19.0-bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ARG SOURCE_COMMIT=unknown
 ENV NODE_ENV=production RESEARCH_HOST=0.0.0.0 RESEARCH_ENGINE=cpp-verify RESEARCH_BUILD_REVISION=$SOURCE_COMMIT
@@ -18,6 +19,7 @@ COPY package.json ./
 COPY lib/finance ./lib/finance
 COPY lib/research-signing.ts ./lib/research-signing.ts
 COPY services/research ./services/research
+COPY verification/python/verify_research.py ./verification/python/verify_research.py
 COPY scripts/staging ./scripts/staging
 COPY tests/fixtures/research.ts ./tests/fixtures/research.ts
 USER node

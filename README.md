@@ -13,7 +13,7 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
   moderate comments, and database triggers retain an append-only audit trail.
   The ChatGPT two-person comment/revocation check passed as user-reported evidence.
   Email sign-in through WorkOS Staging is confirmed by the user and live callback
-  log; the email-account comment/revocation check remains outstanding.
+  log; the user also confirmed the email-account comment/revocation checklist.
   [Discussion model](docs/research-collaboration.md) · [Email sign-in and evidence](docs/discussion-email-sign-in.md).
 
 - Selectable buy, sell, split and dividend markers on Research lab equity curves,
@@ -183,6 +183,12 @@ See [portfolio-benchmark.md](docs/portfolio-benchmark.md) for timing, limits, ha
 
 ## Independent Python verification
 
+Saved Research lab experiments now offer **Run independent replay**. Successful
+checks attach a receipt bound to both the frozen inputs and results; the
+confidence certificate and downloads show its timestamp and scope. Existing
+public summaries change only after a new sharing review. See
+[receipt binding and acceptance boundaries](docs/independent-replay.md).
+
 Python 3.11+ independently replays exported Research lab experiments using only its standard library. Exact cash/share/trade results and input hashes must agree; floating risk/return metrics use documented tolerances. It does not call TypeScript or verify market-data authenticity.
 
 ```sh
@@ -212,6 +218,7 @@ The verifier is supporting tooling; TypeScript remains the application core. See
 | `POST /api/portfolio` | Preview or save a complete historical ledger and its bound inputs |
 | `GET /api/research` | List owned runs; `id` opens one; `download=json` or `csv` exports |
 | `POST /api/research` | Preview or save an immutable experiment, with preview fingerprint verification |
+| `POST /api/research/replay` | Owner-only Python replay of a saved report, with a bound persisted receipt |
 
 Production requires platform authentication. A development-only identity supports the internal preview. User identity is never accepted from a transaction request body.
 

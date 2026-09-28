@@ -33,7 +33,7 @@ jobs:
           done
       - name: Build the production image and wait for readiness
         run: docker compose -f compose.research.yml up --build --detach --wait --wait-timeout 120
-      - name: Verify authenticated HTTP, native parity and process-crash recovery
+      - name: Verify signed HTTP, native/Python parity and process-crash recovery
         run: |
           docker compose -f compose.research.yml exec -T -e RESEARCH_DEPLOYMENT_STAGE=ci research node --experimental-strip-types scripts/staging/check.ts ci /tmp/marketlab-ci-acceptance.json
           mkdir -p outputs/research-container

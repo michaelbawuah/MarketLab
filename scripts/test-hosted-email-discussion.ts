@@ -53,6 +53,7 @@ export async function testEmailDiscussion({ request, providerFetch, owner, runId
   await request(api, 200, { headers: guest });
   await request(api, 200, post({ action: 'accept' }, guest));
   await request(api, 200, post({ action: 'comment', id: crypto.randomUUID(), body: 'Email guest question' }, guest));
+  await request('/api/research/replay',401,post({id:runId},guest));
   const thread = await (await request(api, 200, { headers: guest })).json() as { comments: { authorName: string; body: string }[] };
   assert.equal(thread.comments[0].authorName, 'Invited reader'); assert.equal(thread.comments[0].body, 'Email guest question'); assert.ok(!JSON.stringify(thread).includes(profile.email)); checks += 3;
   for (const route of ['/api/workspace', '/api/research', '/api/research/discussion']) await request(route, 401, { headers: guest });

@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync,readdirSync } from 'node:fs';
 import { analyzeResearch,researchFingerprint } from '../../lib/finance/research.ts';
-import { sharingPreview,createShare,revokeShare,readShare,ShareError } from '../../lib/research-sharing.ts';
+import { sharingPreview,createShare,revokeShare,readShare,ShareError,ownedResearch } from '../../lib/research-sharing.ts';
 import { researchFixture } from '../fixtures/research.ts';
+import { saveReplayReceipt,attachReplayReceipt } from '../../lib/research-replay.ts';
+import { replayReportJSON,checkedReplayReceipt } from '../../lib/finance/replay-receipt.ts';
+import { PythonReplay } from '../../services/research/python-replay.ts';
 
 // Execute the actual generated schema and production prepared statements in
 // SQLite. Worker/dispatcher behavior is checked separately against a built Worker.
@@ -27,6 +30,28 @@ async function setup() {
   return {sqlite,db,id,now,preview,input:{id,revision:0,digest:preview.digest,days:7,confirmed:true}};
 }
 const rejected=(status:number)=>(e:unknown)=>e instanceof ShareError&&e.status===status;
+test('real replay receipts survive reads, isolate owners, reject stale rows and require fresh sharing consent',async()=>{
+  const f=await setup();try{
+    const run=await ownedResearch(f.db,'owner-a',f.id),link=await createShare(f.db,'owner-a',f.input,f.now),token=link.path.split('/').at(-1)!;
+    const receipt=await new PythonReplay().verify(Buffer.from(replayReportJSON(run)));
+    assert.deepEqual(await saveReplayReceipt(f.db,'owner-a',run,receipt),receipt);
+    assert.deepEqual((await ownedResearch(f.db,'owner-a',f.id)).replayReceipt,receipt);
+    assert.equal((await attachReplayReceipt(f.db,'owner-b',{...run,replayReceipt:receipt})).replayReceipt,undefined);
+    const next=await sharingPreview(f.db,'owner-a',f.id,f.now);assert.notEqual(next.digest,f.preview.digest);
+    assert.equal(next.report.certificates.full.checks.find(c=>c.id==='independent-replay')?.status,'passed');
+    assert.equal(next.report.certificates.holdout.independentReplay?.comparedFields,receipt.comparedFields);
+    const redacted=JSON.stringify(next.report);assert.ok(!redacted.includes(f.id));assert.ok(!redacted.includes(receipt.reportDigest));assert.ok(!redacted.includes('Private name'));
+    assert.deepEqual((await readShare(f.db,token,f.now))?.report,f.preview.report,'Published summaries remain frozen');
+    await assert.rejects(createShare(f.db,'owner-a',{...f.input,revision:1},f.now),rejected(409));
+    const changed=structuredClone(run);changed.analysis.full.strategyRisk.volatilityPct=999;
+    f.sqlite.prepare('UPDATE research_runs SET result=? WHERE owner=? AND id=?').run(JSON.stringify(changed.analysis),'owner-a',f.id);
+    assert.equal((await ownedResearch(f.db,'owner-a',f.id)).replayReceipt,undefined);
+    assert.equal((await sharingPreview(f.db,'owner-a',f.id,f.now)).report.certificates.full.independentReplay,undefined);
+    assert.equal(await saveReplayReceipt(f.db,'owner-a',run,receipt),null,'The receipt write must fence the report sent for checking');
+    assert.equal(await saveReplayReceipt(f.db,'owner-a',changed,receipt),null);
+    for(const patch of [{verified:false},{reportId:'b'.repeat(64)},{comparedFields:NaN},{verifiedAt:'2100-01-01T00:00:00.000Z'},{floatRelativeTolerance:.1},{extra:true}])assert.equal(checkedReplayReceipt({...receipt,...patch},receipt.reportId,receipt.reportDigest),null);
+  }finally{f.sqlite.close();}
+});
 test('new sharing requires consent, the reviewed digest and ownership',async()=>{
   const f=await setup();try{
     await assert.rejects(createShare(f.db,'owner-a',{...f.input,confirmed:false},f.now),rejected(400));

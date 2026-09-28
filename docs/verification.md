@@ -584,3 +584,25 @@ This checkpoint updates documentation only. The existing public-link lifecycle
 check, real customer brokerage-import evidence and unattached independent Python
 receipt retain their separate recorded status. No financial calculation,
 authorization rule, runtime configuration or service deployment changed.
+# September 28: attached independent Python replay
+
+The owner-triggered saved-report replay and receipt flow is implemented; see
+[binding and product behavior](independent-replay.md). The complete local
+`pnpm test:service:local --ci` gate passed against disposable MongoDB 8.0.17:
+type checking, lint, native build, 130 unit tests, 19 integration tests,
+4 native cross-check tests, 11 Python rejection tests, 10 freshly generated
+reports with 67,044 scalar comparisons, production build and 274 built-Worker
+HTTP/header/content assertions. Tests used fictional inputs only.
+
+The new tests execute the real Python process, signed service HTTP endpoint
+and generated D1 schema. Worker transport is mocked, with its streamed request
+body checked against the exact report actually replayed in Python. Earlier
+local attempts exposed two harness issues: changing a private source label
+required recomputing its dataset ID, and the mock receives a ReadableStream
+rather than a string. Those fixtures were corrected; application validation
+was preserved, and the final complete gate passed.
+
+Publication, remote CI and the owner's live replay click are distinct evidence.
+At this source checkpoint remote verification is pending. The separate
+public-link anonymous browser lifecycle remains outstanding. No new browser
+QA was claimed; managed preview browser control was unavailable in this turn.

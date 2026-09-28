@@ -1,5 +1,6 @@
 import { publicResearch, shareDigest, type SharedResearch } from './finance/shared-research.ts';
 import type { SavedResearch } from './finance/research.ts';
+import { attachReplayReceipt } from './research-replay.ts';
 
 export class ShareError extends Error { status:number; constructor(message:string,status=400){super(message);this.status=status;} }
 type ShareRow={owner:string;run_id:string;token_hash:string;created:string;expires:string;revoked:string|null;revision:number;report:string;digest:string};
@@ -11,7 +12,7 @@ export async function ownedResearch(db:D1Database,owner:string,id:string):Promis
   if(!validId(id))throw new ShareError('Experiment not found.',404);
   const r=await db.prepare('SELECT id,name,created,symbol,benchmark,start,end,payload,result FROM research_runs WHERE owner = ? AND id = ?').bind(owner,id).first<RunRow>();
   if(!r)throw new ShareError('Experiment not found.',404);
-  return {id:r.id,name:r.name,created:r.created,symbol:r.symbol,benchmark:r.benchmark,start:r.start,end:r.end,snapshot:JSON.parse(r.payload),analysis:JSON.parse(r.result)};
+  return attachReplayReceipt(db,owner,{id:r.id,name:r.name,created:r.created,symbol:r.symbol,benchmark:r.benchmark,start:r.start,end:r.end,snapshot:JSON.parse(r.payload),analysis:JSON.parse(r.result)});
 }
 export async function sharingPreview(db:D1Database,owner:string,id:string,now=new Date()) {
   const run=await ownedResearch(db,owner,id),report=publicResearch(run),body=JSON.stringify(report);

@@ -18,7 +18,8 @@ or schema migration is required. There are no invitation emails or notifications
 
 The integration is **disabled by default**. It is currently enabled with WorkOS
 Staging. Live sign-in is confirmed by the owner and a verified-session callback
-log; the remaining email-account discussion lifecycle checks are still pending.
+log. The owner also reported completing the email-account discussion lifecycle
+check at 23:59 America/New_York on September 27.
 Until all configuration is present and the flag is enabled, the email button is
 hidden and its endpoints return 404. ChatGPT sign-in continues to work.
 
@@ -193,6 +194,29 @@ browser behavior. Email-account invitation acceptance, comment, refresh,
 sign-out and access denial after revocation remain separate live checks. Their
 automated coverage passed in the 234-assertion local Worker run. WorkOS remains
 on Staging; no production activation or paid feature was enabled.
+
+## User-reported discussion acceptance — September 27, 2026
+
+After the live sign-in confirmation, the owner was asked to accept an invitation
+with the email account, post a comment, refresh, sign out, then revoke the
+invitation from the owner account and confirm the link no longer granted access.
+At 23:59:20 America/New_York, the owner replied, "worked out, now whats next."
+
+The email discussion extension is accepted within this user-reported scope.
+The later discussion steps were not independently observed in a browser or
+production audit extract. The verified callback log, this user confirmation and
+the 234-assertion local Worker suite remain separate forms of evidence. This
+does not establish broader adoption, production WorkOS activation, or the
+separate anonymous public-report link lifecycle.
+
+The implementation checkpoint
+[`2024fd3`](https://github.com/michaelbawuah/MarketLab/commit/2024fd3c61c34de35e81afa44c6f329c0f14b06b)
+passed [Research container acceptance](https://github.com/michaelbawuah/MarketLab/actions/runs/36375232375)
+and [Engineering verification](https://github.com/michaelbawuah/MarketLab/actions/runs/36375232323).
+Engineering passed on attempt 2; attempt 1 passed the calculation checks but
+stopped on `ECONNRESET` in the local Worker harness. The same 234 Worker assertions
+also passed locally on a repeat. No application code was changed for the retry.
+The staging rebuild for this source passed its configured readiness check.
 
 ## Official implementation references
 

@@ -7,7 +7,7 @@ export const MAX_RESEARCH_RUNS = 30;
 export type ResearchDraft = { name:string; assetId:string; benchmarkId:string; start:string; end:string; holdoutStart:string; window:number; initialCash:string; feeBps:number; slippageBps:number; confirmed:boolean };
 export type ResearchSnapshot = { method:typeof RESEARCH_METHOD; config:ResearchDraft; asset:PortfolioBinding; benchmark:PortfolioBinding };
 export type RunSummary = { id:string; name:string; created:string; symbol:string; benchmark:string; start:string; end:string };
-export type SavedResearch = RunSummary & { snapshot:ResearchSnapshot; analysis:ResearchAnalysis };
+export type SavedResearch = RunSummary & { snapshot:ResearchSnapshot; analysis:ResearchAnalysis; replayReceipt?:import('./replay-receipt.ts').ReplayReceipt };
 type Fraction = { n:bigint; d:bigint };
 function fraction(n:bigint,d=1n):Fraction { let a=n<0n?-n:n,b=d;while(b){const t=a%b;a=b;b=t;}return {n:n/(a||1n),d:d/(a||1n)}; }
 function add(a:Fraction,b:Fraction){return fraction(a.n*b.d+b.n*a.d,a.d*b.d);}
