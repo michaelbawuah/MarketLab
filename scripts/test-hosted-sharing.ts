@@ -13,6 +13,7 @@ import { datasetId } from '../lib/finance/market-data.ts';
 import { testDiscussion } from './test-hosted-discussion.ts';
 import { emailTestBindings, testEmailDiscussion } from './test-hosted-email-discussion.ts';
 import { replayTestBindings,testHostedReplay } from './test-hosted-replay.ts';
+import { testPersonalWorkspaces } from './test-hosted-workspaces.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),temporary=await mkdtemp(path.join(tmpdir(),'marketlab-hosted-'));
 const config=path.join(temporary,'dist/server/wrangler.json'),wrangler=path.join(root,'node_modules/wrangler/bin/wrangler.js'),persist=path.join(temporary,'db');
@@ -48,7 +49,7 @@ try {
     // Run the exact production modules in workerd directly. Wrangler's extra
     // development proxy can return a spurious "restarted mid-request" 503 for
     // early rejected POSTs. No assertions or application/D1 responses are mocked.
-    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{...replayTestBindings,WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{}),...(emailEnabled?emailTestBindings:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
+    worker=new Miniflare({name:build.name,modules,modulesRoot:serverRoot,compatibilityDate:build.compatibility_date,compatibilityFlags:build.compatibility_flags,bindings:{...replayTestBindings,ALPHA_VANTAGE_API_KEY:providerKey,WORKSPACE_OWNER_EMAIL:'owner@marketlab.test',...(sharingEnabled?{PUBLIC_REPORT_SHARING_ENABLED:'true'}:{}),...(emailEnabled?emailTestBindings:{})},d1Databases:{DB:databaseId!},d1Persist:path.join(persist,'v3/d1'),assets:{directory:path.resolve(serverRoot,build.assets.directory),routerConfig:{has_user_worker:true}},fetchMock:providerFetch,host:'127.0.0.1',port:0,cf:false,log:new Log(LogLevel.ERROR)});
     let startupTimer:ReturnType<typeof setTimeout>|undefined;
     try{await Promise.race([worker.ready,new Promise<never>((_,reject)=>{startupTimer=setTimeout(()=>reject(new Error('Worker did not start in 45 seconds')),45000);})]);}finally{clearTimeout(startupTimer);}
     return (await worker.ready).origin;
@@ -66,16 +67,19 @@ try {
     return new Response(body,{status:r.status,statusText:r.statusText,headers:r.headers});
   }
   for(const route of ['/api/workspace','/api/datasets','/api/actions','/api/portfolio','/api/provider','/api/report','/api/research','/api/research/jobs','/api/research/shares']) {
-    await request(route,401);await request(route,403,{headers:visitor});
+    await request(route,401);
   }
-  const anonymous=await (await request('/',200)).text();assert.ok(anonymous.includes('Sign in with ChatGPT'));assert.ok(!anonymous.includes('PRIVATE_FIXTURE'));assertions+=2;
-  const outsider=await (await request('/',200,{headers:visitor})).text();assert.ok(outsider.includes('This workspace is private'));assertions++;
+  const anonymous=await (await request('/',200)).text();assert.ok(anonymous.includes('What happens to $10,000?'));assert.ok(!anonymous.includes('PRIVATE_FIXTURE'));assertions+=2;
+  const outsider=await (await request('/',200,{headers:visitor})).text();assert.ok(outsider.includes('Personal workspace') && !outsider.includes('PRIVATE_FIXTURE'));assertions++;
   const api=await request('/api/research?id='+id,200,{headers:owner});assert.equal((await api.json() as {run:{name:string}}).run.name,'PRIVATE_FIXTURE_NAME');assertions++;
   const preview=await (await request('/api/research/shares?id='+id,200,{headers:owner})).json() as {digest:string;report:unknown;status:{revision:number};enabled:boolean};
   assert.ok(!JSON.stringify(preview.report).includes('PRIVATE_FIXTURE'));assertions++;
   const body={action:'create',id,revision:preview.status.revision,digest:preview.digest,days:7,confirmed:true};
   const post=(payload:unknown,headers:Record<string,string>=owner)=>({method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(payload)});
   const providerRequest={symbol:'NVDA',mode:'key',apiKey:providerKey};
+  assert.equal((await (await request('/api/provider',200,{headers:owner})).json() as {configured:boolean}).configured,true);
+  assert.equal((await (await request('/api/provider',200,{headers:visitor})).json() as {configured:boolean}).configured,false);assertions+=2;
+  await request('/api/provider',400,post({symbol:'NVDA',mode:'configured'},visitor));
   await request('/api/provider',401,post(providerRequest,{}));
   await request('/api/provider',403,post(providerRequest,{...owner,origin:'https://unrelated.example.test'}));
   const providerFailure=await (await request('/api/provider',429,post(providerRequest))).json() as {diagnostic:{upstreamStatus:number;providerNotice:string}};
@@ -90,7 +94,7 @@ try {
   // client-supplied, are validated again, and cannot claim server provenance.
   const browserRoute='/api/provider/browser',browserStart={action:'start',symbol:'NVDA'};
   await request(browserRoute,401,post(browserStart,{}));
-  await request(browserRoute,403,post(browserStart,visitor));
+  await request(browserRoute,201,post(browserStart,visitor));
   await request(browserRoute,403,post(browserStart,{...owner,origin:'https://unrelated.example.test'}));
   await request(browserRoute,400,post({...browserStart,apiKey:'SHOULD_NOT_BE_ACCEPTED'}));
   await request(browserRoute,429,post(browserStart));
@@ -130,7 +134,7 @@ try {
   await request('/api/research/shares',503,post(body));
   await worker!.dispose();worker=undefined;base=await start(true);
   const example=await (await request('/example',200)).text();
-  assert.ok(example.includes('PUBLIC FICTIONAL EXAMPLE'));assert.ok(!example.includes('PRIVATE_FIXTURE'));assertions+=2;
+  assert.ok(example.includes('SAMPLE REPORT') && example.includes('FICTIONAL EXAMPLE'));assert.ok(!example.includes('PRIVATE_FIXTURE'));assertions+=2;
   const enabledPreview=await (await request('/api/research/shares?id='+id,200,{headers:owner})).json() as typeof preview;
   assert.equal(enabledPreview.enabled,true);assertions++;
   await request('/api/research/shares',401,post(body,{}));
@@ -140,7 +144,7 @@ try {
   const token=created.path.split('/').at(-1)!,publicApi=await request('/api/shared/'+token,200);
   for(const [header,pattern] of [['cache-control',/no-store/],['referrer-policy',/^no-referrer$/],['x-robots-tag',/noindex/],['content-security-policy',/frame-ancestors 'none'/]] as const){assert.match(publicApi.headers.get(header)??'',pattern,header);assertions++;}
   const summary=await publicApi.json() as {report:unknown};assert.deepEqual(summary.report,preview.report);assertions++;
-  const page=await request(created.path,200),html=await page.text();assert.ok(html.includes('READ-ONLY REPORT'));assert.ok(!html.includes('PRIVATE_FIXTURE'));assert.match(page.headers.get('cache-control')??'',/no-store/);assertions+=3;
+  const page=await request(created.path,200),html=await page.text();assert.ok(html.includes('SHARED REPORT'));assert.ok(!html.includes('PRIVATE_FIXTURE'));assert.match(page.headers.get('cache-control')??'',/no-store/);assertions+=3;
   await request('/api/shared/'+token,405,post({}));
   await request('/api/research/shares',409,post(body));
   await worker!.dispose();worker=undefined;base=await start(false);
@@ -150,6 +154,7 @@ try {
   await request('/api/research/shares',200,post({action:'revoke',id,revision:created.status.revision}));
   await request('/api/shared/'+token,404);
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
+  assertions += await testPersonalWorkspaces({request,owner,visitor,privateRunId:id});
   const discussionChecks = await testDiscussion({request,db:await worker!.getD1Database('DB') as unknown as D1Database,base,owner,visitor,runId:id});
   assertions += discussionChecks;
   await request('/api/discussion-auth/start?return_to=' + encodeURIComponent('/discussion/' + 'a'.repeat(64)),404);
@@ -158,7 +163,7 @@ try {
   assertions += emailChecks;
   const replayChecks = await testHostedReplay({request,providerFetch,db:await worker!.getD1Database('DB') as unknown as D1Database,owner,visitor,runId:id});
   assertions += replayChecks;
-  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, owner-only APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance, invite-only discussion and bound Python replay receipts verified.`);
+  console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, account-scoped APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance, invite-only discussion and bound Python replay receipts verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');
 }finally {
   await worker?.dispose();

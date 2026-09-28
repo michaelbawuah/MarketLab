@@ -1,4 +1,5 @@
 'use client';
+import { friendlyError } from '@/lib/client-errors';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CloudDownload, Database, RefreshCw, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,9 @@ export default function StockExplorer({ onOpenDataset }: { onOpenDataset: (id: s
         if (controller.signal.aborted) return;
         setDatasets(saved); setError('');
         const requested = result.datasets.find(d => d.id === importedId.current);
-        if (requested) setSelected(requested.symbol);
+        if (requested) setSelected(requested.symbol); else setSelected(current=>saved.some(d=>d.symbol===current)?current:saved[0]?.symbol??current);
         importedId.current = null;
-      } catch (e) { if (!controller.signal.aborted) setError((e as Error).message); }
+      } catch (e) { if (!controller.signal.aborted) setError(friendlyError(e)); }
       finally { if (!controller.signal.aborted) setLoading(false); }
     }
     void load();
@@ -45,26 +46,26 @@ export default function StockExplorer({ onOpenDataset }: { onOpenDataset: (id: s
   const change = latest && previous ? Number(BigInt(latest.priceMicros) - BigInt(previous.priceMicros)) / Number(previous.priceMicros) * 100 : null;
   const matches = providerSymbols.filter(s => `${s} ${companies[s]}`.toLowerCase().includes(search.toLowerCase().trim()));
   return <div className="research-workspace market-explorer">
-    <div className="market-intro"><span className="provider-icon"><CloudDownload size={24}/></span><div><h2>Market prices, with their source.</h2><p>Explore daily closes saved through your Alpha Vantage connection. Every price carries its observation date. Fetch on demand to update your snapshots.</p></div><span className="provider-tag">DAILY CLOSES</span></div>
-    <div className="market-tools"><div className="search-field"><Search size={17}/><Input aria-label="Search market symbols" placeholder="Search company or symbol…" value={search} onChange={e => setSearch(e.target.value)}/></div><span>{datasets.length} of {providerSymbols.length} symbols saved</span><Button variant="outline" onClick={() => reload()} disabled={loading}><RefreshCw size={16} className={loading ? 'animate-spin' : ''}/> Reload saved prices</Button></div>
+    <div className="market-intro"><span className="provider-icon"><CloudDownload size={24}/></span><div><h2>Find a company. Explore its history.</h2><p>Choose a stock to see its saved daily prices. Load new prices when you’re ready to update.</p></div><span className="provider-tag">DAILY CLOSES</span></div>
+    <div className="market-tools"><div className="search-field"><Search size={17}/><Input aria-label="Search market symbols" placeholder="Search company or symbol…" value={search} onChange={e => setSearch(e.target.value)}/></div><span>{datasets.length} of {providerSymbols.length} symbols saved</span><Button variant="outline" onClick={() => reload()} disabled={loading}><RefreshCw size={16} className={loading ? 'animate-spin' : ''}/> Refresh view</Button></div>
     {error && <div className="error-banner" role="alert">{error} Previously loaded snapshots keep their original dates. <button onClick={() => reload()}>Retry</button></div>}
     {loading && <p className="research-muted" role="status">Loading saved provider prices…</p>}
     <div className="market-grid">{matches.map(symbol => {
       const saved = datasets.find(d => d.symbol === symbol), close = saved?.observations.at(-1);
       return <button className={`panel market-card ${symbol === selected ? 'is-selected' : ''}`} key={symbol} onClick={() => setSelected(symbol)} aria-pressed={symbol === selected}>
         <div className="market-card-heading"><span className="asset-monogram">{symbol[0]}</span><span><strong>{symbol}</strong><small>{companies[symbol]}</small></span><ArrowRight size={16}/></div>
-        {close ? <><strong className="market-card-price">{price(close.priceMicros)}</strong><span className="market-card-date">Close · {close.date}</span><small className="market-card-source">Alpha Vantage · {saved?.origin === 'alphavantage-browser' ? 'browser import' : 'server fetch'}</small></> : <><strong className="market-card-empty">{loading ? 'Loading…' : error ? 'Unavailable' : 'Not fetched yet'}</strong><span className="market-card-date">{symbol === 'IBM' ? 'Public provider access available' : 'Provider key required to fetch'}</span><small className="market-card-source">Select to view fetch options</small></>}
+        {close ? <><strong className="market-card-price">{price(close.priceMicros)}</strong><span className="market-card-date">Close · {close.date}</span><small className="market-card-source">Alpha Vantage · {saved?.origin === 'alphavantage-browser' ? 'browser import' : 'server fetch'}</small></> : <><strong className="market-card-empty">{loading ? 'Loading…' : error ? 'Unavailable' : 'Add prices'}</strong><span className="market-card-date">{symbol === 'IBM' ? 'No key needed for this example' : 'Connect your price provider'}</span><small className="market-card-source">Select to get started</small></>}
       </button>;
     })}</div>
     {!matches.length && <div className="panel empty-state">No supported symbols match “{search}”. Try NVIDIA or IBM.</div>}
     {dataset && latest ? <section className="panel market-detail">
-      <div className="panel-heading"><div><h2>{selected} · {companies[selected]}</h2><p>Saved daily history · {dataset.firstDate} → {dataset.lastDate}</p></div><Button variant="outline" onClick={() => onOpenDataset(dataset.id)}><Database size={16}/> Dataset & provenance</Button></div>
-      <div className="market-quote"><div><span>Unadjusted daily close · USD</span><strong>{price(latest.priceMicros)}</strong><small>Observation date: {latest.date}</small></div>{previous && change !== null && <div><span>Change from previous observation</span><strong className={change >= 0 ? 'positive' : 'negative'}>{percent(change)}</strong><small>{previous.date} → {latest.date} · excludes dividends</small></div>}</div>
+      <div className="panel-heading"><div><h2>{selected} · {companies[selected]}</h2><p>Saved daily history · {dataset.firstDate} → {dataset.lastDate}</p></div><Button variant="outline" onClick={() => onOpenDataset(dataset.id)}><Database size={16}/> View price history</Button></div>
+      <div className="market-quote"><div><span>Closing price · USD</span><strong>{price(latest.priceMicros)}</strong><small>Price as of {latest.date}</small></div>{previous && change !== null && <div><span>Change since the previous close</span><strong className={change >= 0 ? 'positive' : 'negative'}>{percent(change)}</strong><small>{previous.date} → {latest.date} · excludes dividends</small></div>}</div>
       <ResearchChart key={dataset.id} dataset={dataset}/>
-      <dl className="market-source"><div><dt>Source</dt><dd>{dataset.source}</dd></div><div><dt>Saved (UTC)</dt><dd>{dataset.created.replace('T', ' ').slice(0, 19)}</dd></div><div><dt>Provider refreshed</dt><dd>{dataset.providerRefreshed} · {dataset.providerTimezone}</dd></div></dl>
-      <div className="research-chart-note">{dataset.origin === 'alphavantage-browser' && 'Browser import: prices were validated, but the provider response is not independently authenticated. '}This is a saved close, not a live quote. The newest observation available in your saved snapshots is shown. Lines connect supplied observations without filling gaps. Unadjusted changes can reflect stock splits.</div>
-    </section> : !loading && <section className="panel market-empty"><CloudDownload size={28}/><div><h2>{selected} · {error ? 'Price unavailable' : 'Ready for market data'}</h2><p>{error ? 'Reload saved prices or check the provider connection below.' : selected === 'IBM' ? 'Fetch IBM below using the provider’s public demo key. Its prices come from Alpha Vantage.' : `Fetch ${selected} below with a one-time or configured Alpha Vantage key. No provider price has been saved for this symbol.`}</p></div></section>}
+      <details className="product-details"><summary>Price source & details</summary><dl className="market-source"><div><dt>Source</dt><dd>{dataset.source}</dd></div><div><dt>Saved (UTC)</dt><dd>{dataset.created.replace('T', ' ').slice(0, 19)}</dd></div><div><dt>Provider refreshed</dt><dd>{dataset.providerRefreshed} · {dataset.providerTimezone}</dd></div></dl>
+      <div className="research-chart-note">{dataset.origin === 'alphavantage-browser' && 'Browser import: prices were validated, but the provider response is not independently authenticated. '}This is a saved close, not a live quote. The newest observation available in your saved snapshots is shown. Lines connect supplied observations without filling gaps. Unadjusted changes can reflect stock splits.</div></details>
+    </section> : !loading && <section className="panel market-empty"><CloudDownload size={28}/><div><h2>{selected} · {error ? 'Price unavailable' : 'Add price history'}</h2><p>{error ? 'Refresh view or check the provider connection below.' : selected === 'IBM' ? 'Choose Load IBM prices below to get started. No provider key is needed.' : `Connect Alpha Vantage below to load ${selected} prices, or import a CSV in Prices & data.`}</p></div></section>}
     <ProviderConnection requestedSymbol={selected} onImported={id => reload(id)} onViewDataset={onOpenDataset}/>
-    <p className="research-muted">CSV imports remain available in Historical data. Demo portfolio prices belong to the separate Demo section.</p>
+    <p className="research-muted">Daily closing prices, not live quotes. The date beside each price tells you when it was recorded.</p>
   </div>;
 }

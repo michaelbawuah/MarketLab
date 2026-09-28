@@ -1,5 +1,11 @@
 # Release verification
 
+## Consumer experience — September 28 request
+
+The consumer redesign, observed browser checks and precise release-test scope
+are recorded in [consumer experience](consumer-experience.md). The unchanged
+Node/MongoDB service was not redeployed.
+
 ## Exact-money demonstration and milestones 6–8 checkpoint — September 26, 2026
 
 - Added two fictional examples to Methodology: a valid 20¢ payment rejected by
@@ -606,3 +612,14 @@ Publication, remote CI and the owner's live replay click are distinct evidence.
 At this source checkpoint remote verification is pending. The separate
 public-link anonymous browser lifecycle remains outstanding. No new browser
 QA was claimed; managed preview browser control was unavailable in this turn.
+
+## September 28 personal-workspace extension
+
+The former database-startup blocker is resolved: restoring the full, checksum-
+matched MongoDB 8.0.17 executable allowed all 19 integration tests to pass.
+135 unit tests, four native tests, 11 Python tests, 67,044 cross-language
+comparisons and 314 built-Worker checks passed alongside typecheck and lint.
+New account isolation, email workspace creation, durable save/return, exports,
+provider-key separation and share replacement/revocation are covered. Browser
+preview also saved/reloaded the practice portfolio and downloaded matching JSON
+and CSV backtest reports. See [full scope and live limits](personal-workspaces.md).

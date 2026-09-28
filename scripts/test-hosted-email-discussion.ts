@@ -49,14 +49,31 @@ export async function testEmailDiscussion({ request, providerFetch, owner, runId
   const setCookie = authenticated.headers.getSetCookie().find(c => c.startsWith(EMAIL_SESSION_COOKIE + '='));
   assert.ok(setCookie); assert.match(setCookie, /HttpOnly; Secure; SameSite=Lax/); checks += 2;
   const cookie = setCookie.split(';')[0], guest = { cookie };
+  // A newly verified email account can create its own workspace, independently
+  // of an invitation or a ChatGPT account with the same email address.
+  const rootLogin=await request('/api/discussion-auth/start?return_to=%2F',303,{redirect:'manual'});
+  const rootUrl=new URL(rootLogin.headers.get('location')!),rootFlow=rootLogin.headers.getSetCookie()[0].split(';')[0];
+  providerFetch.get('https://api.workos.com').intercept({method:'POST',path:'/user_management/authenticate'}).reply(200,authResponse(),{headers:{'content-type':'application/json'}});
+  const rootCallback=await request('/api/discussion-auth/callback?code=workspace-code&state='+rootUrl.searchParams.get('state'),303,{redirect:'manual',headers:{cookie:rootFlow}});
+  assert.equal(rootCallback.headers.get('location'),'/');checks++;
+  const home=await request('/',200,{headers:guest});assert.match(home.headers.get('cache-control')??'',/no-store/);assert.ok((await home.text()).includes(profile.email));checks+=2;
+  const portfolioDraft={name:'Email member portfolio',asOf:'2026-09-18',csv:'id,date,type,symbol,shares,amount,fee,reference\nfund,2026-09-18,deposit,,0,123.45,0,\n',bindings:[],confirmed:true};
+  const personalPreview=await (await request('/api/portfolio',200,post({mode:'preview',revision:0,draft:portfolioDraft},guest))).json() as {fingerprint:string};
+  await request('/api/portfolio',201,post({mode:'save',revision:0,draft:portfolioDraft,fingerprint:personalPreview.fingerprint},guest));
+  const personal=await (await request('/api/portfolio',200,{headers:{...owner,...guest}})).json() as {portfolio:{snapshot:{name:string}};analysis:{value:string}};
+  assert.equal(personal.portfolio.snapshot.name,'Email member portfolio');assert.equal(personal.analysis.value,'12345');checks+=2;
+  const separate=await (await request('/api/portfolio',200,{headers:{'oai-authenticated-user-id':'same-email-chatgpt','oai-authenticated-user-email':profile.email}})).json() as {portfolio:unknown};
+  assert.equal(separate.portfolio,null);checks++;
+  await request('/api/portfolio',401,{headers:{...owner,cookie:`${EMAIL_SESSION_COOKIE}=tampered`}});
   assert.ok(!(await (await request(invite.path, 200, { headers: guest })).text()).includes('Continue with email')); checks++;
   await request(api, 200, { headers: guest });
   await request(api, 200, post({ action: 'accept' }, guest));
   await request(api, 200, post({ action: 'comment', id: crypto.randomUUID(), body: 'Email guest question' }, guest));
-  await request('/api/research/replay',401,post({id:runId},guest));
+  await request('/api/research/replay',404,post({id:runId},guest));
   const thread = await (await request(api, 200, { headers: guest })).json() as { comments: { authorName: string; body: string }[] };
   assert.equal(thread.comments[0].authorName, 'Invited reader'); assert.equal(thread.comments[0].body, 'Email guest question'); assert.ok(!JSON.stringify(thread).includes(profile.email)); checks += 3;
-  for (const route of ['/api/workspace', '/api/research', '/api/research/discussion']) await request(route, 401, { headers: guest });
+  for (const route of ['/api/workspace', '/api/research']) await request(route, 200, { headers: guest });
+  await request('/api/research/discussion?id='+runId,404,{headers:guest});
   await request(api, 404, { headers: { 'oai-authenticated-user-id': 'same-email-chatgpt', 'oai-authenticated-user-email': profile.email } });
   await request(api, 401, { headers: { cookie: `${EMAIL_SESSION_COOKIE}=tampered` } });
   // Prepare expired/unverified sessions using the same official SDK and a fake
@@ -94,6 +111,9 @@ export async function testEmailDiscussion({ request, providerFetch, owner, runId
   providerFetch.get('https://api.workos.com').intercept({ method: 'POST', path: '/user_management/sessions/revoke' }).reply(204);
   const logout = await request('/api/discussion-auth/logout' + query, 303, { method: 'POST', redirect: 'manual', headers: { ...guest, origin: 'https://marketlab.test' } });
   assert.ok(logout.headers.getSetCookie().some(c => c.startsWith(EMAIL_SESSION_COOKIE + '=') && c.includes('Max-Age=0'))); checks++;
+  providerFetch.get('https://api.workos.com').intercept({method:'POST',path:'/user_management/sessions/revoke'}).reply(204);
+  const workspaceLogout=await request('/api/discussion-auth/logout?return_to=%2F',303,{method:'POST',redirect:'manual',headers:{...guest,...owner,origin:'https://marketlab.test'}});
+  assert.equal(workspaceLogout.headers.get('location'),'/signout-with-chatgpt?return_to=%2F');assert.ok(workspaceLogout.headers.getSetCookie().some(c=>c.includes('Max-Age=0')));checks+=2;
   await request('/api/research/discussion', 200, post({ action: 'revoke', runId, id: invite.id }));
   await request(api, 404, { headers: guest });
   await request(api, 409, post({ action: 'comment', id: crypto.randomUUID(), body: 'Revoked guest' }, guest));

@@ -1,8 +1,8 @@
 import { env } from 'cloudflare:workers';
-import { chatGPTSignInPath } from '@/app/chatgpt-auth';
+import { chatGPTSignInPath, chatGPTSignOutPath } from '@/app/chatgpt-auth';
 import { database, publicSharingEnabled, HttpError, json } from '@/lib/server';
 import { invitationAvailable } from '@/lib/research-discussion';
-import { beginEmailLogin, clearFlowCookie, clearSessionCookie, discussionReturnPath, emailClient, emailConfig,
+import { beginEmailLogin, clearFlowCookie, clearSessionCookie, accountReturnPath, emailClient, emailConfig,
   EMAIL_FLOW_COOKIE, EMAIL_SESSION_COOKIE, readEmailCookie, readEmailSession, sessionCookie, verifyEmailFlow } from '@/lib/discussion-email';
 
 type Context = { params: Promise<{ action: string }> };
@@ -12,15 +12,17 @@ function redirectTo(path: string, cookies: string[] = []) {
   return new Response(null, { status: 303, headers });
 }
 async function validInvitation(path: string) {
+  if (path === '/') return;
+  if (!publicSharingEnabled()) throw new HttpError('This invitation is unavailable.', 404);
   if (!await invitationAvailable(database(), path.slice('/discussion/'.length))) throw new HttpError('This invitation is unavailable.', 404);
 }
 export async function GET(request: Request, { params }: Context) {
   const { action } = await params, url = new URL(request.url), config = emailConfig(env);
-  if (!publicSharingEnabled() || !config) return json({ error: 'Email sign-in is not available.' }, 404);
+  if (!config) return json({ error: 'Email sign-in is not available.' }, 404);
   try {
     if (action === 'callback') {
       const flow = await verifyEmailFlow(readEmailCookie(request.headers.get('cookie'), EMAIL_FLOW_COOKIE), url.searchParams.get('state'), config.password);
-      if (!flow) return json({ error: 'This sign-in attempt expired. Open your invitation and try again.' }, 400);
+      if (!flow) return json({ error: 'This sign-in attempt expired. Return to MarketLab and try again.' }, 400);
       const failurePath = `${flow.returnTo}?email_error=1`;
       const code = url.searchParams.get('code');
       if (!code || code.length > 2048 || url.searchParams.has('error')) return redirectTo(failurePath, [clearFlowCookie()]);
@@ -48,8 +50,9 @@ export async function GET(request: Request, { params }: Context) {
         return redirectTo(failurePath, [clearFlowCookie()]);
       }
     }
-    const path = discussionReturnPath(url.searchParams.get('return_to'));
-    if (!path) return json({ error: 'Open a report invitation to sign in.' }, 400);
+    const path = accountReturnPath(url.searchParams.get('return_to'));
+    if (!path) return json({ error: 'Return to MarketLab to sign in.' }, 400);
+    if(path!=='/'&&!publicSharingEnabled())return json({error:'This invitation is unavailable.'},404);
     if (action === 'chatgpt') return redirectTo(chatGPTSignInPath(path), [clearSessionCookie(), clearFlowCookie()]);
     if (action === 'start') {
       await validInvitation(path);
@@ -69,17 +72,17 @@ export async function GET(request: Request, { params }: Context) {
 }
 export async function POST(request: Request, { params }: Context) {
   const { action } = await params, config = emailConfig(env), url = new URL(request.url);
-  if (action !== 'logout' || !config || !publicSharingEnabled()) return json({ error: 'Not found.' }, 404);
+  if (action !== 'logout' || !config) return json({ error: 'Not found.' }, 404);
   // Browser form POSTs supply Origin; fail closed if absent or cross-origin.
   if (request.headers.get('origin') !== new URL(config.redirectUri).origin) return json({ error: 'Invalid sign-out request.' }, 403);
-  const path = discussionReturnPath(url.searchParams.get('return_to'));
-  if (!path) return json({ error: 'Invalid discussion.' }, 400);
+  const path = accountReturnPath(url.searchParams.get('return_to'));
+  if (!path || (path!=='/'&&!publicSharingEnabled())) return json({ error: 'Invalid sign-out destination.' }, 400);
   try {
     const raw = readEmailCookie(request.headers.get('cookie'), EMAIL_SESSION_COOKIE);
     if (raw) {
       const session = await readEmailSession(config, raw, true);
       if (session.sessionId) await emailClient(config).userManagement.revokeSession({ sessionId: session.sessionId });
     }
-    return redirectTo(path, [clearSessionCookie(), clearFlowCookie()]);
+    return redirectTo(path==='/'?chatGPTSignOutPath('/'):path, [clearSessionCookie(), clearFlowCookie()]);
   } catch { return json({ error: 'Could not finish signing out. Please try again.' }, 503); }
 }

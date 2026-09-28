@@ -14,6 +14,15 @@ demonstrable correctness, reliable concurrent systems and honest performance
 evidence. User adoption by students, clubs or developers is a second concrete
 goal. No hiring outcome, trading edge or institutional endorsement is implied.
 
+## Latest extension — September 28
+
+Personal saved workspaces are authorized for new users with email or ChatGPT
+sign-in. This supersedes the earlier single-owner and discussion-only email scope
+recorded below. [Implementation and acceptance](personal-workspaces.md) covers
+the consumer experience, account isolation and completed automated checks.
+New-workspace production browser acceptance and the three real participant
+sessions remain explicit gates; prior shared-link opening was user-confirmed.
+
 ## Ordered milestones
 
 | # | Milestone and acceptance evidence | Status on September 27 |

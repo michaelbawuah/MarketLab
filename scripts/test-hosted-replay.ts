@@ -14,7 +14,7 @@ export async function testHostedReplay({request,providerFetch,db,owner,visitor,r
   const route='/api/research/replay',post=(payload:unknown,headers:Record<string,string>=owner)=>({method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(payload)});
   const run=(await (await request('/api/research?id='+runId,200,{headers:owner})).json() as {run:SavedResearch}).run;
   const raw=replayReportJSON(run),receipt=await new PythonReplay().verify(Buffer.from(raw));
-  await request(route,401,post({id:runId},{}));await request(route,403,post({id:runId},visitor));
+  await request(route,401,post({id:runId},{}));await request(route,404,post({id:runId},visitor));
   await request(route,403,post({id:runId},{...owner,origin:'https://unrelated.test'}));
   await request(route,404,post({id:runId},{...owner,'oai-authenticated-user-id':'other-owner-id'}));
   await request(route,400,post({id:runId,receipt}));await request(route,404,post({id:'a'.repeat(64)}));

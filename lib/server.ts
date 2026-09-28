@@ -3,13 +3,26 @@ import { headers } from 'next/headers';
 import { analyze, type Quote, type Transaction } from './finance/core';
 import { DATASET, demoQuotes, demoTransactions, type Workspace, type PipelineRun } from './finance/demo';
 import { workspaceOwner, WorkspaceAccessError } from './workspace-access';
+import { discussionIdentity } from './discussion-identity';
 export class HttpError extends Error { constructor(message:string, public status=400){super(message);} }
 export function database(){if(!env.DB)throw new HttpError('Database is temporarily unavailable.',503);return env.DB;}
 export function publicSharingEnabled(){return env.PUBLIC_REPORT_SHARING_ENABLED==='true';}
+export async function workspaceAccount(){
+ const result=await discussionIdentity();
+ if(result.needsRefresh)return {user:null,needsRefresh:true};
+ if(result.user)return result;
+ if(process.env.NODE_ENV==='development')return {user:{userId:'local-preview',displayName:'Local preview',accountLabel:'Preview account',provider:'chatgpt' as const}};
+ return result;
+}
 export async function identity(){
- const h=await headers();
- try { return workspaceOwner(h.get('oai-authenticated-user-id'),h.get('oai-authenticated-user-email'),env.WORKSPACE_OWNER_EMAIL,process.env.NODE_ENV==='development'); }
+ const account=await workspaceAccount();
+ try { return workspaceOwner(account.user?.userId??null); }
  catch(e){if(e instanceof WorkspaceAccessError)throw new HttpError(e.message,e.status);throw e;}
+}
+/** A personal configured provider key stays with its original ChatGPT account. */
+export async function configuredProviderKey(owner:string){
+ const h=await headers();
+ return h.get('oai-authenticated-user-id')===owner && !!env.WORKSPACE_OWNER_EMAIL?.trim() && h.get('oai-authenticated-user-email')?.trim().toLowerCase()===env.WORKSPACE_OWNER_EMAIL.trim().toLowerCase() ? env.ALPHA_VANTAGE_API_KEY : undefined;
 }
 export function json(data:unknown,status=200){return Response.json(data,{status,headers:{'Cache-Control':'no-store'}});}
 export function failure(e:unknown){if(e instanceof HttpError)return json({error:e.message},e.status);console.error('Workspace operation failed',e);return json({error:'The saved workspace is temporarily unavailable. Please retry.'},503);}

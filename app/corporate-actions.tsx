@@ -1,4 +1,5 @@
 'use client';
+import { friendlyError } from '@/lib/client-errors';
 import ReportDownload from './report-download';
 import ConfidenceCertificate from './confidence-certificate';
 import { actionsCertificate } from '@/lib/finance/confidence';
@@ -42,7 +43,7 @@ export default function CorporateActions({ dataset }: { dataset: SavedDataset })
   useEffect(() => {
     if (!eligible) return;
     const controller = new AbortController();
-    void fetch(`/api/actions?id=${dataset.id}`, { cache: 'no-store', signal: controller.signal }).then(read).then(result => setSaved(result.actions)).catch(e => { if (!controller.signal.aborted) setError((e as Error).message); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    void fetch(`/api/actions?id=${dataset.id}`, { cache: 'no-store', signal: controller.signal }).then(read).then(result => setSaved(result.actions)).catch(e => { if (!controller.signal.aborted) setError(friendlyError(e)); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [dataset.id, eligible, refresh]);
   function reload() { setLoading(true); setError(''); setRefresh(v => v + 1); }
@@ -52,27 +53,27 @@ export default function CorporateActions({ dataset }: { dataset: SavedDataset })
   async function save() {
     if (!preview) return; setSaving(true); setFormError('');
     try { const result = await fetch('/api/actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ datasetId: dataset.id, revision: saved?.revision ?? 0, actions: draft }) }).then(read); setSaved(result.actions); setOpen(false); toast.success('Event record saved. Performance comparison updated.'); }
-    catch (e) { setFormError((e as Error).message); } finally { setSaving(false); }
+    catch (e) { setFormError(friendlyError(e)); } finally { setSaving(false); }
   }
   const analysis = saved ? actionPerformance(dataset, { source: saved.source, complete: true, events: saved.events }) : null;
   return <section className="panel actions-panel">
-    <div className="panel-heading"><div><h2><GitBranch size={18}/> Splits & dividends</h2><p>Trace the effect of corporate actions on a buy-and-hold position.</p></div>{eligible && !loading && !error && <Button variant={saved ? 'outline' : 'default'} onClick={start}>{saved ? 'Edit event record' : 'Add event record'}</Button>}</div>
+    <div className="panel-heading"><div><h2><GitBranch size={18}/> Company events</h2><p>Review splits and dividends so your investment results include them.</p></div>{eligible && !loading && !error && <Button variant={saved ? 'outline' : 'default'} onClick={start}>{saved ? 'Edit company events' : 'Review company events'}</Button>}</div>
     {!eligible ? <p className="actions-message">This dataset uses adjusted or unknown prices. Use an unadjusted close dataset to apply events without double counting. The original series change remains available above.</p> : <>
       {loading && <p className="actions-message" role="status">Loading event record…</p>}
       {error && <p className="actions-message negative" role="alert">{error} <button className="text-link" onClick={reload}>Retry</button></p>}
-      {!loading && !error && !saved && <div className="actions-empty"><p>No event coverage recorded for {dataset.symbol}.</p><p>Add split effective dates and cash-dividend ex-dates from your source, or explicitly record that there were no events. Price history alone cannot establish that.</p></div>}
+      {!loading && !error && !saved && <div className="actions-empty"><p>Review {dataset.symbol} before your first backtest.</p><p>Add any stock splits or dividends during these dates, or confirm that there were none.</p></div>}
       {saved && analysis && <>
         <ConfidenceCertificate certificate={actionsCertificate(dataset,saved,analysis,dataset.id)}/>
-        <div className="actions-meta"><span className="research-kind">USER-SUPPLIED EVENTS</span><span>Revision {saved.revision} · {saved.events.length} events · {dataset.kind === 'synthetic' ? 'Fictional data' : 'Historical research'}</span><Button variant="outline" size="sm" asChild><ReportDownload href={`/api/actions?id=${dataset.id}&download=1`} download><Download size={15}/> Export analysis</ReportDownload></Button></div>
-        <div className="actions-metrics"><div><span>Raw price change</span><strong>{pct(analysis.priceReturnPct)}</strong></div><div><span>After splits</span><strong>{pct(analysis.splitReturnPct)}</strong></div><div><span>Including cash dividends</span><strong className={analysis.cashInclusiveReturnPct >= 0 ? 'positive' : 'negative'}>{pct(analysis.cashInclusiveReturnPct)}</strong></div><div><span>Observed wealth decline</span><strong>{pct(analysis.drawdownPct)}</strong></div></div>
+        <details className="product-details"><summary>Company event details</summary><div className="actions-meta"><span className="research-kind">USER-SUPPLIED EVENTS</span><span>Revision {saved.revision} · {saved.events.length} events · {dataset.kind === 'synthetic' ? 'Fictional data' : 'Historical research'}</span><Button variant="outline" size="sm" asChild><ReportDownload href={`/api/actions?id=${dataset.id}&download=1`} download><Download size={15}/> Export analysis</ReportDownload></Button></div>
+        <div className="actions-metrics"><div><span>Price change</span><strong>{pct(analysis.priceReturnPct)}</strong></div><div><span>After splits</span><strong>{pct(analysis.splitReturnPct)}</strong></div><div><span>Including cash dividends</span><strong className={analysis.cashInclusiveReturnPct >= 0 ? 'positive' : 'negative'}>{pct(analysis.cashInclusiveReturnPct)}</strong></div><div><span>Largest drop in value</span><strong>{pct(analysis.drawdownPct)}</strong></div></div>
         <Comparison analysis={analysis}/>
         <div className="actions-details"><p><strong>Source:</strong> {saved.source}</p><p>Starting with 1 share at the first close → {analysis.shares} shares, plus {dollars(analysis.incomePerInitialShare)} in cash dividends earned. Original acquisition cost stays fixed through splits.</p><p>All chart series start at 100. Dividends accrue as receivables on ex-date and are held without interest or reinvestment. This is a hypothetical position, not payment-date cash in your portfolio.</p></div>
         {saved.events.length ? <Table><TableHeader><TableRow><TableHead>Effective / ex-date</TableHead><TableHead>Event</TableHead><TableHead>Terms</TableHead></TableRow></TableHeader><TableBody>{saved.events.map(e => <TableRow key={`${e.date}-${e.type}`}><TableCell>{e.date}</TableCell><TableCell>{e.type === 'split' ? 'Stock split' : 'Cash dividend'}</TableCell><TableCell>{e.type === 'split' ? `${e.newShares} new for ${e.oldShares} old` : `$${e.amount} / post-split share`}</TableCell></TableRow>)}</TableBody></Table> : <p className="actions-message">You declared no split or cash-dividend events in this period.</p>}
-        <div className="research-chart-note">Coverage after {dataset.firstDate} through {dataset.lastDate} is declared by you and has not been independently verified. Splits apply before same-date dividends. Fractional shares are retained; taxes, fees, cash in lieu, spin-offs and other distributions are excluded. Only supplied observation dates are valued.</div>
+        <div className="research-chart-note">Coverage after {dataset.firstDate} through {dataset.lastDate} is declared by you and has not been independently verified. Splits apply before same-date dividends. Fractional shares are retained; taxes, fees, cash in lieu, spin-offs and other distributions are excluded. Only supplied observation dates are valued.</div></details>
       </>}
     </>}
     <Dialog open={open} onOpenChange={value => { if (!saving) { setOpen(value); if (!value) reload(); } }}><DialogContent className="import-dialog actions-dialog"><DialogHeader><DialogTitle>{dataset.symbol} · Split & dividend record</DialogTitle><DialogDescription>Use dates after {dataset.firstDate} through {dataset.lastDate}. The holding starts at the first supplied close.</DialogDescription></DialogHeader>
-      <form className="import-form" onSubmit={e => { e.preventDefault(); setFormError(''); try { const validated = validateActions(draft, dataset); setPreview(actionPerformance(dataset, validated)); } catch (err) { setPreview(null); setFormError((err as Error).message); } }}>
+      <form className="import-form" onSubmit={e => { e.preventDefault(); setFormError(''); try { const validated = validateActions(draft, dataset); setPreview(actionPerformance(dataset, validated)); } catch (err) { setPreview(null); setFormError(friendlyError(err)); } }}>
         <fieldset className="import-fields" disabled={saving}><label>Event source<Input value={draft.source} onChange={e => edit({ ...draft, source: e.target.value })} placeholder="Company announcement or event-data source" minLength={3} maxLength={160} required/></label>
           <p className="form-note">Enter new shares for old shares (2 for 1 means a forward split). Cash dividends use ex-date and USD per post-split share. Confirm these terms in your source; dates and amounts are not fetched automatically.</p>
           <div className="action-edit-list">{draft.events.map((event, i) => <div className="action-edit-row" key={i}>

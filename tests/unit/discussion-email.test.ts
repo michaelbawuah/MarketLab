@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { beginEmailLogin, discussionReturnPath, emailConfig, EMAIL_FLOW_COOKIE, readEmailCookie, verifyEmailFlow } from '../../lib/discussion-email.ts';
+import { beginEmailLogin, accountReturnPath, discussionReturnPath, emailConfig, EMAIL_FLOW_COOKIE, readEmailCookie, verifyEmailFlow } from '../../lib/discussion-email.ts';
 const env = { DISCUSSION_EMAIL_AUTH_ENABLED: 'true', WORKOS_API_KEY: 'sk_test_fictional', WORKOS_CLIENT_ID: 'client_test', WORKOS_COOKIE_PASSWORD: 'fictional-password-for-tests-only-32-characters', WORKOS_REDIRECT_URI: 'https://marketlab.test/api/discussion-auth/callback' };
 const path = '/discussion/' + 'a'.repeat(64);
+test('workspace email sign-in binds the root return path and rejects arbitrary destinations',async()=>{
+  assert.equal(accountReturnPath('/'),'/');assert.equal(accountReturnPath(path),path);
+  for(const value of ['//evil.test','/api/portfolio','/\\evil.test','/?next=evil','https://evil.test'])assert.equal(accountReturnPath(value),null);
+  const config=emailConfig(env)!,flow=await beginEmailLogin(config,'/');
+  assert.equal((await verifyEmailFlow(readEmailCookie(flow.cookie,EMAIL_FLOW_COOKIE),new URL(flow.url).searchParams.get('state'),config.password))?.returnTo,'/');
+});
 test('email login stays disabled until explicitly enabled with complete HTTPS callback configuration', () => {
   assert.ok(emailConfig(env));
   for (const changed of [{ DISCUSSION_EMAIL_AUTH_ENABLED: 'false' }, { WORKOS_API_KEY: '' }, { WORKOS_CLIENT_ID: 'bad' }, { WORKOS_COOKIE_PASSWORD: 'short' }, { WORKOS_REDIRECT_URI: 'http://marketlab.test/api/discussion-auth/callback' }, { WORKOS_REDIRECT_URI: 'https://marketlab.test/callback' }, { WORKOS_REDIRECT_URI: env.WORKOS_REDIRECT_URI + '?x=1' }]) assert.equal(emailConfig({ ...env, ...changed }), null);

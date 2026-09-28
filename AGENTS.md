@@ -5,8 +5,18 @@ the user-supplied `docs/engineering-standards-and-roadmap.pdf`, the controlling
 priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
 `docs/verification.md` and `docs/reliability-evidence.md` record observed checks.
 
-- The primary goal is Quant SWE evidence: correctness, reliability, observability,
-  reproducible measurements and useful research workflows. Keep TypeScript central.
+- September 28 extension: the user explicitly authorized personal saved portfolio
+  workspaces for new users, closing test/live-check gaps and a three-person pilot.
+  This supersedes the older single-owner workspace and discussion-only email scope.
+  Every authenticated account owns its records; never merge accounts by email.
+  See `docs/personal-workspaces.md` for the model and evidence. Do not claim
+  participant observations from automated fixtures or agent testing.
+- The current user priority (September 28) is consumer usability: instant value,
+  plain language, sensible defaults and consistent visual design. Keep the
+  calculation and verification sophistication underneath this experience. See
+  `docs/consumer-experience.md` for the seven required product standards.
+- Preserve Quant SWE evidence: correctness, reliability, observability and
+  reproducible measurements. Keep TypeScript central.
 - Follow the ordered roadmap. Extra strategies, asset classes and statistical
   significance features are deferred while higher-priority milestones remain.
 - Preserve exact money/share arithmetic, causal execution, frozen input hashes,
@@ -24,7 +34,8 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   checkpoint is `0c3476a`, with passing remote verification. On September 26 the
   user explicitly approved public report access while keeping the workspace
   owner-only. The Site audience is now public and production
-  `PUBLIC_REPORT_SHARING_ENABLED=true`; preserve the owner email restriction.
+  `PUBLIC_REPORT_SHARING_ENABLED=true`. The original email restriction was
+  superseded by the later personal-workspace authorization above.
   `/example` uses only the built-in fictional teaching data, without reading or
   creating personal records. Automatic requests to the live host returned edge
   403/1010; do not claim a successful live browser or owner-sharing lifecycle
@@ -61,7 +72,8 @@ priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
   Milestone 12 uses the approved invite-only comments model in
   `docs/research-collaboration.md`: same redacted report, ChatGPT account-bound
   single-use invitations, retained comments on revocation, private append-only
-  audit trail. Do not expand to forks, raw-input sharing or workspace access.
+  audit trail. Do not expand discussion invitations to forks, raw-input sharing or access
+  to the report owner’s workspace. Invitees may create their own separate workspace.
   On September 27 at 9:38 AM America/New_York, the user reported completing the
   fresh-invitation, separate-account comment and revocation checklist. Milestone
   12 is accepted within that scope. Keep this user-reported result distinct from

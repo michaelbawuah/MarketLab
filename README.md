@@ -4,7 +4,9 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 **Engineering direction:** follow the adopted [engineering roadmap](docs/engineering-roadmap.md), based on Michael's supplied standards. It includes the directory map, ordered milestones and observed status. The first reliability work now has [reproducible clock-race and process-crash evidence](docs/reliability-evidence.md).
 
-**Current release:** public read-only report sharing with an owner-only research workspace opening on provider-backed Stock explorer. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
+**Current release:** personal saved workspaces with email or ChatGPT sign-in, a zero-setup practice portfolio, and public read-only report sharing. Each account opens on My portfolio and can return to its own saved work. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
+
+See [personal workspaces and acceptance evidence](docs/personal-workspaces.md) for account separation, first-use flow, and the remaining live pilot gates.
 
 ## What works
 
@@ -22,7 +24,7 @@ A JavaScript/TypeScript portfolio research workspace with auditable transaction 
 
 - Reviewed, redacted read-only experiment summaries with expiring links,
   replacement and revocation. Public access is activated while private workspace
-  routes remain owner-only. A [fictional public example](https://marketlab-portfolio.michaelbaffour240306.chatgpt.site/example)
+  routes remain private to each signed-in account. A [fictional public example](https://marketlab-portfolio.michaelbaffour240306.chatgpt.site/example)
   contains only built-in teaching data. Live browser verification remains outstanding.
   [Sharing boundary and activation](docs/research-sharing-and-events.md).
 

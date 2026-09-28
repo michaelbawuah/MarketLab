@@ -1,10 +1,12 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { friendlyError } from '@/lib/client-errors';
+import { useEffect, useState } from 'react';
 import { ArrowRight, Download, FlaskConical, Play, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { calculateDemo, DEMO_COSTS, demoDifference, demoReport, type DemoCost } from '@/lib/finance/quick-demo';
+import MetricLabel from './metric-label';
 import ConfidenceCertificate from './confidence-certificate';
 import { costDemoCertificate } from '@/lib/finance/confidence';
 import type { SavedResearch } from '@/lib/finance/research';
@@ -40,17 +42,15 @@ function CostChart({ baseline, selected }: { baseline: SavedResearch; selected: 
 }
 
 type Results = Record<DemoCost, SavedResearch>;
-export default function QuickDemo({ onOpenData }: { onOpenData: () => void }) {
+export default function QuickDemo({ onOpenData, guest=false }: { onOpenData: () => void; guest?: boolean }) {
   const [cost,setCost] = useState<DemoCost>('illustrative'), [results,setResults] = useState<Results|null>(null), [error,setError] = useState(''), [retry,setRetry] = useState(0);
-  const heading = useRef<HTMLHeadingElement>(null), focused = useRef(false);
   useEffect(() => {
     let active = true;
     void Promise.all(DEMO_COSTS.map(item=>calculateDemo(item.id))).then(runs => {
       if(active){setResults(Object.fromEntries(DEMO_COSTS.map((item,i)=>[item.id,runs[i]])) as Results);setError('');}
-    }).catch((e: unknown) => {if(active)setError(e instanceof Error?e.message:'The sample calculation could not finish.');});
+    }).catch((e: unknown) => {if(active)setError(friendlyError(e, 'The example couldn’t load. Try the demo again.'));});
     return () => {active=false;};
   },[retry]);
-  useEffect(() => {if(results&&!focused.current){heading.current?.focus({preventScroll:true});focused.current=true;}},[results]);
   const current = results ? {baseline:results.zero,selected:results[cost]} : null;
   if(error)return <div className="panel quick-demo-error" role="alert"><h2>We couldn’t calculate the sample.</h2><p>{error}</p><Button onClick={() => {setError('');setRetry(n=>n+1);}}>Retry demo</Button></div>;
   if(!current)return <div className="panel quick-demo-loading" role="status"><FlaskConical size={24}/><p>Calculating the same rule with and without trading costs…</p></div>;
@@ -64,30 +64,30 @@ export default function QuickDemo({ onOpenData }: { onOpenData: () => void }) {
   }
   return <div className="quick-demo" data-demo-ready="true">
     <section className="quick-demo-takeaway" aria-labelledby="quick-demo-takeaway">
-      <span className="quick-demo-kicker"><FlaskConical size={15}/> FICTIONAL EXPERIMENT · $10,000 STARTING CASH</span>
-      <h2 id="quick-demo-takeaway" ref={heading} tabIndex={-1}>{delta===0n?'Same costs. Same outcome.':`Trading costs left ${amount} ${delta>0n?'less':'more'} at the end.`}</h2>
+      <span className="quick-demo-kicker"><FlaskConical size={15}/> FICTIONAL EXAMPLE · $10,000 TO START</span>
+      <h2 id="quick-demo-takeaway" aria-live="polite">{delta===0n?'Same costs. Same outcome.':`${amount} ${delta>0n?'less':'more'} after trading costs.`}</h2>
       <p>{delta===0n?'Both runs now use zero fees and zero slippage, so their results match.':`The prices and trading rule stayed identical. ${model.trades.length} trades, fees and less favorable execution prices changed the ending value.`}</p>
-      <div className="quick-demo-context"><span>Invented XDEMO prices</span><span>3-observation moving average</span><span>{selected.analysis.full.observations} evaluated observations</span></div>
+      <div className="quick-demo-context"><span>Invented XDEMO prices</span><span>A simple trend-following rule</span><span>{selected.analysis.full.observations} price dates</span></div>
     </section>
 
     <div className="quick-demo-controls"><label htmlFor="demo-costs">Change the trading costs<NativeSelect id="demo-costs" value={cost} onChange={e=>setCost(e.target.value as DemoCost)}>{DEMO_COSTS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</NativeSelect></label><p>Fees are charged per trade. Slippage means buying a little higher or selling a little lower than the quoted price. These settings are illustrative.</p></div>
 
     <div className="quick-demo-metrics" aria-label="Calculated demo comparison">
-      <section><span>Without costs</span><strong>{money(base.history.at(-1)!.value)}</strong><p>{pct(base.returnPct)} return</p><small>{base.trades.length} trades · $0.00 in fees</small></section>
-      <section className="quick-demo-selected"><span>With selected costs</span><strong>{money(model.history.at(-1)!.value)}</strong><p>{pct(model.returnPct)} return</p><small>{model.trades.length} trades · {money(model.fees)} in fees</small></section>
+      <section><span>Without costs</span><strong>{money(base.history.at(-1)!.value)}</strong><p>{pct(base.returnPct)} <MetricLabel help="The percentage gained or lost compared with the $10,000 starting amount.">return</MetricLabel></p><small>{base.trades.length} trades · $0.00 in fees</small></section>
+      <section className="quick-demo-selected"><span>With selected costs</span><strong>{money(model.history.at(-1)!.value)}</strong><p>{pct(model.returnPct)} <MetricLabel help="The percentage gained or lost after the selected trading costs.">return</MetricLabel></p><small>{model.trades.length} trades · {money(model.fees)} in fees</small></section>
       <section><span>Difference in ending value</span><strong>{money(difference)}</strong><p>{(base.returnPct-model.returnPct).toFixed(2)} percentage points</p><small>Includes fees, slippage and their effect on position size.</small></section>
     </div>
 
-    <section className="panel"><div className="panel-heading"><div><h2>One rule. Two cost assumptions.</h2><p>Fictional strategy value · {selected.start} to {selected.end}</p></div><span className="research-kind">SYNTHETIC INPUTS</span></div><CostChart baseline={baseline} selected={selected}/><p className="quick-demo-chart-note">The rule holds stock when the prior close was above its trailing average; otherwise it holds cash. It trades at the next supplied close. Both paths start with $10,000.</p></section>
+    <section className="panel"><div className="panel-heading"><div><h2>Your money over time</h2><p>Fictional strategy value · {selected.start} to {selected.end}</p></div><span className="research-kind">FICTIONAL EXAMPLE</span></div><CostChart baseline={baseline} selected={selected}/><p className="quick-demo-chart-note">Both paths start with $10,000 and follow the same rule. Only the trading costs change.</p></section>
 
     <ConfidenceCertificate certificate={costDemoCertificate(selected)}/>
-    <section className="quick-demo-explainer"><div><h2>The lesson</h2><p>A strategy’s return depends on how its trades are executed. Always include costs before judging a result.</p></div><div><h2>What this example means</h2><p>These choppy prices were invented to make repeated trading easy to see. The result teaches a calculation; it provides no evidence that this rule would succeed with real prices.</p></div></section>
+    <details className="product-details quick-demo-lesson"><summary>What can I learn from this?</summary><section className="quick-demo-explainer"><div><h2>The lesson</h2><p>A strategy’s return depends on how its trades are executed. Always include costs before judging a result.</p></div><div><h2>What this example means</h2><p>These choppy prices were invented to make repeated trading easy to see. The result teaches a calculation; it provides no evidence that this rule would succeed with real prices.</p></div></section></details>
 
     <section className="panel quick-demo-evidence"><details><summary>Inspect the inputs, assumptions & exact values</summary><div className="quick-demo-assumptions"><p><strong>Inputs:</strong> {selected.snapshot.asset.dataset.count} invented weekday closes for XDEMO, including warmup. No splits or dividends exist in this fictional instrument. This is not an exchange calendar.</p><p><strong>Selected costs:</strong> {(config.feeBps/100).toFixed(2)}% fee and {(config.slippageBps/100).toFixed(2)}% adverse price slippage per trade. No leverage, shorting, taxes, cash interest or forced sale at the end.</p><p><strong>Reproducibility:</strong> The download contains every input, calculated observation and assumption. This demonstration does not save datasets, trades or experiments to your workspace.</p><p><strong>Fixture version:</strong> {demoReport(selected).demo.version}</p></div>
       <Table><TableHeader><TableRow><TableHead>Date</TableHead><TableHead className="numeric">Fictional close</TableHead><TableHead className="numeric">Value without costs</TableHead><TableHead className="numeric">Value with selected costs</TableHead></TableRow></TableHeader><TableBody>{base.history.map((row,i)=><TableRow key={row.date}><TableCell>{row.date}</TableCell><TableCell className="numeric">{money((BigInt(selected.snapshot.asset.dataset.observations[i+config.window].priceMicros)/10000n).toString())}</TableCell><TableCell className="numeric">{money(row.value)}</TableCell><TableCell className="numeric">{money(model.history[i].value)}</TableCell></TableRow>)}</TableBody></Table>
     </details></section>
 
-    <div className="quick-demo-actions"><Button onClick={onOpenData}>Try your own historical data <ArrowRight size={16}/></Button><Button variant="outline" onClick={download}><Download size={16}/> Download sample report</Button><Button variant="ghost" onClick={()=>setCost('illustrative')} disabled={cost==='illustrative'}><RotateCcw size={16}/> Reset demo</Button></div>
-    <p className="quick-demo-footnote">Runs in your browser. Fictional results are separate from provider prices and your portfolio. No market-data connection is needed.</p>
+    <div className="quick-demo-actions"><Button onClick={onOpenData}>{guest?'Open my workspace':'Try my own data'} <ArrowRight size={16}/></Button><Button variant="outline" onClick={download}><Download size={16}/> Download report</Button><Button variant="ghost" onClick={()=>setCost('illustrative')} disabled={cost==='illustrative'}><RotateCcw size={16}/> Reset demo</Button></div>
+    <p className="quick-demo-footnote">A fictional example, ready to explore. Historical results aren’t a prediction.</p>
   </div>;
 }

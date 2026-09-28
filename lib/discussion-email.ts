@@ -21,6 +21,9 @@ export function emailConfig(env: EmailEnvironment): EmailConfig | null {
 export function discussionReturnPath(value: string | null): string | null {
   return value && /^\/discussion\/[a-f0-9]{64}$/.test(value) ? value : null;
 }
+export function accountReturnPath(value: string | null): string | null {
+  return value === '/' ? '/' : discussionReturnPath(value);
+}
 export function emailCookie(name: typeof EMAIL_SESSION_COOKIE | typeof EMAIL_FLOW_COOKIE, value: string, maxAge: number): string {
   return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
@@ -46,7 +49,7 @@ async function flowKey(password: string) {
 // The provider receives a random state only, never a report invitation token.
 // The verifier and return path stay in a host-only, HttpOnly, signed cookie.
 export async function beginEmailLogin(config: EmailConfig, returnTo: string, now = Date.now()) {
-  if (!discussionReturnPath(returnTo)) throw new Error('Invalid discussion path');
+  if (!accountReturnPath(returnTo)) throw new Error('Invalid sign-in path');
   const { url, state, codeVerifier } = await emailClient(config).userManagement.getAuthorizationUrlWithPKCE({
     provider: 'authkit', redirectUri: config.redirectUri, screenHint: 'sign-in', prompt: 'login',
   });
@@ -62,7 +65,7 @@ export async function verifyEmailFlow(raw: string | null, state: string | null, 
   try {
     if (!await crypto.subtle.verify('HMAC', await flowKey(password), Buffer.from(parts[1], 'base64url'), new TextEncoder().encode(parts[0]))) return null;
     const flow = JSON.parse(Buffer.from(parts[0], 'base64url').toString('utf8')) as Flow;
-    if (flow.state !== state || !discussionReturnPath(flow.returnTo) || typeof flow.codeVerifier !== 'string' ||
+    if (flow.state !== state || !accountReturnPath(flow.returnTo) || typeof flow.codeVerifier !== 'string' ||
         !/^[A-Za-z0-9_-]{43,128}$/.test(flow.codeVerifier) || !Number.isSafeInteger(flow.expires) ||
         flow.expires <= now || flow.expires > now + FLOW_SECONDS * 1000) return null;
     return flow;

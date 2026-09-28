@@ -23,11 +23,10 @@ test('inconsistent saved results cannot earn a public sharing preview',async()=>
   const snapshot=await researchFixture(),analysis=analyzeResearch(snapshot);analysis.full.strategy.history[0].value='1';
   assert.throws(()=>publicResearch({id:'a'.repeat(64),name:'Fixture',created:'2026-09-26',symbol:'XTEST',benchmark:'XTEST',start:snapshot.config.start,end:snapshot.config.end,snapshot,analysis}),/review before sharing/);
 });
-test('production workspace requires the verified owner identity and fails closed without its allowlist',()=>{
-  const denied=(id:string|null,email:string|null,allowed:string|undefined,status:number)=>assert.throws(()=>workspaceOwner(id,email,allowed),e=>e instanceof WorkspaceAccessError&&e.status===status);
-  denied(null,null,'owner@example.test',401);denied('forged',null,'owner@example.test',403);
-  denied('visitor','visitor@example.test','owner@example.test',403);denied('owner','owner@example.test',undefined,503);
-  assert.equal(workspaceOwner('stable-site-owner','Owner@Example.Test','owner@example.test'),'stable-site-owner');
-  assert.equal(workspaceOwner(null,null,undefined,true),'local-preview');
-  denied(null,null,undefined,401);
+test('each verified identity owns its workspace and anonymous production requests fail closed',()=>{
+  assert.throws(()=>workspaceOwner(null),e=>e instanceof WorkspaceAccessError&&e.status===401);
+  assert.equal(workspaceOwner('stable-site-owner'),'stable-site-owner');
+  assert.equal(workspaceOwner('new-user'),'new-user');
+  assert.equal(workspaceOwner('workos:client_test:user_one'),'workos:client_test:user_one');
+  assert.equal(workspaceOwner(null,true),'local-preview');
 });

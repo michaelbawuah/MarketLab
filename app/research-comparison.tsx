@@ -1,4 +1,6 @@
 'use client';
+import MetricLabel from './metric-label';
+import { friendlyError } from '@/lib/client-errors';
 import { useEffect, useState } from 'react';
 import { GitCompareArrows } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +16,7 @@ function money(value: string, signed = false) {
   const cents = BigInt(value), absolute = cents < 0n ? -cents : cents;
   return `${cents < 0n ? '−' : signed && cents > 0n ? '+' : ''}$${(absolute / 100n).toLocaleString('en-US')}.${(absolute % 100n).toString().padStart(2, '0')}`;
 }
-const periods = { full: 'Full period', development: 'Earlier period', holdout: 'Later period · fresh cash' };
+const periods = { full: 'Full period', development: 'Earlier period', holdout: 'Later period' };
 type Loaded = { id: string; run?: SavedResearch; error?: string };
 
 export default function ResearchComparison({ active, runs, period }: { active: SavedResearch; runs: RunSummary[]; period: ResearchPeriod }) {
@@ -30,7 +32,7 @@ export default function ResearchComparison({ active, runs, period }: { active: S
         if (!response.ok || !data.run || data.run.id !== requested) throw new Error(data.error || 'Could not load this saved experiment.');
         if (!controller.signal.aborted) setLoaded({ id: requested, run: data.run });
       }).catch((error: unknown) => {
-        if (!controller.signal.aborted) setLoaded({ id: requested, error: error instanceof Error ? error.message : 'Could not load this saved experiment.' });
+        if (!controller.signal.aborted) setLoaded({ id: requested, error: friendlyError(error, 'We couldn’t open this backtest. Please try again.') });
       });
     return () => controller.abort();
   }, [requested, retry]);
@@ -40,19 +42,19 @@ export default function ResearchComparison({ active, runs, period }: { active: S
   const delta = comparison?.delta;
   const measures = comparison ? [
     ['Return after costs', percent(comparison.left.strategy.returnPct), percent(comparison.right.strategy.returnPct), delta ? points(delta.returnPp) : '—'],
-    ['Largest observed drawdown', percent(comparison.left.strategy.maxDrawdown), percent(comparison.right.strategy.maxDrawdown), delta ? points(delta.drawdownPp) : '—'],
+    ['Drawdown', percent(comparison.left.strategy.maxDrawdown), percent(comparison.right.strategy.maxDrawdown), delta ? points(delta.drawdownPp) : '—'],
     ['Ending value', money(comparison.left.strategy.history.at(-1)!.value), money(comparison.right.strategy.history.at(-1)!.value), delta ? money(delta.endingValue, true) : '—'],
     ['Executed trades', String(comparison.left.strategy.trades.length), String(comparison.right.strategy.trades.length), delta ? `${delta.trades > 0 ? '+' : ''}${delta.trades}` : '—'],
     ['Total fees', money(comparison.left.strategy.fees), money(comparison.right.strategy.fees), delta ? money(delta.fees, true) : '—'],
   ] : [];
 
   return <section className="panel experiment-comparison" aria-labelledby="compare-heading">
-    <div className="panel-heading"><div><h2 id="compare-heading"><GitCompareArrows size={19}/> Compare saved experiments</h2><p>Inspect a different window or cost assumption using frozen results.</p></div></div>
+    <div className="panel-heading"><div><h2 id="compare-heading"><GitCompareArrows size={19}/> Compare backtests</h2><p>See how changing a setting affected your saved result.</p></div></div>
     <div className="comparison-controls"><label htmlFor="compare-run">Compare with</label><NativeSelect id="compare-run" value={requested} disabled={!others.length} onChange={event => { setLoaded(null); setSelected(event.target.value); }}>
-      <option value="">{others.length ? 'Choose another saved experiment…' : 'Save a second experiment to compare'}</option>
-      {others.map(r => <option key={r.id} value={r.id}>{r.name} · {r.symbol} / {r.benchmark} · {r.id.slice(0, 8)}</option>)}
+      <option value="">{others.length ? 'Choose another backtest…' : 'Save a second backtest to compare'}</option>
+      {others.map(r => <option key={r.id} value={r.id}>{r.name} · {r.symbol} / {r.benchmark}</option>)}
     </NativeSelect>{requested && <Button variant="ghost" onClick={() => { setSelected(''); setLoaded(null); }}>Clear comparison</Button>}</div>
-    {!requested && <p className="comparison-note">Open New experiment to copy the current settings, change the window or costs, and save a second run. Both saved experiments remain unchanged.</p>}
+    {!requested && <p className="comparison-note">Choose New backtest to copy the current settings, change the window or costs, and save a second run. Both saved experiments remain unchanged.</p>}
     {requested && !other && !error && <p className="comparison-note" role="status">Loading comparison…</p>}
     {error && <div className="comparison-error" role="alert"><p>{error}</p><Button variant="outline" onClick={() => { setLoaded(null); setRetry(n => n + 1); }}>Retry comparison</Button></div>}
     {other && comparison && <>
@@ -60,13 +62,13 @@ export default function ResearchComparison({ active, runs, period }: { active: S
         <strong>{comparison.aligned ? 'Matched inputs and evaluation dates' : 'Different research setups'}</strong>
         <p>{comparison.aligned ? 'Differences below are comparison minus current. They describe these saved observations.' : 'Individual results are shown for inspection. Differences are withheld because these setups are not directly matched.'}</p>
         {comparison.differences.length > 0 && <ul>{comparison.differences.map(text => <li key={text}>{text}</li>)}</ul>}
-        <div className="comparison-changes">{comparison.changes.length ? comparison.changes.map(text => <span key={text}>{text}</span>) : <span>Same SMA window, fee and slippage settings</span>}</div>
+        <div className="comparison-changes">{comparison.changes.length ? comparison.changes.map(text => <span key={text}>{text}</span>) : <span>Same trend window and trading costs</span>}</div>
         {comparison.changes.length > 1 && <p>Multiple settings changed; a result difference cannot be attributed to one setting.</p>}
         {(active.analysis.synthetic || other.analysis.synthetic) && <p><strong>Contains fictional price inputs.</strong></p>}
       </div>
       <div className="comparison-period"><strong>{periods[period]}</strong><span>Uses the evaluation period selected above.</span></div>
-      <Table><TableHeader><TableRow><TableHead>Strategy measure</TableHead>{[active, other].map((r, i) => <TableHead key={r.id} className="numeric comparison-column"><span>{i ? 'Comparison' : 'Current'}</span><strong>{r.name}</strong><small>{r.id.slice(0, 8)}</small></TableHead>)}<TableHead className="numeric">Difference</TableHead></TableRow></TableHeader><TableBody>
-        {measures.map(([label, left, right, difference]) => <TableRow key={label}><TableCell>{label}</TableCell><TableCell className="numeric">{left}</TableCell><TableCell className="numeric">{right}</TableCell><TableCell className="numeric">{difference}</TableCell></TableRow>)}
+      <Table><TableHeader><TableRow><TableHead>Strategy measure</TableHead>{[active, other].map((r, i) => <TableHead key={r.id} className="numeric comparison-column"><span>{i ? 'Comparison' : 'Current'}</span><strong>{r.name}</strong></TableHead>)}<TableHead className="numeric">Difference</TableHead></TableRow></TableHeader><TableBody>
+        {measures.map(([label, left, right, difference]) => <TableRow key={label}><TableCell><MetricLabel>{label}</MetricLabel></TableCell><TableCell className="numeric">{left}</TableCell><TableCell className="numeric">{right}</TableCell><TableCell className="numeric">{difference}</TableCell></TableRow>)}
       </TableBody></Table>
       <p className="comparison-note">A positive drawdown difference means a smaller observed decline. Fees exclude slippage, which is already reflected in returns. Results are hypothetical; repeated trials can overfit the later period.</p>
       <details className="comparison-inputs"><summary>Compare settings & frozen inputs</summary><Table><TableHeader><TableRow><TableHead>Setting</TableHead><TableHead>Current</TableHead><TableHead>Comparison</TableHead></TableRow></TableHeader><TableBody>
@@ -83,7 +85,7 @@ export default function ResearchComparison({ active, runs, period }: { active: S
             const a = active.snapshot[role], b = other.snapshot[role], name = role === 'asset' ? 'Asset' : 'Benchmark';
             return [[`${name} prices`, `${a.dataset.symbol} · ${a.dataset.source} · ${a.dataset.id}`, `${b.dataset.symbol} · ${b.dataset.source} · ${b.dataset.id}`], [`${name} events`, `${a.actions.source} · revision ${a.actions.revision}`, `${b.actions.source} · revision ${b.actions.revision}`]];
           }),
-        ]).map(([label, left, right]) => <TableRow key={label}><TableCell>{label}</TableCell><TableCell>{left}</TableCell><TableCell>{right}</TableCell></TableRow>)}
+        ]).map(([label, left, right]) => <TableRow key={label}><TableCell><MetricLabel>{label}</MetricLabel></TableCell><TableCell>{left}</TableCell><TableCell>{right}</TableCell></TableRow>)}
       </TableBody></Table></details>
     </>}
   </section>;

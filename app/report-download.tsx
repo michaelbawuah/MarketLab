@@ -1,4 +1,5 @@
 'use client';
+import { friendlyError } from '@/lib/client-errors';
 import { useState, type ComponentProps } from 'react';
 import { toast } from 'sonner';
 
@@ -17,7 +18,7 @@ export default function ReportDownload({href,children,...props}: ComponentProps<
       const disposition=response.headers.get('Content-Disposition')??'',filename=disposition.match(/filename="([^"\r\n]+)"/)?.[1]??'marketlab-report';
       const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename.replaceAll(/[\\/]/g,'_');document.body.appendChild(link);link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
-    }catch(e){toast.error(e instanceof Error&&e.name!=='AbortError'?e.message:'The report took too long to prepare. Please try again.');}
+    }catch(e){toast.error(friendlyError(e, 'The report couldn’t be downloaded. Please try again.'));}
     finally{clearTimeout(timeout);setBusy(false);}
   }}>{busy?'Preparing report…':children}</a>;
 }

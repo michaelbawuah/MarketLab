@@ -20,8 +20,8 @@ export async function testDiscussion({ request, db, base, owner, visitor, runId 
     const r = await (await request(management, 201, post({ action: 'invite', runId, revision, label }))).json() as { id: string; path: string };
     return { ...r, api: r.path.replace('/discussion/', '/api/discussion/') };
   };
-  await request(management, 401); await request(management, 403, { headers: visitor });
-  await request(management, 403, post({ action: 'invite', runId, revision: 1, label: 'Denied' }, visitor));
+  await request(management, 401); await request(management, 404, { headers: visitor });
+  await request(management, 409, post({ action: 'invite', runId, revision: 1, label: 'Denied' }, visitor));
   await request(management, 409, post({ action: 'invite', runId, revision: 2, label: 'No active share' }));
   const shared = await share(), revision = shared.status.revision;
   const invite = await createInvite('PRIVATE_INVITATION_LABEL', revision);

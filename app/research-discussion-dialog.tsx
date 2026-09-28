@@ -1,4 +1,5 @@
 'use client';
+import { friendlyError } from '@/lib/client-errors';
 import { useCallback, useEffect, useState } from 'react';
 import { MessageSquare, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import './discussion.css';
 export default function ResearchDiscussionDialog({ id }: { id: string }) {
   const [open, setOpen] = useState(false), [state, setState] = useState<OwnerDiscussion | null>(null), [label, setLabel] = useState(''), [link, setLink] = useState(''), [error, setError] = useState(''), [message, setMessage] = useState(''), [busy, setBusy] = useState(false), [revoking, setRevoking] = useState<string | null>(null);
   const reload = useCallback(async () => { const s = await fetch(`/api/research/discussion?id=${id}`, { cache: 'no-store' }).then(discussionResponse<OwnerDiscussion>); setState(s); }, [id]);
-  useEffect(() => { if (!open) return; let live = true; void fetch(`/api/research/discussion?id=${id}`, { cache: 'no-store' }).then(discussionResponse<OwnerDiscussion>).then(s => { if (live) setState(s); }).catch(e => { if (live) setError(e.message); }); return () => { live = false; }; }, [open, id]);
+  useEffect(() => { if (!open) return; let live = true; void fetch(`/api/research/discussion?id=${id}`, { cache: 'no-store' }).then(discussionResponse<OwnerDiscussion>).then(s => { if (live) setState(s); }).catch(e => { if (live) setError(friendlyError(e)); }); return () => { live = false; }; }, [open, id]);
   async function action(payload: Record<string, unknown>) {
     setBusy(true); setError(''); setMessage('');
     try {
@@ -19,7 +20,7 @@ export default function ResearchDiscussionDialog({ id }: { id: string }) {
       if (result.path) { setLink(new URL(result.path, window.location.origin).href); setLabel(''); setMessage('Invitation created. Copy this link before closing; it is shown only once.'); }
       else if (payload.action === 'revoke') { setLink(''); setMessage('Invitation revoked. Existing comments are retained.'); }
       await reload(); return true;
-    } catch (e) { setError((e as Error).message); return false; } finally { setBusy(false); }
+    } catch (e) { setError(friendlyError(e)); return false; } finally { setBusy(false); }
   }
   return <><Button variant="outline" onClick={() => { setState(null); setError(''); setLink(''); setMessage(''); setOpen(true); }}><MessageSquare size={16}/> Discussion</Button><Dialog open={open} onOpenChange={v => { if (!busy) setOpen(v); }}><DialogContent className="discussion-dialog"><DialogHeader><DialogTitle>Invite-only discussion</DialogTitle><DialogDescription>Invite someone to join the discussion on this report.</DialogDescription></DialogHeader>
     {error && <p role="alert" className="discussion-error">{error}</p>}{message && <p role="status">{message}</p>}
@@ -28,6 +29,6 @@ export default function ResearchDiscussionDialog({ id }: { id: string }) {
     {link && <div className="discussion-link"><label htmlFor="invitation-link">Copy and send this invitation yourself</label><Input id="invitation-link" readOnly value={link} onFocus={e => e.target.select()}/><Button variant="outline" onClick={async () => { try { await navigator.clipboard.writeText(link); setMessage('Invitation link copied.'); } catch { setMessage('Select and copy the invitation link above.'); } }}><Copy size={16}/> Copy invitation</Button></div>}
     {!!state.invitations.length && <details className="discussion-invitations" open><summary>Invitations ({state.invitations.length}/100)</summary><ul>{state.invitations.map(i => <li key={i.id}><div><strong>{i.label}</strong><p>{i.revokedAt ? 'Revoked' : i.revision !== state.revision || !state.active ? 'Report link inactive' : i.claimedAt ? `Accepted by ${i.claimedName}` : 'Awaiting acceptance'}</p></div>{!i.revokedAt && i.revision === state.revision && state.active && <Button variant="outline" size="sm" disabled={busy} onClick={() => setRevoking(i.id)}>Revoke</Button>}</li>)}</ul></details>}
     <DiscussionThread comments={state.comments} active={state.active} revision={state.revision} busy={busy} action={action}/></>}
-    <Button variant="ghost" disabled={busy} onClick={() => { setError(''); void reload().catch(e => setError(e.message)); }}>Refresh discussion</Button>
+    <Button variant="ghost" disabled={busy} onClick={() => { setError(''); void reload().catch(e => setError(friendlyError(e))); }}>Refresh discussion</Button>
   </DialogContent></Dialog><AlertDialog open={!!revoking} onOpenChange={v => { if (!v) setRevoking(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Revoke this invitation?</AlertDialogTitle><AlertDialogDescription>This account will lose discussion access. Existing comments stay in the record. Access through a separate public report link is unchanged.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Keep access</AlertDialogCancel><AlertDialogAction onClick={() => { if (revoking) void action({ action: 'revoke', id: revoking }); setRevoking(null); }}>Revoke invitation</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog></>;
 }

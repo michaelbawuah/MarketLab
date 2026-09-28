@@ -1,13 +1,17 @@
 import Dashboard from './workspace';
 import { initialWorkspace } from '@/lib/finance/demo';
-import { identity, HttpError, publicSharingEnabled } from '@/lib/server';
-import { chatGPTSignInPath } from './chatgpt-auth';
+import { workspaceAccount, publicSharingEnabled } from '@/lib/server';
+import { emailConfig } from '@/lib/discussion-email';
+import { env } from 'cloudflare:workers';
+import { redirect } from 'next/navigation';
+import Welcome from './welcome';
 export const dynamic = 'force-dynamic';
-export default async function Page() {
-  try { await identity(); }
-  catch(e) {
-    const status=e instanceof HttpError?e.status:503;
-    return <main style={{maxWidth:580,margin:'15vh auto',padding:24,lineHeight:1.8}}><h1 style={{fontSize:28,fontWeight:600}}>MarketLab workspace</h1><p>{status===401?'Sign in to open your private research workspace.':status===403?'This workspace is private. You can still open a report link its owner shared with you.':'The workspace is temporarily unavailable. Please try again shortly.'}</p>{status===401&&<a href={chatGPTSignInPath('/')} target="_top" style={{display:'inline-block',marginTop:20,textDecoration:'underline'}}>Sign in with ChatGPT</a>}{publicSharingEnabled()&&<p style={{marginTop:20}}><a href="/example" style={{textDecoration:'underline'}}>View a fictional example</a></p>}</main>;
-  }
-  return <Dashboard initial={initialWorkspace()}/>;
+export default async function Page({searchParams}:{searchParams:Promise<{email_error?:string}>}) {
+  const params=await searchParams;
+  let account;
+  try { account=await workspaceAccount(); }
+  catch { return <Welcome status={503} sharing={publicSharingEnabled()} emailEnabled={!!emailConfig(env)}/>; }
+  if(account.needsRefresh)redirect('/api/discussion-auth/refresh?return_to=%2F');
+  if(!account.user)return <Welcome status={401} sharing={publicSharingEnabled()} emailEnabled={!!emailConfig(env)} emailError={params.email_error==='1'}/>;
+  return <Dashboard initial={initialWorkspace()} account={{label:account.user.accountLabel,email:account.user.provider==='email'}}/>;
 }
