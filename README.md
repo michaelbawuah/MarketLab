@@ -1,14 +1,27 @@
 # MarketLab
 
-A JavaScript/TypeScript portfolio research workspace with auditable transaction accounting, historical valuation, and a reproducible price-ingestion pipeline.
+A portfolio planning and analysis app with saved goals, a combined view of accounts, transparent fee projections and independently checkable backtests.
 
 **Engineering direction:** follow the adopted [engineering roadmap](docs/engineering-roadmap.md), based on Michael's supplied standards. It includes the directory map, ordered milestones and observed status. The first reliability work now has [reproducible clock-race and process-crash evidence](docs/reliability-evidence.md).
 
-**Current release:** personal saved workspaces with email or ChatGPT sign-in, a zero-setup practice portfolio, and public read-only report sharing. Each account opens on My portfolio and can return to its own saved work. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
+**Current release:** personal saved workspaces with email or ChatGPT sign-in, a zero-setup practice portfolio, and public read-only report sharing. Each account opens on My plan and can return to its own saved accounts, goals and reports. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
 
 See [personal workspaces and acceptance evidence](docs/personal-workspaces.md) for account separation, first-use flow, and the remaining live pilot gates.
 
 ## What works
+
+- **My plan:** saved manual accounts and debts, goal progress under editable assumptions,
+  cost-of-fees projections, allocation drift alerts, contribution and stress scenarios,
+  plus a transparent planning checklist. Historical backtests can supply a goal stress
+  scenario without being treated as future forecasts.
+- **Strategy library:** tested trend templates and explicitly published community reports
+  with report-bound independent replay receipts. Reuse rule settings on your own data.
+- **Optional peer comparison:** fixed-quarter cohorts, at least 20 opt-in accounts,
+  rounded aggregate results, frozen snapshots and withdrawal controls.
+- **Trust and support:** in-app support requests and owner replies, privacy/deletion
+  disclosures, educational-use framing and an on-demand service status check.
+  No bank-sync, bank-grade certification, completed accessibility audit or uptime
+  guarantee is claimed. [Release details and acceptance evidence](docs/ongoing-use-release.md).
 
 - Invite-only report discussions with ChatGPT or verified email sign-in:
   single-use invitations bind to the chosen account, owners revoke access and

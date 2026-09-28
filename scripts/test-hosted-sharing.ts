@@ -13,6 +13,7 @@ import { datasetId } from '../lib/finance/market-data.ts';
 import { testDiscussion } from './test-hosted-discussion.ts';
 import { emailTestBindings, testEmailDiscussion } from './test-hosted-email-discussion.ts';
 import { replayTestBindings,testHostedReplay } from './test-hosted-replay.ts';
+import { testPlanning } from './test-hosted-planning.ts';
 import { testPersonalWorkspaces } from './test-hosted-workspaces.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url)),temporary=await mkdtemp(path.join(tmpdir(),'marketlab-hosted-'));
@@ -57,7 +58,7 @@ try {
   let base=await start(false);
   const owner={'oai-authenticated-user-id':'hosted-fixture-owner','oai-authenticated-user-email':'owner@marketlab.test'},visitor={'oai-authenticated-user-id':'other-user','oai-authenticated-user-email':'visitor@marketlab.test'};
   let assertions=0;
-  async function request(route:string,status:number,init:RequestInit={}) {
+  async function request(route:string,status:number|number[],init:RequestInit={}) {
     // Negative writes may be rejected before their body is read, and this suite
     // also replaces the Worker between phases. Do not reuse a loopback socket
     // closed by either boundary (UND_ERR_SOCKET on CI). Never retry a write.
@@ -68,7 +69,7 @@ try {
     // Always drain the socket before the next request, including negative-path
     // assertions whose callers do not otherwise read their response bodies.
     const body=await r.text();
-    assert.equal(r.status,status,`${init.method??'GET'} ${route.split('?')[0]}${r.status!==status?`: ${body}`:''}`);
+    if(Array.isArray(status))assert.ok(status.includes(r.status),`${route}: expected ${status.join(' or ')}, received ${r.status}: ${body}`);else assert.equal(r.status,status,`${init.method??'GET'} ${route.split('?')[0]}${r.status!==status?`: ${body}`:''}`);
     assertions++;
     return new Response(body,{status:r.status,statusText:r.statusText,headers:r.headers});
   }
@@ -160,7 +161,8 @@ try {
   await request('/api/research/shares',200,post({action:'revoke',id,revision:created.status.revision}));
   await request('/api/shared/'+token,404);
   const revokedPage=await request(created.path,404);assert.ok((await revokedPage.text()).includes('This report link is unavailable'));assertions++;
-  assertions += await testPersonalWorkspaces({request,owner,visitor,privateRunId:id});
+  const workspaceChecks = await testPersonalWorkspaces({request,owner,visitor,privateRunId:id});
+  assertions += workspaceChecks;
   const discussionChecks = await testDiscussion({request,db:await worker!.getD1Database('DB') as unknown as D1Database,base,owner,visitor,runId:id});
   assertions += discussionChecks;
   await request('/api/discussion-auth/start?return_to=' + encodeURIComponent('/discussion/' + 'a'.repeat(64)),404);
@@ -168,6 +170,8 @@ try {
   const emailChecks = await testEmailDiscussion({request,providerFetch,owner,runId:id});
   assertions += emailChecks;
   const replayChecks = await testHostedReplay({request,providerFetch,db:await worker!.getD1Database('DB') as unknown as D1Database,owner,visitor,runId:id});
+  const planningChecks = await testPlanning({request,owner,visitor,db:await worker!.getD1Database('DB') as unknown as D1Database,runId:id});
+  assertions += planningChecks;
   assertions += replayChecks;
   console.log(`Built Worker: ${assertions} HTTP/header/content assertions passed. Activation gate, anonymous sharing, account-scoped APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance, invite-only discussion and bound Python replay receipts verified.`);
   console.log('Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.');

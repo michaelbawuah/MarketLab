@@ -1,4 +1,20 @@
 import { sqliteTable, text, integer, primaryKey, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
+export const planningWorkspaces = sqliteTable('planning_workspaces', {
+ owner:text('owner').primaryKey(),revision:integer('revision').notNull(),updated:text('updated').notNull(),payload:text('payload').notNull(),
+});
+export const strategyLibrary = sqliteTable('strategy_library', {
+ id:text('id').primaryKey(),owner:text('owner').notNull(),runId:text('run_id').notNull(),created:text('created').notNull(),
+ title:text('title').notNull(),report:text('report').notNull(),digest:text('digest').notNull(),
+},t=>[uniqueIndex('strategy_library_owner_run').on(t.owner,t.runId)]);
+export const peerContributions = sqliteTable('peer_contributions', {
+ owner:text('owner').notNull(),period:text('period').notNull(),cohort:text('cohort').notNull(),returnPct:integer('return_bps').notNull(),created:text('created').notNull(),active:integer('active').notNull().default(1),
+},t=>[primaryKey({columns:[t.owner,t.period]}),index('peer_contributions_cohort_period').on(t.cohort,t.period)]);
+export const peerReleases = sqliteTable('peer_releases', {
+ period:text('period').notNull(),cohort:text('cohort').notNull(),payload:text('payload').notNull(),created:text('created').notNull(),
+},t=>[primaryKey({columns:[t.period,t.cohort]})]);
+export const supportTickets = sqliteTable('support_tickets', {
+ id:text('id').primaryKey(),owner:text('owner').notNull(),subject:text('subject').notNull(),body:text('body').notNull(),created:text('created').notNull(),reply:text('reply'),replied:text('replied'),
+},t=>[index('support_tickets_owner_created').on(t.owner,t.created)]);
 export const ledger = sqliteTable('ledger', {owner:text('owner').notNull(),id:text('id').notNull(),sequence:integer('sequence').notNull(),payload:text('payload').notNull()},t=>[primaryKey({columns:[t.owner,t.id]}),uniqueIndex('ledger_owner_sequence').on(t.owner,t.sequence)]);
 export const prices = sqliteTable('prices', {dataset:text('dataset').notNull(),symbol:text('symbol').notNull(),date:text('date').notNull(),close:text('close').notNull()},t=>[primaryKey({columns:[t.dataset,t.symbol,t.date]})]);
 export const runs = sqliteTable('runs', {id:text('id').primaryKey(),owner:text('owner').notNull(),started:text('started').notNull(),status:text('status').notNull(),records:integer('records').notNull(),inserted:integer('inserted').notNull(),duration:integer('duration').notNull(),message:text('message').notNull()},t=>[uniqueIndex('runs_owner_started_id').on(t.owner,t.started,t.id)]);

@@ -16,6 +16,13 @@ goal. No hiring outcome, trading edge or institutional endorsement is implied.
 
 ## Latest extension — September 28
 
+The user subsequently authorized ongoing-use features: goals, multiple accounts,
+fees, drift alerts, what-if planning, opt-in peers, a verified strategy library,
+and truthful trust/support surfaces. [Release scope and evidence](ongoing-use-release.md)
+records the implemented behavior and remaining external acceptance work. This
+supersedes the earlier deferral of strategy templates and broad planning asset
+groups; the existing financial engine and private-data boundary remain intact.
+
 Personal saved workspaces are authorized for new users with email or ChatGPT
 sign-in. This supersedes the earlier single-owner and discussion-only email scope
 recorded below. [Implementation and acceptance](personal-workspaces.md) covers

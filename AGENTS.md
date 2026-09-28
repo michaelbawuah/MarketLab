@@ -1,5 +1,12 @@
 # MarketLab working direction
 
+- September 28 ongoing-use extension: goals, manual multi-account aggregation,
+  fee projections, allocation drift alerts, what-if scenarios, opt-in peer cohorts,
+  and a verified strategy library are now authorized. Preserve private records,
+  explicit sharing consent, and the $0 paid-spend limit. Bank aggregation is a
+  later integration after traction; do not claim connected accounts or automatic
+  refresh. Planning assumptions are hypothetical, never forecasts or advice.
+
 Read `docs/engineering-roadmap.md` before choosing the next milestone. It tracks
 the user-supplied `docs/engineering-standards-and-roadmap.pdf`, the controlling
 priority order. `docs/architecture-roadmap.md` describes the runtime boundary;
