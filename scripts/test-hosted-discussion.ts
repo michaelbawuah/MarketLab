@@ -8,7 +8,7 @@ export async function testDiscussion({ request, db, base, owner, visitor, runId 
   db: D1Database; base: string; owner: Record<string, string>; visitor: Record<string, string>; runId: string;
 }) {
   let checks = 0;
-  const post = (payload: unknown, headers = owner) => ({ method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(payload) });
+  const post = (payload: unknown, headers = owner) => ({ method: 'POST', headers: { 'Content-Type': 'application/json', Connection: 'close', ...headers }, body: JSON.stringify(payload) });
   const other = { 'oai-authenticated-user-id': 'club-member-two', 'oai-authenticated-user-email': 'second@marketlab.test' };
   const management = '/api/research/discussion';
   const ownerState = async () => (await request(`${management}?id=${runId}`, 200, { headers: owner })).json() as Promise<OwnerDiscussion>;

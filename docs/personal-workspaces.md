@@ -77,3 +77,12 @@ extension. The revised pilot kit records P1–P3 as not yet run and includes an
 uncoached task script, facilitator checks and a results table. A genuine supported
 brokerage export still requires a consenting user's real file; authored fictional
 CSV coverage is not that evidence. No adoption claim follows from automated QA.
+
+Production preflight must pass with a facilitator's separate practice account
+before inviting the three new participants. The pilot kit supplies that checklist.
+
+The first remote engineering run completed its financial/integration layers but
+hit an `UND_ERR_SOCKET` in the hosted test client. The harness now closes each
+loopback request connection across rejected writes and Worker restarts, without
+retrying writes or weakening an assertion. The separate container acceptance
+passed on that same commit. Remote rerun status is checked separately.

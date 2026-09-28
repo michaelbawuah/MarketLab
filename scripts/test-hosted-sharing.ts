@@ -58,7 +58,13 @@ try {
   const owner={'oai-authenticated-user-id':'hosted-fixture-owner','oai-authenticated-user-email':'owner@marketlab.test'},visitor={'oai-authenticated-user-id':'other-user','oai-authenticated-user-email':'visitor@marketlab.test'};
   let assertions=0;
   async function request(route:string,status:number,init:RequestInit={}) {
-    const r=await fetch(base+route,{...init,signal:AbortSignal.timeout(10000)});
+    // Negative writes may be rejected before their body is read, and this suite
+    // also replaces the Worker between phases. Do not reuse a loopback socket
+    // closed by either boundary (UND_ERR_SOCKET on CI). Never retry a write.
+    const headers=new Headers(init.headers);headers.set('Connection','close');
+    let r:Response;
+    try { r=await fetch(base+route,{...init,headers,signal:AbortSignal.timeout(10000)}); }
+    catch(cause){throw new Error(`${init.method??'GET'} ${route.split('?')[0]}: hosted test transport failed`,{cause});}
     // Always drain the socket before the next request, including negative-path
     // assertions whose callers do not otherwise read their response bodies.
     const body=await r.text();
@@ -110,7 +116,7 @@ try {
   await request(browserRoute,400,post({...completion,data:{...browserData,origin:'alphavantage'}}));
   await request(browserRoute,400,post({...completion,data:{...browserData,observations:[browserData.observations[0],browserData.observations[0]]}}));
   await request(browserRoute,404,post(completion,{...owner,'oai-authenticated-user-id':'another-owner-fixture'}));
-  const completions=await Promise.all([0,1].map(async()=>{const response=await fetch(base+browserRoute,{...post(completion),signal:AbortSignal.timeout(10000)});return {status:response.status,body:await response.json() as {dataset:{id:string;origin:string};message?:string}};}));
+  const completions=await Promise.all([0,1].map(async()=>{const response=await fetch(base+browserRoute,{...post(completion),headers:{...post(completion).headers,Connection:'close'},signal:AbortSignal.timeout(10000)});return {status:response.status,body:await response.json() as {dataset:{id:string;origin:string};message?:string}};}));
   assert.deepEqual(completions.map(r=>r.status).sort(),[201,409]);assertions++;
   const savedBrowser=completions.find(r=>r.status===201)!.body;
   assert.equal(savedBrowser.dataset.origin,'alphavantage-browser');assertions++;

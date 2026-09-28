@@ -3,7 +3,7 @@ export class WorkspaceAccessError extends Error {
   constructor(message: string, status: number) { super(message); this.status = status; }
 }
 
-/** Production identity comes only from the Sites dispatcher's verified headers. */
+/** The caller supplies only a dispatcher-verified or verified email-session ID. */
 export function workspaceOwner(userId: string | null, development = false) {
   if (development && !userId) return 'local-preview';
   if (!userId) throw new WorkspaceAccessError('Sign in to open your saved workspace.', 401);
