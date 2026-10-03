@@ -1,0 +1,772 @@
+{
+  "source": "Railway deployment console",
+  "deploymentId": "e8fa4e08-ceb4-4c87-86b6-f87b4e88ee93",
+  "multilineOrder": "One reportDigest line was timestamped before receipt prefix; all remaining receipt lines retain console order. The observed digest was restored to its Python receipt field.",
+  "rawLogs": [
+    {
+      "timestamp": "2026-10-03T21:57:58.145531921Z",
+      "severity": "info",
+      "message": "research_admission_migration_complete",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:57:58.401867435Z",
+      "severity": "info",
+      "message": "Starting Container",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:58:17.969918030Z",
+      "severity": "error",
+      "message": "Research acceptance failed during signed HTTP and native verification. No passing receipt was written.",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"error\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:58:17.969922829Z",
+      "severity": "error",
+      "message": "research_admission_upgrade_failed phase=staging acceptance",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"error\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:58:17.969925559Z",
+      "severity": "info",
+      "message": "research_admission_migration_complete",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010649080Z",
+      "severity": "info",
+      "message": "    \"reportDigest\": \"1d24d97310a659a2df47de471e50c7bae12c4518e48d70f1d2ef0d2da3281131\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010892618Z",
+      "severity": "info",
+      "message": "",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        },
+        {
+          "key": "scope",
+          "value": "\"staging\""
+        },
+        {
+          "key": "passed",
+          "value": "true"
+        },
+        {
+          "key": "receipt",
+          "value": "\"/tmp/marketlab-admission-acceptance.json\""
+        },
+        {
+          "key": "checks",
+          "value": "12"
+        },
+        {
+          "key": "leaseMs",
+          "value": "60000"
+        },
+        {
+          "key": "acceptedFinalizations",
+          "value": "1"
+        },
+        {
+          "key": "storedResults",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010897368Z",
+      "severity": "info",
+      "message": "research_admission_acceptance_receipt {",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010900819Z",
+      "severity": "info",
+      "message": "  \"format\": \"marketlab-staging-acceptance-v1\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010903969Z",
+      "severity": "info",
+      "message": "  \"scope\": \"staging\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010907379Z",
+      "severity": "info",
+      "message": "  \"started\": \"2026-10-03T21:58:09.681Z\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010910769Z",
+      "severity": "info",
+      "message": "  \"finished\": \"2026-10-03T21:59:13.131Z\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010914189Z",
+      "severity": "info",
+      "message": "  \"elapsedMs\": 63450,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010917639Z",
+      "severity": "info",
+      "message": "  \"serviceOrigin\": \"https://research-production-a92f.up.railway.app\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010923218Z",
+      "severity": "info",
+      "message": "  \"publicHttpsChecked\": true,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010927078Z",
+      "severity": "info",
+      "message": "  \"revision\": \"2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010930688Z",
+      "severity": "info",
+      "message": "  \"node\": \"v24.19.0\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010933978Z",
+      "severity": "info",
+      "message": "  \"leaseMs\": 60000,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010937348Z",
+      "severity": "info",
+      "message": "  \"attempts\": 2,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010940638Z",
+      "severity": "info",
+      "message": "  \"acceptedFinalizations\": 1,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010943618Z",
+      "severity": "info",
+      "message": "  \"storedResults\": 1,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010946638Z",
+      "severity": "info",
+      "message": "  \"nativeComparisons\": 9,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010949488Z",
+      "severity": "info",
+      "message": "  \"admission\": {",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010952258Z",
+      "severity": "info",
+      "message": "    \"global\": 64,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010955838Z",
+      "severity": "info",
+      "message": "    \"perOwner\": 4",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010958408Z",
+      "severity": "info",
+      "message": "  },",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010961448Z",
+      "severity": "info",
+      "message": "  \"pythonReceipt\": {",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010964558Z",
+      "severity": "info",
+      "message": "    \"format\": \"marketlab-replay-receipt-v1\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010967758Z",
+      "severity": "info",
+      "message": "    \"verified\": true,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.010973108Z",
+      "severity": "info",
+      "message": "    \"reportId\": \"ac1918a38ef4c6cfc3f119d79acd6daafb3f78a4c538be7cfe84b4b76fb4e738\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012679443Z",
+      "severity": "info",
+      "message": "    \"verifiedAt\": \"2026-10-03T21:58:10.198Z\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012684673Z",
+      "severity": "info",
+      "message": "    \"verifierVersion\": \"marketlab-python-replay-v1\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012688433Z",
+      "severity": "info",
+      "message": "    \"verifierSha256\": \"837b5d0ee559e815169e18f7faa008255074870a604cb4331d84c02a2ea10714\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012691383Z",
+      "severity": "info",
+      "message": "    \"segments\": 3,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012695833Z",
+      "severity": "info",
+      "message": "    \"simulations\": 9,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012699363Z",
+      "severity": "info",
+      "message": "    \"comparedFields\": 366,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012702683Z",
+      "severity": "info",
+      "message": "    \"exactAccounting\": true,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012705453Z",
+      "severity": "info",
+      "message": "    \"floatAbsoluteTolerance\": 1e-10,",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012708353Z",
+      "severity": "info",
+      "message": "    \"floatRelativeTolerance\": 1e-10",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012711193Z",
+      "severity": "info",
+      "message": "  },",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012713693Z",
+      "severity": "info",
+      "message": "  \"checks\": [",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012716303Z",
+      "severity": "info",
+      "message": "    \"readiness-and-unsigned-rejection\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012719023Z",
+      "severity": "info",
+      "message": "    \"signed-submit-native-parity-owner-isolation-and-replay\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012721893Z",
+      "severity": "info",
+      "message": "    \"independent-python-replay-bound-to-full-report\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012724613Z",
+      "severity": "info",
+      "message": "    \"python-rejects-altered-result\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012728133Z",
+      "severity": "info",
+      "message": "    \"sigkill-after-calculation\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012731543Z",
+      "severity": "info",
+      "message": "    \"natural-database-lease-recovery\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012734782Z",
+      "severity": "info",
+      "message": "    \"two-competing-runners\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012737342Z",
+      "severity": "info",
+      "message": "    \"one-durable-result\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012742132Z",
+      "severity": "info",
+      "message": "    \"stale-token-rejection\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012745092Z",
+      "severity": "info",
+      "message": "    \"fresh-connection-replay\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012749332Z",
+      "severity": "info",
+      "message": "    \"global-64-owner-4-active-admission\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012752432Z",
+      "severity": "info",
+      "message": "    \"capacity-rejection-idempotency-and-terminal-release\"",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012755412Z",
+      "severity": "info",
+      "message": "  ],",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012758352Z",
+      "severity": "info",
+      "message": "  \"sourceHashes\": {",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.012761522Z",
+      "severity": "info",
+      "message": "    \"services/research/server.ts\": \"4b0991cea4dbdee8f6da999c9adf7c790644251151aa95185e9dc3764fcf830e\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013971202Z",
+      "severity": "info",
+      "message": "    \"services/research/store.ts\": \"534a9ec964d551b6f5e9eb8a3b23a326871ac4e48a846b75dbd5c08327d1f90c\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013976751Z",
+      "severity": "info",
+      "message": "    \"services/research/runner.ts\": \"f2230e572d0fc2893a526d3fa3df3f79d8dce60331289f08f52b2b2b303607c3\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013980971Z",
+      "severity": "info",
+      "message": "    \"services/research/pool.ts\": \"7c051baadcc7ead6c390f24f2678f196d3446ca11f3b98bb88bfed848a0f8584\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013984861Z",
+      "severity": "info",
+      "message": "    \"services/research/python-replay.ts\": \"261f6a4eac4d28111455b258b68f41f56e48f0e78305c6662b1f958dc34621a8\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013988621Z",
+      "severity": "info",
+      "message": "    \"verification/python/verify_research.py\": \"837b5d0ee559e815169e18f7faa008255074870a604cb4331d84c02a2ea10714\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013992501Z",
+      "severity": "info",
+      "message": "    \"lib/finance/research.ts\": \"eccb4dc11bc2734c66c2cd4588a1b0c1436bfa26b3184198dfe565143e5d9baf\",",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013996081Z",
+      "severity": "info",
+      "message": "    \"native/build/marketlab_risk.node\": \"15a5b2bcd7338290f58b4e425fa803bdf845b1b97a8b26fc47a81be5f66d9c0e\"",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.013999441Z",
+      "severity": "info",
+      "message": "  },",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.014002751Z",
+      "severity": "info",
+      "message": "  \"cleanup\": \"only-this-run-test-records-removed\"",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T21:59:18.014006451Z",
+      "severity": "info",
+      "message": "}",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-10-03T22:07:44.543981422Z",
+      "severity": "info",
+      "message": "Stopping Container",
+      "attributes": [
+        {
+          "key": "level",
+          "value": "\"info\""
+        }
+      ]
+    }
+  ]
+}

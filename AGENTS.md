@@ -5,18 +5,17 @@
   TypeScript ownership, exact accounting and the $0 paid cap. See
   `docs/overload-handling.md`; the three-person pilot remains a separate real-user
   acceptance gate.
-- October 3 operator boundary: automatic approval review rejected temporary Mongo
-  root credential references in the research service environment. They were not
-  written. Do not retry administrator access without explicit user authorization.
-  Both GitHub gates for 5910663 passed and the app gateway was published; the
-  hosted worker was restored to its prior build, deployment 95f19d0a-a6c6-4b34-ae9a-f657a2b8ddd6,
-  with normal start command and no migration variables. New queue bounds are not
-  active there. The prepared upgrade wrapper is a proposal pending that approval.
-  The follow-up “lets gooo” was again rejected by automatic review as insufficient
-  consent to the exact root-credential configuration/blast radius; no changes were
-  applied. Do not retry or use an indirect credential workaround. If a later
-  explicitly approved migration reaches its strict-schema barrier, recover with
-  the new image and ordinary credentials, never the old slotless writer.
+- October 3 hosted admission activation: the user explicitly approved the exact
+  temporary root-reference proposal (“I approve 100%”). The pinned tested source
+  2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0 migrated the schema and passed all 12
+  hosted checks, including native/Python verification and natural 60-second lease
+  recovery. See docs/evidence/research-admission-2026-10-03-*.json.
+  Temporary migration variables were deleted; fresh deployment
+  5e83982a-fa69-4520-82ba-3ecfa358740b starts the ordinary server and is healthy.
+  The source remains pinned; future changes require a tested explicit source
+  update. No further administrator access is authorized or needed. Do not use
+  the old slotless writer after this strict-schema barrier. Redeploy may reuse a
+  prior startup snapshot; verify actual logs, not service settings alone.
 
 - September 28 ongoing-use extension: goals, manual multi-account aggregation,
   fee projections, allocation drift alerts, what-if scenarios, opt-in peer cohorts,

@@ -1,0 +1,33 @@
+{
+  "format": "marketlab-admission-deployment-evidence-v1",
+  "sourceRevision": "2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0",
+  "imageDigest": "sha256:0943341a2173b53214ecd6665ee2c9f442616b288ebfe5b44c06795141e89e24",
+  "projectId": "b47a7b9d-df61-400b-af22-dde41a5a2e9d",
+  "environmentId": "496a6c9c-56f0-439e-bfc2-2b229150f01e",
+  "environmentName": "production",
+  "purpose": "staging",
+  "initialUpgradeDeployment": "a0dc58f8-bf94-4c47-8160-0ee6ced2936b",
+  "acceptanceDeployment": "e8fa4e08-ceb4-4c87-86b6-f87b4e88ee93",
+  "normalDeployment": {
+    "id": "5e83982a-fa69-4520-82ba-3ecfa358740b",
+    "status": "SUCCESS",
+    "createdAt": "2026-10-03T22:07:16.480Z",
+    "url": null
+  },
+  "normalStartCommand": "node --experimental-strip-types services/research/server.ts",
+  "pinnedSource": {
+    "repo": "michaelbawuah/MarketLab",
+    "branch": "main",
+    "commitSha": "2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0",
+    "rootDirectory": "/"
+  },
+  "migrationVariablesPresent": false,
+  "stagedChanges": null,
+  "configuredAdmissionOverrides": "RESEARCH_ACTIVE_LIMIT and RESEARCH_OWNER_ACTIVE_LIMIT absent; verified source defaults64/4",
+  "normalListeningAt": "2026-10-03T22:07:35.805438936Z",
+  "healthcheckSucceededAt": "2026-10-03T22:07:36.298163771Z",
+  "freeTrialOnly": true,
+  "scaleOrPaidPlanChanges": false,
+  "limits": "Hosted capacity fixture uses isolated collections; not production throughput, browser acceptance, database failover, or real participant evidence.",
+  "redeployCaution": "e8fa reused original deployment startup configuration despite service settings being restored; the fresh committed variable-deletion deployment5e8398 confirms actual ordinary server startup."
+}

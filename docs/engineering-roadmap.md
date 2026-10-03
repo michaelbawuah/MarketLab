@@ -37,6 +37,12 @@ measurement. [Implementation and evidence](overload-handling.md) records the dat
 constraints, human-facing busy messages, reproducible benchmark and release checks.
 This does not close the real-user pilot or new-workspace production browser gate.
 
+October 3 hosted activation passed after explicit temporary operator approval:
+the pinned source migrated the database, all 12 signed/native/Python/crash checks
+passed, and a fresh ordinary-role deployment is healthy with migration variables
+removed. See the hosted evidence in [bounded admission](overload-handling.md).
+The real-user gates above remain pending.
+
 ## Ordered milestones
 
 | # | Milestone and acceptance evidence | Status on September 27 |

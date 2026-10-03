@@ -1,0 +1,60 @@
+{
+  "format": "marketlab-staging-acceptance-v1",
+  "scope": "staging",
+  "started": "2026-10-03T21:58:09.681Z",
+  "finished": "2026-10-03T21:59:13.131Z",
+  "elapsedMs": 63450,
+  "serviceOrigin": "https://research-production-a92f.up.railway.app",
+  "publicHttpsChecked": true,
+  "revision": "2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0",
+  "node": "v24.19.0",
+  "leaseMs": 60000,
+  "attempts": 2,
+  "acceptedFinalizations": 1,
+  "storedResults": 1,
+  "nativeComparisons": 9,
+  "admission": {
+    "global": 64,
+    "perOwner": 4
+  },
+  "pythonReceipt": {
+    "format": "marketlab-replay-receipt-v1",
+    "verified": true,
+    "reportId": "ac1918a38ef4c6cfc3f119d79acd6daafb3f78a4c538be7cfe84b4b76fb4e738",
+    "verifiedAt": "2026-10-03T21:58:10.198Z",
+    "verifierVersion": "marketlab-python-replay-v1",
+    "verifierSha256": "837b5d0ee559e815169e18f7faa008255074870a604cb4331d84c02a2ea10714",
+    "segments": 3,
+    "simulations": 9,
+    "comparedFields": 366,
+    "exactAccounting": true,
+    "floatAbsoluteTolerance": 1e-10,
+    "floatRelativeTolerance": 1e-10,
+    "reportDigest": "1d24d97310a659a2df47de471e50c7bae12c4518e48d70f1d2ef0d2da3281131"
+  },
+  "checks": [
+    "readiness-and-unsigned-rejection",
+    "signed-submit-native-parity-owner-isolation-and-replay",
+    "independent-python-replay-bound-to-full-report",
+    "python-rejects-altered-result",
+    "sigkill-after-calculation",
+    "natural-database-lease-recovery",
+    "two-competing-runners",
+    "one-durable-result",
+    "stale-token-rejection",
+    "fresh-connection-replay",
+    "global-64-owner-4-active-admission",
+    "capacity-rejection-idempotency-and-terminal-release"
+  ],
+  "sourceHashes": {
+    "services/research/server.ts": "4b0991cea4dbdee8f6da999c9adf7c790644251151aa95185e9dc3764fcf830e",
+    "services/research/store.ts": "534a9ec964d551b6f5e9eb8a3b23a326871ac4e48a846b75dbd5c08327d1f90c",
+    "services/research/runner.ts": "f2230e572d0fc2893a526d3fa3df3f79d8dce60331289f08f52b2b2b303607c3",
+    "services/research/pool.ts": "7c051baadcc7ead6c390f24f2678f196d3446ca11f3b98bb88bfed848a0f8584",
+    "services/research/python-replay.ts": "261f6a4eac4d28111455b258b68f41f56e48f0e78305c6662b1f958dc34621a8",
+    "verification/python/verify_research.py": "837b5d0ee559e815169e18f7faa008255074870a604cb4331d84c02a2ea10714",
+    "lib/finance/research.ts": "eccb4dc11bc2734c66c2cd4588a1b0c1436bfa26b3184198dfe565143e5d9baf",
+    "native/build/marketlab_risk.node": "15a5b2bcd7338290f58b4e425fa803bdf845b1b97a8b26fc47a81be5f66d9c0e"
+  },
+  "cleanup": "only-this-run-test-records-removed"
+}

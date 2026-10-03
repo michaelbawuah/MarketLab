@@ -212,7 +212,49 @@ native/Python replay, real process recovery and isolated 64/4 capacity checks.
 The hosted app gateway update was published successfully with environment
 revision 8. These results do not establish hosted activation of the new queue.
 
-### Hosted activation blocked
+### Hosted activation verified
+
+The user explicitly approved the exact temporary root-reference proposal on
+October 3 (“I approve 100%”). The deployed source was pinned to the tested commit
+`2ee9906e5aeb84caf76c6dc5a2efc8251c2f19b0`; no mutable branch deployment was used.
+The schema migrated, and the original approved runner produced a passing hosted
+receipt on deployment `e8fa4e08-ceb4-4c87-86b6-f87b4e88ee93`.
+
+All 12 checks passed in 63,450 ms: signed public HTTPS submission, unsigned rejection,
+owner isolation, idempotent replay, nine native comparisons, independent Python
+replay matching 366 fields and rejecting tampering, SIGKILL after calculation,
+natural 60-second lease recovery, two competing runners, two attempts, one durable
+finalization, stale-token rejection and fresh-client replay. The isolated capacity
+fixture verified 64/4 limits, saturation replay and terminal release. Its result is
+not public HTTP load or production throughput evidence. The live configuration
+has no admission overrides, so the verified source defaults 64/4 apply.
+
+The temporary credential references were first cleared, then both variables were
+deleted. A fresh configuration deployment, `5e83982a-fa69-4520-82ba-3ecfa358740b`,
+starts `services/research/server.ts` with ordinary credentials; its actual listening
+log and healthcheck succeeded at 22:07:35–36 UTC. It uses the same verified image
+`sha256:0943341a2173b53214ecd6665ee2c9f442616b288ebfe5b44c06795141e89e24`.
+There are no migration variables or staged changes. Mongo remains private, with
+the same single worker replica and trial resources; no paid/scale change was made.
+
+The initial signed acceptance attempts failed during the public routing handover.
+The existing runner eventually passed after restart. Reusing its deployment build
+also reused startup configuration despite changed service settings; the final
+fresh configuration deployment establishes the actual ordinary startup. A proposed
+ad hoc acceptance start command was rejected and never applied; no new runner was
+needed once the original passing receipt was retrieved.
+
+Evidence: [receipt](evidence/research-admission-2026-10-03-receipt.json),
+[console/provenance](evidence/research-admission-2026-10-03-console.json), and
+[normal deployment](evidence/research-admission-2026-10-03-deployment.json).
+One multiline reportDigest log appeared before the receipt prefix. Its observed
+value was restored to the Python receipt field, and a fresh local calculation
+independently matched both the fictional report ID and full-report digest. All
+seven source hashes match; the eighth identifies the image-built native addon.
+Fresh-account production browser acceptance and three real pilot sessions remain
+pending. This activation does not establish database failover or adoption.
+
+### Earlier approval boundary — superseded by the verified activation above
 
 Automatic approval review rejected referencing Mongo root credentials in the
 research environment, because that would persist broad administrator access
@@ -223,8 +265,8 @@ worker build redeployed. Deployment `95f19d0a-a6c6-4b34-ae9a-f657a2b8ddd6`
 succeeded; logs confirm the normal native-verification service listening.
 No pending configuration changes or migration variables remain.
 
-**The hosted worker still runs its prior build; new admission bounds are not
-active there.** The prepared operator wrapper and exact 64/4 schema are reviewable,
+At that earlier checkpoint the hosted worker still ran its prior build; new
+admission bounds were not active there. The prepared operator wrapper and exact 64/4 schema were reviewable,
 but running it with temporary administrator references requires explicit approval.
 After migration/acceptance, clear those references, restore the ordinary start
 command and verify restricted-role readiness. Do not infer that publishing source,
