@@ -232,3 +232,19 @@ container acceptance or the app gateway migrated the live database.
 
 The three real participant pilot sessions and fresh-account production browser
 acceptance remain outstanding; synthetic load jobs are not users or adoption.
+
+October 3 continuation: the user replied “lets gooo” after the permission request.
+Automatic approval review still rejected the root references, stating that this
+reply did not explicitly authorize the exact credential configuration and its
+blast radius. The call made no changes; the prior healthy deployment and ordinary
+start command remain in place. No indirect administrator-access workaround was
+attempted. Explicit consent to temporary Mongo root references in the research
+environment, followed by clearing them and ordinary-role redeployment, is needed.
+
+During a future approved upgrade, the public service URL may still route to the
+old container immediately after the new process listens. A healthcheck success
+is distinct from the passing signed acceptance receipt. Once migration completion
+is recorded, recover using the new image with ordinary credentials; the old image
+cannot insert slotless jobs under the new strict schema. Do not roll back to the
+old writer after the schema barrier. Remove the temporary references after either
+success or failure, and confirm ordinary-role readiness separately.

@@ -12,6 +12,11 @@
   hosted worker was restored to its prior build, deployment 95f19d0a-a6c6-4b34-ae9a-f657a2b8ddd6,
   with normal start command and no migration variables. New queue bounds are not
   active there. The prepared upgrade wrapper is a proposal pending that approval.
+  The follow-up “lets gooo” was again rejected by automatic review as insufficient
+  consent to the exact root-credential configuration/blast radius; no changes were
+  applied. Do not retry or use an indirect credential workaround. If a later
+  explicitly approved migration reaches its strict-schema barrier, recover with
+  the new image and ordinary credentials, never the old slotless writer.
 
 - September 28 ongoing-use extension: goals, manual multi-account aggregation,
   fee projections, allocation drift alerts, what-if scenarios, opt-in peer cohorts,
