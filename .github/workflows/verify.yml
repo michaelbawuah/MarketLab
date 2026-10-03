@@ -19,15 +19,18 @@ jobs:
     services:
       mongo:
         image: mongo:8.0.17
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test_admin
+          MONGO_INITDB_ROOT_PASSWORD: ephemeral-ci-fixture-only
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok'"
+          --health-cmd "mongosh --quiet -u test_admin -p ephemeral-ci-fixture-only --authenticationDatabase admin --eval 'db.adminCommand({ping:1}).ok'"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
     env:
-      MONGODB_TEST_URI: mongodb://127.0.0.1:27017
+      MONGODB_TEST_URI: mongodb://test_admin:ephemeral-ci-fixture-only@127.0.0.1:27017/?authSource=admin
     steps:
       - uses: actions/checkout@v7
         with:

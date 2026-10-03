@@ -19,8 +19,9 @@ MongoDB 8.0.17. Install dependencies with `pnpm install --frozen-lockfile` first
 # Starts a disposable loopback database, runs every gate and cleans up its data.
 MONGOD_BIN=/path/to/mongod pnpm test:service:local --ci
 
-# Or use a dedicated test server; each test creates and drops its own unique DB.
-MONGODB_TEST_URI=mongodb://127.0.0.1:27017 pnpm verify:ci
+# Or use an authenticated dedicated test server with a test admin role;
+# the suite creates isolated databases/users and removes them afterward.
+MONGODB_TEST_URI="mongodb://TEST_ADMIN:TEST_PASSWORD@127.0.0.1:27017/?authSource=admin" pnpm verify:ci
 ```
 
 `verify:ci` runs type checking, lint, native compilation, unit tests, integration
@@ -119,3 +120,9 @@ PKCE/state binding, exact configured-client and legacy issuers, identity
 separation, verified email, invitation acceptance, posting, refresh, sign-out,
 revocation and owner-API isolation. The successful live callback is recorded
 separately in [email sign-in evidence](../docs/discussion-email-sign-in.md).
+
+The local service harness and Engineering CI now enable Mongo authentication.
+Admission migration tests use a restricted `readWrite` account and a separate
+operator connection; they do not infer production permissions from a no-auth
+fixture. See [bounded admission](../docs/overload-handling.md) and
+`pnpm bench:arrivals` for the independent fixed-arrival matrix.

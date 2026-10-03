@@ -7,6 +7,7 @@ let service: Awaited<ReturnType<typeof createResearchService>> | undefined;
 let start = 0, cpu = process.cpuUsage(), peakRss = 0;
 const lag = monitorEventLoopDelay({ resolution: 10 });
 let sampler: NodeJS.Timeout | undefined;
+let crashArmed=false;
 process.on('message', async (message: { type: string; config?: ServiceConfig }) => {
   try {
     if (message.type === 'start' && !service && message.config) {
@@ -15,6 +16,15 @@ process.on('message', async (message: { type: string; config?: ServiceConfig }) 
       service = await createResearchService(config);
       await new Promise<void>(resolve => service!.server.listen(0, '127.0.0.1', resolve));
       process.send!({ type: 'ready', port: (service.server.address() as AddressInfo).port });
+    } else if (message.type === 'arm-crash' && service && !crashArmed) {
+      // Local benchmark-only barrier; this helper is excluded from the image.
+      crashArmed=true;
+      service.store.complete=async()=>{
+        process.send!({type:'crash-barrier'});
+        return await new Promise<boolean>(()=>{});
+      };
+    } else if (message.type === 'sample' && service) {
+      process.send!({type:'sample',rssBytes:process.memoryUsage().rss});
     } else if (message.type === 'measure' && service && !sampler) {
       cpu = process.cpuUsage(); start = performance.now(); peakRss = process.memoryUsage().rss;
       lag.reset(); lag.enable(); sampler = setInterval(() => { peakRss = Math.max(peakRss, process.memoryUsage().rss); }, 100);

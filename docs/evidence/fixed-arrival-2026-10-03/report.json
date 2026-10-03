@@ -1,0 +1,515 @@
+{
+  "format": "marketlab-fixed-arrival-v1",
+  "valid": true,
+  "source": {
+    "baseCommit": "f11166e9fbfa30e90fff58eecaf287f87eae65e5",
+    "workingTreeHadChanges": true,
+    "relevantSourceSha256": "d9b72fdd635edc0291455bd2821d14c966b551443f0771a0b1dc6839f5e1fd99",
+    "files": {
+      "lib/finance/brokerage-csv.ts": "7a405be980e946d93fd478b75ab7af557e017bcde255c6c1e530dd4b8258fe1e",
+      "lib/finance/browser-provider.ts": "648e163d4ac307de15fb92a37577f7595aebe87d6c9c9ce361d4742887c070f4",
+      "lib/finance/confidence.ts": "2eef45868f4e959f7bd1b1135c23b3b49a9d0f281e01685241aecdae835705f7",
+      "lib/finance/core.ts": "5c24bdfb37963ae8cd156acc1fbd17eb62f5f48c3ce688a39177d32749f7b361",
+      "lib/finance/corporate-actions.ts": "390868e99f0fc5bfa6bdda1af6cb65281f7ae0e2e051eb3714388c506ca1f320",
+      "lib/finance/demo.ts": "547ad59346fd2cd8c53becce31ef46ef57c4d6e1e26be13b3366dbb9cb02d85f",
+      "lib/finance/equity-events.ts": "a6924935e31333a6f698222dfe7b9a934aef948daa96d30a9cbbddcc1a5a1dae",
+      "lib/finance/historical-portfolio.ts": "752cd689b942d9ebe9ae4607deefe33145a522ecdf28dc1bf152adbb5f154104",
+      "lib/finance/market-data.ts": "e8917e75150a45402e55ad5c2312ebca101c772f61718e34ab5bece26bb795c6",
+      "lib/finance/market-explorer.ts": "dc5df06a68de7fc9e5c399dd96fd1ad48c63797d7672352599b743232f105276",
+      "lib/finance/money-examples.ts": "b9710ad7ff58039196a4beb88ea5b55e5789eab3a04539590b1adf281b9bc1bf",
+      "lib/finance/pipeline.ts": "a84c111c252ed2430f62f7d84a3fc77945aa52f4e3210220a22b22878952fa49",
+      "lib/finance/portfolio-benchmark.ts": "5d47cdf009fc20b2b1cec34e653d0211868e54e0862c6ebae28fc38b5d0a3d37",
+      "lib/finance/provider.ts": "134ee5023fd7cea553074f931598795fc867043e5bafeaa68bfff882f75a40dd",
+      "lib/finance/quick-demo-fingerprints.ts": "42a055e1166354d1534a85be0cccb229457419a670f637fa28704edd6f4bff52",
+      "lib/finance/quick-demo.ts": "34b1efc1482e01b7b0e59468098a372835146a5d41ac5484c2d0cb3236afacdd",
+      "lib/finance/replay-receipt.ts": "0eaf2363acff3f4814ceaed98a6a7bde5c430e579afdec916ee6ec4ade812504",
+      "lib/finance/research-comparison.ts": "bc515accf2fc718cbf19464fb3f17c753421c53ad4632cbbfc0c839413f14a95",
+      "lib/finance/research-input.ts": "b4808aee7ec5a78ae9089c947100bd14f6a8767b6830ef58a752dc1c4b90e1a4",
+      "lib/finance/research.ts": "eccb4dc11bc2734c66c2cd4588a1b0c1436bfa26b3184198dfe565143e5d9baf",
+      "lib/finance/shared-research.ts": "c186a0419bddb25ca8bac5e296bf910cc1be9f3b6c92c991d0b2e6051027e4fd",
+      "lib/finance/validation.ts": "a9b7e53b187ff19ef4a813ffe714813cf972244fed7cb39b99ab2ff40a721e79",
+      "lib/research-signing.ts": "2c35d4399e653e5ab84e932eaba48a5a7581ed69b0dc6551733122e8bd2551aa",
+      "native/build/marketlab_risk.node": "c2a41dfe5f384c561a7b2875e8afd560097ce831ff74edf9d41e2e7a41a0f1af",
+      "native/risk.cc": "88b82a23c427f03f4d3415006e60c49b98ad33bfebe6471b05d738c84c5c52e3",
+      "package.json": "22d508e714952c60253ee7fd4706b6ddc5681caab9db76e8d335e33206e49e97",
+      "pnpm-lock.yaml": "b06ef0ba4415af73804531d413bee17ac10b1912a06d93b70a57209c0622b680",
+      "scripts/benchmark-arrivals.ts": "b48d75484e9c18eca5265109637c03d448e92f30d92170ac05d452ae15bdd94d",
+      "scripts/benchmark-service.ts": "e38f93e965e789124717510e6813c7cbcd91e506bd033a48793cf15c7da0b95e",
+      "scripts/benchmark/processes.ts": "e9186c1ebcaca82885dcaf8aca4113dbd1649e3debfbd6a34ecf2b7a04b4cd12",
+      "scripts/benchmark/service-child.ts": "b8a1ddd82cba4e4bb9be786df2909bb7937e710be4660e6beaa1d10159ce2707",
+      "scripts/benchmark/statistics.ts": "b83ec007c0fa2e1115320dc82e2b0a799d8203c279021e2efbe9fe990c9ef02e",
+      "scripts/benchmark/workload.ts": "053b43a4238ce0da5fbceb07d9b8f950ac15a0d315258a8e8068cfa96bb0a5d8",
+      "services/research/auth.ts": "790ae9c04c8b5dfff5498f7995f3e1975d6184a196533510b157f764b816d6ac",
+      "services/research/compute-worker.ts": "ec0e08411cbdddd62a80ab60eef842b012efb06f5829b7e1f7ec23c7d7cc24bf",
+      "services/research/native.ts": "c0cd9826f7c30210e488d493e5026979510d6c33f8cefee5ee315d238fe1c75e",
+      "services/research/pool.ts": "7c051baadcc7ead6c390f24f2678f196d3446ca11f3b98bb88bfed848a0f8584",
+      "services/research/python-replay.ts": "261f6a4eac4d28111455b258b68f41f56e48f0e78305c6662b1f958dc34621a8",
+      "services/research/runner.ts": "f2230e572d0fc2893a526d3fa3df3f79d8dce60331289f08f52b2b2b303607c3",
+      "services/research/server.ts": "4b0991cea4dbdee8f6da999c9adf7c790644251151aa95185e9dc3764fcf830e",
+      "services/research/store.ts": "534a9ec964d551b6f5e9eb8a3b23a326871ac4e48a846b75dbd5c08327d1f90c"
+    }
+  },
+  "environment": {
+    "node": "v24.19.0",
+    "mongo": "8.0.17 (actual version also recorded per trial)",
+    "kernel": "6.18.44",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "visibleLogicalCpus": 9,
+    "availableParallelism": 8,
+    "hostVisibleMemoryBytes": 10451464192,
+    "cgroupCpuMax": "800000 100000",
+    "cgroupMemoryMax": "8589934592",
+    "cgroupCpuSet": "0-8",
+    "sharedMachine": true,
+    "mongoMemoryLimitations": "If serverStatus cannot access its managed /proc namespace (code 13538), RSS is explicitly unavailable, not zero."
+  },
+  "options": {
+    "baseline": 20,
+    "overload": 80,
+    "seconds": 15,
+    "repetitions": 1,
+    "workers": 2,
+    "warmup": 32,
+    "pollMs": 100,
+    "dispatchLimit": 64,
+    "pollers": 8,
+    "drainSeconds": 120,
+    "recovery": true,
+    "output": "/workspace/sites/marketlab/docs/evidence/fixed-arrival-2026-10-03"
+  },
+  "admission": {
+    "global": 64,
+    "perOwner": 4
+  },
+  "method": {
+    "arrivals": "i/rate on a monotonic clock; submission/completion never schedules the next arrival. Late >50ms or dispatch-limit arrivals are counted as driver drops; no catch-up queue.",
+    "timing": "Scheduled/dispatched to full HTTP result hash and native-receipt verification. DB-clock fields separate first queue wait, total residence and final-attempt wall time. The latter includes worker/IPC/persistence, not pure compute.",
+    "population": "Successful admitted jobs only for result latency. All offered outcomes and unresolved jobs are counted. Nearest-rank percentiles.",
+    "resources": "Separate Node service process and standalone loopback MongoDB per trial. Queue, service RSS via IPC and Mongo resident memory via serverStatus sampled every 250ms; service CPU/event-loop diagnostics measured via IPC. Unavailable Mongo RSS is reported explicitly; warm-up excluded; shared-machine contention remains.",
+    "recovery": "Crash occurs after arrivals stop and submission acknowledgements settle, at a benchmark-only after-calculation/before-finalization barrier; running leases expire naturally after 60s. No manual requeue or shortened production lease.",
+    "limits": "Short local overload experiments; not production capacity, an HFT latency claim, replica failover, browser/Workers/TLS testing, independent Python replay or a pilot."
+  },
+  "trials": [
+    {
+      "label": "baseline-1",
+      "rate": 20,
+      "measuredAt": "2026-10-03T18:42:11.953Z",
+      "mongoVersion": "8.0.17",
+      "mongoMemorySampling": {
+        "available": false,
+        "errorCode": 13538,
+        "reason": "Managed runtime /proc namespace is unavailable to Mongo serverStatus; Mongo RSS is unknown."
+      },
+      "arrivalWindowMs": 15000,
+      "arrivalsEndedMs": 15000.017164,
+      "durationMs": 15216.231132,
+      "counts": {
+        "offered": 300,
+        "dispatched": 300,
+        "driverDropped": 0,
+        "admitted": 300,
+        "capacityRejected": 0,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 300,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "gates": {
+        "generator": true,
+        "accounting": true,
+        "correctness": true,
+        "transport": true,
+        "sampling": true,
+        "bounds": true,
+        "phase": true,
+        "recovery": true
+      },
+      "valid": true,
+      "durableResultsVerified": true,
+      "persistedMeasuredJobs": 300,
+      "recoveredJobs": 0,
+      "recoveredLatency": null,
+      "restartToLastRecoveredObservedMs": null,
+      "peakDispatch": 1,
+      "sampledPeakActive": 1,
+      "samplingErrors": 0,
+      "transportPollErrors": 0,
+      "serviceMetrics": [
+        {
+          "type": "metrics",
+          "elapsedMs": 15217.272377999998,
+          "cpuUserMs": 10314.204,
+          "cpuSystemMs": 673.834,
+          "sampledPeakRssBytes": 290365440,
+          "processLifetimeMaxRssKiB": 283940,
+          "eventLoopDelayP99Ms": 17.039359,
+          "eventLoopDelayMaxMs": 25.362431
+        }
+      ],
+      "driverCpu": {
+        "userMs": 3385.04,
+        "systemMs": 339.308
+      },
+      "latency": {
+        "population": "Verified admitted jobs only; rejected, dropped, ambiguous, failed and unresolved counts are separate.",
+        "arrivalLateness": {
+          "count": 300,
+          "minMs": 0,
+          "meanMs": 0.20740669000007378,
+          "p50Ms": 0,
+          "p95Ms": 0.9777070000000094,
+          "p99Ms": 2.7047130000000834,
+          "maxMs": 3.311660000000302
+        },
+        "submit": {
+          "count": 300,
+          "minMs": 8.848047999999835,
+          "meanMs": 11.540663756666513,
+          "p50Ms": 10.91418799999883,
+          "p95Ms": 15.780123000000458,
+          "p99Ms": 17.96454199999971,
+          "maxMs": 21.137228000003233
+        },
+        "scheduledToVerified": {
+          "count": 300,
+          "minMs": 36.74832099999912,
+          "meanMs": 137.08455700000002,
+          "p50Ms": 138.2844959999993,
+          "p95Ms": 150.87333899999976,
+          "p99Ms": 153.1393790000002,
+          "maxMs": 159.04050800000186
+        },
+        "dispatchedToVerified": {
+          "count": 300,
+          "minMs": 37.49352599999838,
+          "meanMs": 137.33652079333322,
+          "p50Ms": 138.40865200000007,
+          "p95Ms": 150.89154499999995,
+          "p99Ms": 153.60195199999998,
+          "maxMs": 158.46591000000262
+        },
+        "initialQueue": {
+          "count": 300,
+          "minMs": 1,
+          "meanMs": 1.6166666666666667,
+          "p50Ms": 1,
+          "p95Ms": 3,
+          "p99Ms": 5,
+          "maxMs": 8
+        },
+        "residence": {
+          "count": 300,
+          "minMs": 11,
+          "meanMs": 14.4,
+          "p50Ms": 13,
+          "p95Ms": 22,
+          "p99Ms": 27,
+          "maxMs": 40
+        },
+        "finalAttemptWallTime": {
+          "count": 300,
+          "minMs": 9,
+          "meanMs": 12.783333333333333,
+          "p50Ms": 12,
+          "p95Ms": 20,
+          "p99Ms": 24,
+          "maxMs": 39
+        }
+      },
+      "samplesFile": "baseline-1.json"
+    },
+    {
+      "label": "overload-1",
+      "rate": 80,
+      "measuredAt": "2026-10-03T18:42:29.433Z",
+      "mongoVersion": "8.0.17",
+      "mongoMemorySampling": {
+        "available": false,
+        "errorCode": 13538,
+        "reason": "Managed runtime /proc namespace is unavailable to Mongo serverStatus; Mongo RSS is unknown."
+      },
+      "arrivalWindowMs": 15000,
+      "arrivalsEndedMs": 15105.069841999997,
+      "durationMs": 22797.683326,
+      "counts": {
+        "offered": 1200,
+        "dispatched": 1200,
+        "driverDropped": 0,
+        "admitted": 529,
+        "capacityRejected": 671,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 529,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "gates": {
+        "generator": true,
+        "accounting": true,
+        "correctness": true,
+        "transport": true,
+        "sampling": true,
+        "bounds": true,
+        "phase": true,
+        "recovery": true
+      },
+      "valid": true,
+      "durableResultsVerified": true,
+      "persistedMeasuredJobs": 529,
+      "recoveredJobs": 0,
+      "recoveredLatency": null,
+      "restartToLastRecoveredObservedMs": null,
+      "peakDispatch": 21,
+      "sampledPeakActive": 64,
+      "samplingErrors": 0,
+      "transportPollErrors": 0,
+      "serviceMetrics": [
+        {
+          "type": "metrics",
+          "elapsedMs": 22798.529840000003,
+          "cpuUserMs": 23642.483,
+          "cpuSystemMs": 1839.581,
+          "sampledPeakRssBytes": 439382016,
+          "processLifetimeMaxRssKiB": 431516,
+          "eventLoopDelayP99Ms": 31.047679,
+          "eventLoopDelayMaxMs": 40.697855
+        }
+      ],
+      "driverCpu": {
+        "userMs": 5446.894,
+        "systemMs": 811.035
+      },
+      "latency": {
+        "population": "Verified admitted jobs only; rejected, dropped, ambiguous, failed and unresolved counts are separate.",
+        "arrivalLateness": {
+          "count": 1200,
+          "minMs": 0,
+          "meanMs": 0.25588099083298704,
+          "p50Ms": 0,
+          "p95Ms": 1.800916000000143,
+          "p99Ms": 3.4167119999983697,
+          "maxMs": 6.981077000000369
+        },
+        "submit": {
+          "count": 1200,
+          "minMs": 10.3405219999986,
+          "meanMs": 139.78387825916658,
+          "p50Ms": 124.58659799999805,
+          "p95Ms": 272.9936290000005,
+          "p99Ms": 370.0164470000018,
+          "maxMs": 612.1605590000036
+        },
+        "scheduledToVerified": {
+          "count": 529,
+          "minMs": 48.22223899999881,
+          "meanMs": 2396.2449901984874,
+          "p50Ms": 2275.252177999999,
+          "p95Ms": 5255.113107999998,
+          "p99Ms": 7183.472603000002,
+          "maxMs": 7786.032311999996
+        },
+        "dispatchedToVerified": {
+          "count": 529,
+          "minMs": 48.255936000001384,
+          "meanMs": 2396.443080542534,
+          "p50Ms": 2275.5729199999987,
+          "p95Ms": 5255.378008,
+          "p99Ms": 7184.029657000006,
+          "maxMs": 7787.024012999995
+        },
+        "initialQueue": {
+          "count": 529,
+          "minMs": 1,
+          "meanMs": 2113.820415879017,
+          "p50Ms": 1976,
+          "p95Ms": 5141,
+          "p99Ms": 7047,
+          "maxMs": 7599
+        },
+        "residence": {
+          "count": 529,
+          "minMs": 13,
+          "meanMs": 2142.6219281663516,
+          "p50Ms": 2009,
+          "p95Ms": 5153,
+          "p99Ms": 7057,
+          "maxMs": 7610
+        },
+        "finalAttemptWallTime": {
+          "count": 529,
+          "minMs": 10,
+          "meanMs": 28.801512287334592,
+          "p50Ms": 28,
+          "p95Ms": 49,
+          "p99Ms": 60,
+          "maxMs": 67
+        }
+      },
+      "samplesFile": "overload-1.json"
+    },
+    {
+      "label": "recovery",
+      "rate": 80,
+      "measuredAt": "2026-10-03T18:42:54.355Z",
+      "mongoVersion": "8.0.17",
+      "mongoMemorySampling": {
+        "available": false,
+        "errorCode": 13538,
+        "reason": "Managed runtime /proc namespace is unavailable to Mongo serverStatus; Mongo RSS is unknown."
+      },
+      "arrivalWindowMs": 15000,
+      "arrivalsEndedMs": 15052.728187,
+      "durationMs": 75493.180847,
+      "counts": {
+        "offered": 1200,
+        "dispatched": 1200,
+        "driverDropped": 0,
+        "admitted": 533,
+        "capacityRejected": 667,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 533,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "gates": {
+        "generator": true,
+        "accounting": true,
+        "correctness": true,
+        "transport": true,
+        "sampling": true,
+        "bounds": true,
+        "phase": true,
+        "recovery": true
+      },
+      "valid": true,
+      "durableResultsVerified": true,
+      "persistedMeasuredJobs": 533,
+      "recoveredJobs": 2,
+      "recoveredLatency": {
+        "count": 2,
+        "minMs": 62043.644241,
+        "meanMs": 62045.665132,
+        "p50Ms": 62043.644241,
+        "p95Ms": 62047.686023,
+        "p99Ms": 62047.686023,
+        "maxMs": 62047.686023
+      },
+      "restartToLastRecoveredObservedMs": 59893.789497000005,
+      "peakDispatch": 22,
+      "sampledPeakActive": 64,
+      "samplingErrors": 0,
+      "transportPollErrors": 198,
+      "crash": {
+        "activeAtKill": 63,
+        "runningAtKill": 2,
+        "oldPid": 300,
+        "signal": "SIGKILL",
+        "killedAtMs": 15075.912556000003,
+        "restartedAtMs": 15374.854743999997,
+        "leaseMs": 60000,
+        "unchangedConfiguration": true,
+        "barrier": "Local helper pauses finalization after real calculation; production has no hook."
+      },
+      "serviceMetrics": [
+        {
+          "type": "metrics",
+          "elapsedMs": 15058.387884999998,
+          "cpuUserMs": 20160.186,
+          "cpuSystemMs": 1408.6,
+          "sampledPeakRssBytes": 448532480,
+          "processLifetimeMaxRssKiB": 442772,
+          "eventLoopDelayP99Ms": 31.277055,
+          "eventLoopDelayMaxMs": 42.532863
+        },
+        {
+          "type": "metrics",
+          "elapsedMs": 60119.10592,
+          "cpuUserMs": 4580.813,
+          "cpuSystemMs": 590.105,
+          "sampledPeakRssBytes": 245624832,
+          "processLifetimeMaxRssKiB": 240232,
+          "eventLoopDelayP99Ms": 11.395071,
+          "eventLoopDelayMaxMs": 30.392319
+        }
+      ],
+      "driverCpu": {
+        "userMs": 7251.742,
+        "systemMs": 985.989
+      },
+      "latency": {
+        "population": "Verified admitted jobs only; rejected, dropped, ambiguous, failed and unresolved counts are separate.",
+        "arrivalLateness": {
+          "count": 1200,
+          "minMs": 0,
+          "meanMs": 0.24941441249994264,
+          "p50Ms": 0,
+          "p95Ms": 1.6542580000023008,
+          "p99Ms": 3.0142800000030547,
+          "maxMs": 11.562193999998271
+        },
+        "submit": {
+          "count": 1200,
+          "minMs": 10.37485999999626,
+          "meanMs": 139.00417885250005,
+          "p50Ms": 121.91619899999932,
+          "p95Ms": 272.3726630000019,
+          "p99Ms": 406.24065100000007,
+          "maxMs": 659.0153750000027
+        },
+        "scheduledToVerified": {
+          "count": 533,
+          "minMs": 84.47773299999972,
+          "meanMs": 2627.4653001688566,
+          "p50Ms": 2313.868333999999,
+          "p95Ms": 5657.768206000001,
+          "p99Ms": 7643.173905999996,
+          "maxMs": 62047.686023
+        },
+        "dispatchedToVerified": {
+          "count": 533,
+          "minMs": 84.7221040000004,
+          "meanMs": 2627.6672958067525,
+          "p50Ms": 2314.2930229999984,
+          "p95Ms": 5657.534739000002,
+          "p99Ms": 7643.208853999997,
+          "maxMs": 62048.510742000006
+        },
+        "initialQueue": {
+          "count": 533,
+          "minMs": 1,
+          "meanMs": 2115.484052532833,
+          "p50Ms": 2001,
+          "p95Ms": 5308,
+          "p99Ms": 7267,
+          "maxMs": 7824
+        },
+        "residence": {
+          "count": 533,
+          "minMs": 14,
+          "meanMs": 2370.6660412757974,
+          "p50Ms": 2037,
+          "p95Ms": 5535,
+          "p99Ms": 7458,
+          "maxMs": 61881
+        },
+        "finalAttemptWallTime": {
+          "count": 533,
+          "minMs": 11,
+          "meanMs": 29.71857410881801,
+          "p50Ms": 28,
+          "p95Ms": 52,
+          "p99Ms": 64,
+          "maxMs": 121
+        }
+      },
+      "samplesFile": "recovery.json"
+    }
+  ]
+}

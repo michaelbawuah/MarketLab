@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "native:build": "node scripts/build-native.mjs",
     "test:native": "node --experimental-strip-types --test tests/cross-check/native.test.ts",
-    "test:service": "node --experimental-strip-types --test tests/integration/service.test.ts tests/integration/lease-clock.test.ts tests/integration/crash-recovery.test.ts",
+    "test:service": "node --experimental-strip-types --test tests/integration/service.test.ts tests/integration/admission.test.ts tests/integration/lease-clock.test.ts tests/integration/crash-recovery.test.ts",
     "test:service:local": "node scripts/test-service-local.mjs",
     "service:start": "node --experimental-strip-types services/research/server.ts",
     "service:submit": "node --experimental-strip-types scripts/research-client.ts",
@@ -31,7 +31,8 @@
     "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "test:integration": "node --experimental-strip-types --test tests/integration/*.test.ts",
     "test:cross-check": "pnpm test:native && pnpm test:python && pnpm test:parity",
-    "verify:ci": "pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check && pnpm verify:hosted"
+    "verify:ci": "pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check && pnpm verify:hosted",
+    "bench:arrivals": "node --experimental-strip-types scripts/benchmark-arrivals.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

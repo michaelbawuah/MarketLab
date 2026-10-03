@@ -1,0 +1,1 @@
+Failed resource-sampling attempt retained. Baseline outcome/financial checks passed but sampling failed because Mongo serverStatus could not read its /proc process path in this managed runtime (code 13538). This is not accepted benchmark evidence. Final runner explicitly marks Mongo RSS unavailable and samples service RSS over IPC.

@@ -36,8 +36,8 @@ export function parseOptions(args: string[]): Options {
 }
 
 async function optionalFile(path: string) { try { return (await readFile(path, 'utf8')).trim(); } catch { return null; } }
-async function sourceManifest() {
-  const files = ['package.json', 'pnpm-lock.yaml', 'lib/research-signing.ts', 'scripts/benchmark-service.ts', 'native/risk.cc', 'native/build/marketlab_risk.node'];
+export async function sourceManifest() {
+  const files = ['package.json', 'pnpm-lock.yaml', 'lib/research-signing.ts', 'scripts/benchmark-service.ts', 'scripts/benchmark-arrivals.ts', 'native/risk.cc', 'native/build/marketlab_risk.node'];
   for (const directory of ['lib/finance', 'services/research', 'scripts/benchmark']) {
     for (const name of (await readdir(join(root, directory))).sort()) if (name.endsWith('.ts')) files.push(`${directory}/${name}`);
   }
@@ -129,7 +129,7 @@ export async function benchmark(options: Options) {
       try {
         inspector = new MongoClient(mongo.uri, { timeoutMS: 5000 }); await inspector.connect();
         const mongoVersion = (await inspector.db('admin').command({ buildInfo: 1 })).version as string;
-        service = await startService({ uri: mongo.uri, database, secret, host: '127.0.0.1', port: 0, workers: options.workers, mode: options.mode });
+        service = await startService({ uri: mongo.uri, database, secret, host: '127.0.0.1', port: 0, workers: options.workers, mode: options.mode, admission: {global:64,perOwner:30} });
         const warm = await runPhase(service.origin, secret, warmJobs, options, cancelled.signal, false);
         if (!warm.summary.valid) throw new Error('Warm-up failed; no valid performance result can be published.');
         const measuring = messageFrom(service.child, 'measuring'); service.child.send({ type: 'measure' }); await measuring;
@@ -162,6 +162,7 @@ export async function benchmark(options: Options) {
         percentile: 'Nearest rank: sorted[ceil(p*n)-1]. Raw per-job samples are retained. Combined percentiles are recomputed from all samples, never averaged.',
         throughput: 'Verified measured jobs divided by the interval from launching the first client until every measured client finishes, including its full-result checks.',
         isolation: 'A fresh loopback-only MongoDB process/database and separate Node service process for each repetition; 256 MiB WiredTiger cache. The load generator, service and database share the same machine.',
+        admission: {global:64,perOwner:30,reason:'Closed-loop compatibility profile; the new fixed-arrival benchmark uses production defaults of 64/4.'},
         warmup: `${options.warmup} distinct jobs per repetition, excluded from measured summaries. New measured jobs keep the normal 30-job owner quota; at most 25 jobs per synthetic owner.`,
         correctness: 'All measured HTTP results must match frozen input and precomputed canonical TypeScript analysis hashes, have one attempt, and carry the configured verification receipt. Post-run Mongo inspection requires every expected owner/id exactly once, completed with one attempt.',
         durability: 'Existing service write concern is majority on a standalone MongoDB process. This measures acknowledged persistence, not replica failover or crash durability.',

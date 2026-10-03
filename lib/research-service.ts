@@ -18,7 +18,8 @@ export async function researchRequest(config:NonNullable<ReturnType<typeof resea
     const reader=response.body?.getReader();if(!reader)throw new Error();let raw='',size=0;const decoder=new TextDecoder('utf-8',{fatal:true});
     try{while(true){const chunk=await reader.read();if(chunk.done)break;size+=chunk.value.byteLength;if(size>16384){await reader.cancel();throw new Error();}raw+=decoder.decode(chunk.value,{stream:true});}raw+=decoder.decode();}finally{reader.releaseLock();}
     if(!response.ok){
-      const messages:Record<number,string>={409:'The background workspace has reached its job limit.',422:'Independent replay did not match the saved report. No receipt was attached.',429:'Independent replay is busy. Please retry shortly.'};
+      const messages:Record<number,string>={409:'This workspace has reached its 30 saved background-report limit.',422:'Independent replay did not match the saved report. No receipt was attached.',429:path==='/v1/replay'?'Independent replay is busy. Please retry shortly.':'Several of your reports are still being calculated. Wait for one to finish, then try again.'};
+      if(response.status===503&&path==='/v1/jobs')throw new HttpError('Report calculations are busy. Please try again shortly. Your saved experiment remains available.',503);
       throw new HttpError(messages[response.status]??'Research service is temporarily unavailable.',messages[response.status]?response.status:503);
     }
     return JSON.parse(raw);

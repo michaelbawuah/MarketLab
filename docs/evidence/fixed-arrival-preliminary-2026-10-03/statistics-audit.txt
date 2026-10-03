@@ -1,0 +1,14 @@
+Source hashes, per-trial outcome accounting, accepted terminal populations and nearest-rank p99 for scheduled latency, initial queue and generator lateness independently recomputed from raw samples with Python. All passed.
+{
+  "offered": 5700,
+  "dispatched": 5700,
+  "driverDropped": 0,
+  "admitted": 2688,
+  "capacityRejected": 3012,
+  "otherRejected": 0,
+  "transportAmbiguous": 0,
+  "completedAndVerified": 2688,
+  "terminalFailed": 0,
+  "invalidResults": 0,
+  "unresolved": 0
+}

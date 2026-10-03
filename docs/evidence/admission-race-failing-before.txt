@@ -1,0 +1,24 @@
+$ node scripts/test-service-local.mjs '--test-name-pattern=authenticated readWrite' tests/integration/admission.test.ts
+Running integration checks against a real authenticated disposable MongoDB process.
+✖ authenticated readWrite startup needs operator migration, safely repairs interruption and rejects unsafe validation modes (247.198296ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 485.384432
+
+✖ failing tests:
+
+test at tests/integration/admission.test.ts:72:1
+✖ authenticated readWrite startup needs operator migration, safely repairs interruption and rejects unsafe validation modes (247.198296ms)
+  Error: Research admission migration has no free slot.
+      at JobStore.initializeAdmission (file:///workspace/sites/marketlab/services/research/store.ts:68:65)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async JobStore.initialize (file:///workspace/sites/marketlab/services/research/store.ts:33:5)
+      at async TestContext.<anonymous> (file:///workspace/sites/marketlab/tests/integration/admission.test.ts:93:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+[ELIFECYCLE] Command failed with exit code 1.

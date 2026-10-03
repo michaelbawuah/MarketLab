@@ -15,7 +15,7 @@ import { replayReportJSON,replayDigest,checkedReplayReceipt } from '../../lib/fi
 const uri=process.env.MONGODB_TEST_URI;if(!uri)throw new Error('MONGODB_TEST_URI is required: these tests use a real disposable MongoDB database.');
 const databaseName=()=>`marketlab_test_${randomUUID().replaceAll('-','')}`;
 test('MongoDB enforces quota and idempotency under concurrent submissions, scopes owners and validates slot bounds',async()=>{
-  const store=new JobStore(uri,databaseName());await store.initialize();
+  const store=new JobStore(uri,databaseName(),'',{global:64,perOwner:30});await store.initialize();
   try{
     const fixture=await researchFixture(),same=await Promise.all(Array.from({length:20},()=>store.submit('duplicate-owner',fixture)));assert.equal(new Set(same.map(j=>j.id)).size,1);assert.equal(await store.jobs.countDocuments({owner:'duplicate-owner'}),1);
     const submissions=await Promise.allSettled(Array.from({length:40},(_,i)=>store.submit('quota-owner',{...fixture,config:{...fixture.config,name:`Distinct run ${i}`}})));

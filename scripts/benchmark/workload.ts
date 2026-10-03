@@ -50,9 +50,9 @@ export async function prepareJobs(profiles: Profile[], count: number, phase: str
   return jobs;
 }
 
-export function assertCorrectResult(value: unknown, expected: PreparedJob, mode: 'typescript' | 'cpp-verify') {
+export function assertCorrectResult(value: unknown, expected: PreparedJob, mode: 'typescript' | 'cpp-verify', maxAttempts=1) {
   const job = value as { id?: string; status?: string; attempts?: number; snapshot?: unknown; analysis?: unknown; verification?: { engine?: string; comparisons?: number; maxAbsoluteError?: number } };
-  if (!job || job.id !== expected.id || job.status !== 'completed' || job.attempts !== 1) throw new Error('Result identity, completion or attempt check failed.');
+  if (!job || job.id !== expected.id || job.status !== 'completed' || !Number.isSafeInteger(job.attempts) || job.attempts! < 1 || job.attempts! > maxAttempts) throw new Error('Result identity, completion or attempt check failed.');
   if (digest(job.snapshot) !== expected.snapshotHash || digest(job.analysis) !== expected.analysisHash) throw new Error('Frozen input or canonical result mismatch.');
   const v = job.verification;
   if (!v || !Number.isFinite(v.maxAbsoluteError) || v.maxAbsoluteError! < 0 || (mode === 'cpp-verify'

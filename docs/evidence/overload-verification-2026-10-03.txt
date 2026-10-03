@@ -1,0 +1,321 @@
+$ node scripts/test-service-local.mjs --ci
+Running integration checks against a real authenticated disposable MongoDB process.
+$ pnpm typecheck && pnpm lint && pnpm native:build && pnpm test:unit && pnpm test:integration && pnpm test:cross-check && pnpm verify:hosted
+$ tsc --noEmit
+$ eslint . --ignore-pattern dist --ignore-pattern .next
+$ node scripts/build-native.mjs
+Built native/build/marketlab_risk.node
+$ node --experimental-strip-types --test tests/unit/*.test.ts
+✔ nearest-rank percentiles retain the slow tail instead of averaging or interpolating it (1.753818ms)
+✔ failed and undispatched jobs reduce goodput and invalidate a run without disappearing (0.355737ms)
+✔ the frozen workload is deterministic, covers eight cost/window profiles and never hits per-owner quota (125.949664ms)
+✔ incorrect inputs, results, completion, attempts or verification cannot pass a fast benchmark (23.93694ms)
+✔ load-run options are bounded and require a new explicit output destination (0.680608ms)
+✔ native Schwab file reconciles quoted USD values, explicit fees, header and footer without cleanup (16.163624ms)
+✔ brokerage import reaches the canonical portfolio with independently expected cash, cost and gains (20.000081ms)
+✔ brokerage report serialization retains evidence and amounts without account titles or descriptions (11.791118ms)
+✔ same-day order is explicit and missing initial funding cannot pass valuation (2.68894ms)
+✔ all unsupported activity stops the whole import instead of producing a partial ledger (1.913729ms)
+✔ cash signs, impossible dates, numeric grouping, currencies and excess precision fail closed (1.432563ms)
+✔ multiple accounts, unknown preambles, malformed footers and mismatched totals are rejected (0.876003ms)
+✔ blank lines, BOM, trailing empty columns and quoted descriptions are handled without storing descriptions (0.313343ms)
+✔ duplicate-looking executions remain distinct and repeated import identities are deterministic (4.011807ms)
+✔ reported net cash and fees remain authoritative when the displayed execution price is rounded (0.472754ms)
+✔ API draft validation re-parses raw broker input, rejects forged receipts and preserves legacy ledger input (1.381215ms)
+✔ conversion certificates detect altered cash, fee and duplicate provenance records (2.981782ms)
+✔ row and byte limits prevent oversized brokerage imports (2.870714ms)
+✔ direct connection sends the key only to Alpha Vantage, reserves first and saves exact prices (18.795858ms)
+✔ provider denial triggers no retry or hosted fallback and no notice/key is persisted (4.866507ms)
+✔ reservation denial prevents any provider request (0.692766ms)
+✔ browser and save network failures never expose the key or retry provider traffic (2.135434ms)
+✔ server transfer validation keeps browser provenance distinct and rejects forged or invalid data (3.825666ms)
+✔ every demo preset has scoped checks and explicitly lacks an independent report receipt (33.275339ms)
+✔ altered wealth, fees, returns, dates and signal timing cannot earn passing certificates (13.089893ms)
+✔ source labels preserve provenance and do not certify a calendar or source authenticity (1.885057ms)
+✔ portfolio certificate reconciles ledger and benchmark, including failure and cash-only cases (4.2062ms)
+✔ corporate-action JSON carries source, assumptions and actual endpoint checks (2.964276ms)
+✔ demo ledger checks use actual ledger balances and supplied quotes (5.942412ms)
+✔ research and portfolio CSV retain observations and contain the full certificate without formula injection (10.284968ms)
+✔ only completed detailed service reports receive a certificate; risk receipt stays separate (2.599295ms)
+✔ automatic dates keep warmup and enough prices for both evaluation periods (3.882362ms)
+✔ automatic dates refuse invalid settings instead of inventing missing history (1.327645ms)
+✔ unknown technical failures do not expose internal details to users (1.915002ms)
+✔ recognizable failures give actionable language without masking valid limits (0.45044ms)
+✔ forward and reverse splits preserve wealth and exact fractional shares (19.687034ms)
+✔ cash dividend offsets ex-date drop and is not reinvested (0.37033ms)
+✔ same-day split precedes dividend; prior income does not split (0.373564ms)
+✔ events between supplied observations apply chronologically without invented prices (0.210087ms)
+✔ rejects adjusted inputs, incomplete coverage, invalid dates and duplicate events (0.809352ms)
+✔ explicit no-event coverage and audit export reconcile with original observations (0.868702ms)
+✔ workspace email sign-in binds the root return path and rejects arbitrary destinations (27.009423ms)
+✔ email login stays disabled until explicitly enabled with complete HTTPS callback configuration (0.393605ms)
+✔ email return paths cannot leave an invitation or redirect to another site (0.167002ms)
+✔ PKCE callback binds state, browser cookie, password, invitation and ten-minute expiry (4.590256ms)
+✔ markers explain actual executions, split holdings and ex-date income in engine order (20.02258ms)
+✔ events between supplied closes preserve effective dates and anchor at the next real observation (3.67635ms)
+✔ same-day split precedes entitlement, with exact reverse-split fractions (1.680338ms)
+✔ later-period markers restart in cash and exclude first-day and earlier entitlements (1.477291ms)
+✔ trade annotations preserve cent fees and micro-dollar fills after slippage (1.460124ms)
+✔ responsive marker grouping preserves all 1,000 events in chronological order (3.206571ms)
+✔ decimal parsing and fractional trade rounding preserve cents (2.032368ms)
+✔ external contributions alone never count as returns (10.121342ms)
+✔ withdrawals are excluded from time-weighted performance (0.858546ms)
+✔ average cost, sale fees, and dividends reconcile to total gain (0.431642ms)
+✔ historical validation prevents overdrafts and short sales (0.602359ms)
+✔ no future quote can be used to value an earlier purchase (0.267053ms)
+✔ daily gain with an end-of-day contribution retains the correct return (0.291911ms)
+✔ fixture replay is deterministic and complete, malformed data is rejected (22.085645ms)
+✔ sample portfolio reconciles and every chart endpoint matches its valuation (4.209616ms)
+✔ API input normalization rejects invalid dates, unknown symbols and extra fields (2.876563ms)
+✔ a large contribution immediately invested does not create a return below -100% (0.288185ms)
+✔ portfolio independently reconciles split, dividend receivable, funding, sale and payment (22.960056ms)
+✔ a dividend is paid to the original entitlement after all shares are sold (1.869803ms)
+✔ ex-date buyers are excluded and sellers retain earned dividends (6.58372ms)
+✔ receivables cannot be spent, and payment cannot duplicate or mismatch an entitlement (4.104086ms)
+✔ missing and stale marks, unsupported price basis and incomplete action coverage stop valuation (2.938336ms)
+✔ reverse split retains rational shares and aggregate dividend rounding is half up (0.806708ms)
+✔ CSV validation preserves same-date order, rejects malformed or duplicate imports, and round-trips exact amounts (1.284199ms)
+✔ frozen action payloads affect identity even when an action revision number is reused (0.910064ms)
+✔ prices preserve six decimals and are ordered by observed date without inventing sessions (15.689588ms)
+✔ canonical identity makes reordered exact replays idempotent and corrections distinct (9.510088ms)
+✔ invalid or future dates, duplicates, non-USD and mixed symbols fail before persistence (1.034582ms)
+✔ invalid prices never round or coerce silently (0.652956ms)
+✔ CSV quoting and aliases are supported while ambiguous structures are rejected (12.476758ms)
+✔ explicit adjusted column selection cannot silently use raw close or claim unadjusted (1.004617ms)
+✔ series metrics match an independent hand calculation with observed date gaps (0.364991ms)
+✔ export keeps exact decimals and metadata and neutralizes spreadsheet formulas (9.409246ms)
+✔ explorer excludes CSV claims, fictional observations and other price bases (1.162635ms)
+✔ explorer chooses newest observation, with stable save-time and ID ties (8.707676ms)
+✔ browser imports appear in the explorer without changing their source classification (0.201594ms)
+✔ decimal arithmetic rejects a valid payment while the canonical ledger spends every cent (1.882893ms)
+✔ a six-decimal price rounds exactly at the half-cent boundary (0.458983ms)
+✔ a millionth share crosses the half-cent boundary without losing precision (0.407936ms)
+✔ integer cents still reject a real one-cent overdraft (0.341135ms)
+✔ successive partial sales conserve basis and clear the final holding exactly (0.192791ms)
+✔ decimal integer strings retain cents across JSON without a Number conversion (0.591523ms)
+✔ planning conserves recorded assets and liabilities; fees remain distinct from balance (1.216126ms)
+✔ unknown fees are not treated as zero and stale balances are surfaced (0.231309ms)
+✔ fictional imported portfolio cannot silently add to net worth (0.321265ms)
+✔ monthly zero-rate projection reconciles exact deposits and never adds future contributions early (0.307945ms)
+✔ positive and negative monthly growth round symmetrically at half a cent (0.15889ms)
+✔ projection matches independently calculated Python Decimal fixtures (0.525954ms)
+✔ fee drag does not double charge historical fees; zero fees have no drag (0.398231ms)
+✔ goal funding excludes debt and solves minimum cent monthly contribution (2.548808ms)
+✔ date ranges count full months and keep completed goals evaluable (0.173862ms)
+✔ allocation alerts use percentage-point thresholds, not relative percentages (0.220383ms)
+✔ stress applies group shocks to assets and leaves debt unchanged (0.23185ms)
+✔ extra contributions use causal observed monthly returns with no future-price fill (0.484832ms)
+✔ validation rejects forged records, duplicate IDs, future balances, dangling goals and invalid target totals (8.656039ms)
+✔ peer cohorts use fixed prior calendar quarters and reject synthetic or incomplete periods (0.501657ms)
+✔ matched flows reconcile independently through split, dividend and withdrawal (14.473061ms)
+✔ internal trades, trade fees and portfolio dividend payments never fund the benchmark (3.236626ms)
+✔ between-observation actions accrue without inventing portfolio dates (2.514767ms)
+✔ same-date funding order matters and insufficient benchmark withdrawals fail closed (1.605684ms)
+✔ withdrawal of rounded holdings liquidates exactly, and unpaid dividends remain unspendable (1.195315ms)
+✔ missing exact marks, coverage gaps, adjusted prices and unsupported versions reject comparison (1.767168ms)
+✔ sub-cent recoverable holdings cannot silently become a permanent total-loss return (0.573376ms)
+✔ large rational-share audit output stops before exceeding the response budget (239.347061ms)
+✔ legacy portfolio results and fingerprints are unchanged, while frozen benchmark edits change identity (5.911866ms)
+✔ optional benchmark draft validation and CSV export preserve exact cents and matched rows (1.610492ms)
+✔ connection validation fixes demo to IBM and rejects unknown inputs or ambiguous currency (6.217978ms)
+✔ daily parsing preserves exact decimals, source, observed dates and adjustment basis (28.754263ms)
+✔ unexpected symbol, refresh date, timezone and future observations fail closed (0.821751ms)
+✔ upstream notices are classified without leaking provider messages or keys (0.929864ms)
+✔ fetch uses the fixed HTTPS endpoint without redirects and returns normalized data (6.705554ms)
+✔ notice classification distinguishes access failures and incidental quota information (0.392182ms)
+✔ provider rate-limit errors do not imply an app cooldown resets the allowance (0.292021ms)
+✔ HTTP errors, malformed payloads and oversized responses are never imported (2.804574ms)
+✔ network errors redact secret URLs, and bounded timeouts stop the request (7.579824ms)
+✔ a one-time NVDA key is forwarded without requiring a configured server key (1.051427ms)
+✔ diagnostics distinguish a JSON usage notice from an upstream HTTP 429 (0.951677ms)
+✔ provider diagnostics remove repeated keys, links and email and exclude arbitrary fields (0.518793ms)
+✔ notice redaction precedes truncation and control characters are removed (1.760949ms)
+✔ HTTP denial diagnostics preserve status without exposing an unstructured response body (0.738505ms)
+✔ demo cost comparisons share valid fictional prices, events, cash, dates and rule (55.129144ms)
+✔ cost lesson uses exact cents and exports a reproducible, explicitly unsaved demo (15.47213ms)
+✔ comparison reads frozen segment results and preserves signed cents and drawdown meaning (20.162141ms)
+✔ same bounds and count do not hide different interior observation dates (2.883974ms)
+✔ matching dataset IDs do not hide changed prices, corporate actions or benchmark records (2.618794ms)
+✔ evaluation boundaries, cash and calculation method prevent matched deltas (6.459813ms)
+✔ intentional fee and slippage variations are identified separately from fixed inputs (1.590251ms)
+✔ names, save timestamps and equivalent dollar notation do not change comparability (1.313093ms)
+✔ export trust boundary validates complete observations and metadata (24.248951ms)
+✔ alphavantage snapshot hashes include frozen provider provenance (16.09494ms)
+✔ alphavantage-browser snapshot hashes include frozen provider provenance (5.459743ms)
+✔ independent SMA fixture covers next-close execution, splits, dividends and final pending signal (15.950041ms)
+✔ later period restarts with initial cash, no carried shares or receivables (1.895572ms)
+✔ signals and executions before a cutoff do not change when later prices or events change (4.103726ms)
+✔ trade costs, affordable sizing and drawdown include first-close friction (1.386273ms)
+✔ reverse split fractions sell completely and ex-date buyers receive no entitlement (1.57665ms)
+✔ matched date grid, raw prices, warmup and segment size are required (2.502388ms)
+✔ risk agrees with independent arithmetic, including zero-variance cases (0.381476ms)
+✔ snapshot identity changes with full event payload and JSON reproduces the result; CSV preserves exact cents (2.753267ms)
+✔ service uses the hosting port, with explicit research port taking precedence (2.097657ms)
+✔ acceptance stores cannot address the default collections through a chosen prefix (11.436317ms)
+✔ active admission has conservative defaults and rejects invalid configured limits (1.189015ms)
+✔ public report allowlist excludes private names, source labels, input hashes and unknown metadata (24.959905ms)
+✔ inconsistent saved results cannot earn a public sharing preview (3.547526ms)
+✔ each verified identity owns its workspace and anonymous production requests fail closed (0.300384ms)
+ℹ tests 150
+ℹ suites 0
+ℹ pass 150
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 919.403358
+$ node --experimental-strip-types --test tests/integration/*.test.ts
+✔ atomic active admission across connections rejects excess without partial jobs and replays at capacity (465.761664ms)
+✔ retry and stale leases retain admission; terminal success/failure/exhaustion release it atomically (74.856809ms)
+✔ HTTP overload distinguishes owner/global capacity and supplies Retry-After (161.991315ms)
+✔ authenticated readWrite startup needs operator migration, safely repairs interruption and rejects unsafe validation modes (160.668457ms)
+✔ oversized legacy queue is preserved and its validator remains unchanged before the barrier (15.504344ms)
+✔ persistent workers preserve canonical accounting and verify all nine risk results (189.817337ms)
+✔ timed-out workers are replaced and pool capacity recovers (183.688648ms)
+✔ SIGKILL before finalization recovers through competing runners with one durable result (1740.707655ms)
+ℹ Killed the actual runner process after worker calculation, before MongoDB finalization.
+ℹ Two replacement runners competed; attempts=2, accepted finalizations=1, stored results=1; fresh connection replay matched exactly.
+✔ a fast competing host cannot steal a live lease (236.839566ms)
+✔ skewed claim and heartbeat use database time without extending ownership by an hour (54.705805ms)
+✔ a slow stale host cannot complete, renew or requeue an expired lease (99.008828ms)
+✔ lease finalization preserves dollar-prefixed error and verification values (59.509362ms)
+✔ real isolated Python binds a receipt to every saved input and result; tampering cannot pass (370.437437ms)
+✔ replay has one in-flight slot, bounded input and a hard subprocess timeout (68.437788ms)
+✔ real replay receipts survive reads, isolate owners, reject stale rows and require fresh sharing consent (129.309748ms)
+✔ new sharing requires consent, the reviewed digest and ownership (8.572192ms)
+✔ an unguessable link reads exactly its reviewed summary; the token is not stored (9.843101ms)
+✔ concurrent first creations allow one committed link and return a conflict for the other (5.845255ms)
+✔ replacement and revocation invalidate old links while stale mutations cannot revive them (14.776359ms)
+✔ identical experiment fingerprints in another workspace do not confer link ownership (11.654626ms)
+✔ expiry is enforced at the exact boundary and altered stored payloads fail closed (19.730184ms)
+✔ MongoDB enforces quota and idempotency under concurrent submissions, scopes owners and validates slot bounds (793.061271ms)
+✔ expired leases recover across connections, stale workers cannot commit and retries stop after three attempts (80.918731ms)
+✔ signed HTTP jobs persist real worker results, reject forgery/replay and isolate owners (520.143515ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2051.618063
+$ pnpm test:native && pnpm test:python && pnpm test:parity
+$ node --experimental-strip-types --test tests/cross-check/native.test.ts
+✔ C++ agrees with independent, flat, inverse, short and scaled risk fixtures (1.697082ms)
+✔ C++ agrees across 100 deterministic return paths and offset typed-array views (8.189695ms)
+✔ native boundary rejects malformed, shared and nonfinite inputs (0.571472ms)
+✔ verification rejects nonfinite or missing canonical metrics (16.225087ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.722443
+$ python3 -m unittest discover -s verification/python -p 'test_*.py'
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.247s
+
+OK
+$ node --experimental-strip-types scripts/test-python-parity.ts
+split-dividend: Python independently matched 366 fields
+costs: Python independently matched 338 fields
+reverse-split: Python independently matched 366 fields
+separate-benchmark: Python independently matched 366 fields
+provider: Python independently matched 366 fields
+browser-provider: Python independently matched 366 fields
+2500-observations-window-500: Python independently matched 60151 fields
+quick-demo-illustrative: Python independently matched 1575 fields
+quick-demo-higher: Python independently matched 1575 fields
+quick-demo-zero: Python independently matched 1575 fields
+Verified 10 freshly computed TypeScript reports; 67044 scalar comparisons.
+$ pnpm build && pnpm test:hosted
+$ node scripts/run-framework.mjs build
+/usr/bin/timeout
+Running bounded vinext build...
+
+  vinext build  (Vite 8.0.13)
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[1/5] analyze client references...
+[2Ktransforming...✓ 318 modules transformed.
+rendering chunks...
+✓ built in 1.07s
+[2/5] analyze server references...
+[2Ktransforming...✓ 351 modules transformed.
+rendering chunks...
+✓ built in 696ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 315 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 770ms
+[4/5] build client environment...
+[2Ktransforming...✓ 2110 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 1.82s
+[5/5] build ssr environment...
+[2Ktransforming...✓ 353 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 922ms
+[0m
+  Route (app)
+  ┌ ƒ /                           
+  ├ λ /api/actions                
+  ├ λ /api/community              
+  ├ λ /api/datasets               
+  ├ λ /api/discussion-auth/:action
+  ├ λ /api/discussion/:token      
+  ├ λ /api/health                 
+  ├ λ /api/pipeline               
+  ├ λ /api/planning               
+  ├ λ /api/portfolio              
+  ├ λ /api/provider               
+  ├ λ /api/provider/browser       
+  ├ λ /api/report                 
+  ├ λ /api/research               
+  ├ λ /api/research/discussion    
+  ├ λ /api/research/jobs          
+  ├ λ /api/research/replay        
+  ├ λ /api/research/shares        
+  ├ λ /api/shared/:token          
+  ├ λ /api/support                
+  ├ λ /api/transactions           
+  ├ λ /api/workspace              
+  ├ ƒ /discussion/:token          
+  ├ ƒ /example                    
+  ├ ? /library                    
+  ├ ƒ /share/:token               
+  ├ ? /status                     
+  ├ ? /support                    
+  └ ? /trust                      
+
+  λ API  ƒ Dynamic  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+$ node --experimental-strip-types scripts/test-hosted-sharing.ts
+Personal workspaces: 27 additional persistence, import, export and isolation assertions passed for two independent accounts.
+Discussion: 28 additional content/audit/concurrency assertions passed; HTTP checks included in Worker total.
+Discussion email callback established a verified session.
+Discussion email callback established a verified session.
+Email discussion: 23 additional AuthKit/identity assertions passed; no live email or real accounts used.
+Planning/community: 22 additional financial, consent, isolation, privacy suppression and support assertions passed.
+Built Worker: 435 HTTP/header/content assertions passed. Activation gate, anonymous sharing, account-scoped APIs, redaction, consent, cross-origin rejection, stale writes, read-only methods, revocation, provider diagnostics, browser-import reservations/provenance, invite-only discussion and bound Python replay receipts verified.
+Direct workerd, isolated local D1, fictional fixture and stubbed external provider only; the live Sites dispatcher and real provider access are outside this test.

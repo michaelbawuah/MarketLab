@@ -4,6 +4,10 @@ A portfolio planning and analysis app with saved goals, a combined view of accou
 
 **Engineering direction:** follow the adopted [engineering roadmap](docs/engineering-roadmap.md), based on Michael's supplied standards. It includes the directory map, ordered milestones and observed status. The first reliability work now has [reproducible clock-race and process-crash evidence](docs/reliability-evidence.md).
 
+**Reliability extension:** bounded background calculations, friendly retry messages,
+per-owner admission limits and reproducible fixed-arrival overload/crash evidence.
+See [mechanism, measurements and limits](docs/overload-handling.md).
+
 **Current release:** personal saved workspaces with email or ChatGPT sign-in, a zero-setup practice portfolio, and public read-only report sharing. Each account opens on My plan and can return to its own saved accounts, goals and reports. It includes on-demand Alpha Vantage daily-price fetching, historical CSV imports, split/dividend research, user-imported historical portfolios with cash-flow-matched benchmarks, saved strategy experiments with benchmark/risk comparisons, and a separate synthetic portfolio demo. The separate demo’s six price series are explicitly synthetic, covering 127 weekday observations from April 1 to September 24, 2026. They are not real market history, exchange calendars, forecasts, or a backtest.
 
 See [personal workspaces and acceptance evidence](docs/personal-workspaces.md) for account separation, first-use flow, and the remaining live pilot gates.

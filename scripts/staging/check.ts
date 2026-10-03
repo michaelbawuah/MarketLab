@@ -98,9 +98,18 @@ try {
   const reopened = new JobStore(config.uri, config.database, prefix);
   try { const durable = await reopened.get(owner, id); assert.equal(durable?.status, 'completed'); assert.deepEqual(JSON.parse(durable!.result!), expected); } finally { await reopened.close(); }
   checks.push('sigkill-after-calculation', 'natural-database-lease-recovery', 'two-competing-runners', 'one-durable-result', 'stale-token-rejection', 'fresh-connection-replay');
+  phase='bounded admission';
+  const capacity=await Promise.all(Array.from({length:64},(_,i)=>observer.submit(owner+':cap:'+Math.floor(i/4),{...snapshot,config:{...snapshot.config,name:`Capacity report ${i}`}})));
+  assert.equal(await observer.jobs.countDocuments({status:{$in:['queued','running']}}),64);
+  await assert.rejects(observer.submit(owner+':cap:0',{...snapshot,config:{...snapshot.config,name:'Extra owner report'}}),(e:unknown)=>(e as {status?:number;code?:string}).status===429&&(e as {code?:string}).code==='owner_capacity');
+  await assert.rejects(observer.submit(owner+':cap:extra',snapshot),(e:unknown)=>(e as {status?:number;code?:string}).status===503&&(e as {code?:string}).code==='global_capacity');
+  assert.equal((await observer.submit(capacity[0].owner,JSON.parse(capacity[0].snapshot))).id,capacity[0].id);
+  const terminal=(await observer.claim(leaseMs))!;await observer.fail(terminal,'acceptance','Intentional fixture failure.',false);
+  await observer.submit(owner+':cap:extra',snapshot);assert.equal(await observer.jobs.countDocuments({status:{$in:['queued','running']}}),64);
+  checks.push('global-64-owner-4-active-admission','capacity-rejection-idempotency-and-terminal-release');
   const sources = ['services/research/server.ts', 'services/research/store.ts', 'services/research/runner.ts', 'services/research/pool.ts', 'services/research/python-replay.ts', 'verification/python/verify_research.py', 'lib/finance/research.ts', 'native/build/marketlab_risk.node'];
   const sourceHashes = Object.fromEntries(await Promise.all(sources.map(async file => [file, createHash('sha256').update(await readFile(new URL('../../' + file, import.meta.url))).digest('hex')])));
-  result = { format: 'marketlab-staging-acceptance-v1', scope, started, finished: new Date().toISOString(), elapsedMs: Math.round(performance.now() - startClock), serviceOrigin: origin.origin, publicHttpsChecked: origin.protocol === 'https:', revision: process.env.RESEARCH_BUILD_REVISION ?? 'unknown', node: process.version, leaseMs, attempts: saved!.attempts, acceptedFinalizations: finalizations, storedResults: 1, nativeComparisons: 9, pythonReceipt, checks, sourceHashes };
+  result = { format: 'marketlab-staging-acceptance-v1', scope, started, finished: new Date().toISOString(), elapsedMs: Math.round(performance.now() - startClock), serviceOrigin: origin.origin, publicHttpsChecked: origin.protocol === 'https:', revision: process.env.RESEARCH_BUILD_REVISION ?? 'unknown', node: process.version, leaseMs, attempts: saved!.attempts, acceptedFinalizations: finalizations, storedResults: 1, nativeComparisons: 9, admission:{global:64,perOwner:4}, pythonReceipt, checks, sourceHashes };
 } finally {
   if (child?.pid && child.exitCode === null && child.signalCode === null) { child.kill('SIGKILL'); await childExited; }
   await Promise.all(runners.map(runner => runner.close()));

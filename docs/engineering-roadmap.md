@@ -30,6 +30,13 @@ the consumer experience, account isolation and completed automated checks.
 New-workspace production browser acceptance and the three real participant
 sessions remain explicit gates; prior shared-link opening was user-confirmed.
 
+## October 3 Quant SWE extension
+
+The user authorized bounded research admission and fixed-arrival overload/recovery
+measurement. [Implementation and evidence](overload-handling.md) records the database
+constraints, human-facing busy messages, reproducible benchmark and release checks.
+This does not close the real-user pilot or new-workspace production browser gate.
+
 ## Ordered milestones
 
 | # | Milestone and acceptance evidence | Status on September 27 |

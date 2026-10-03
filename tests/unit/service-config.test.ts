@@ -32,3 +32,12 @@ test('acceptance stores cannot address the default collections through a chosen 
     for (const value of ['research_jobs', '../', 'acceptance_short_', 'acceptance_' + 'a'.repeat(32)]) assert.throws(() => new JobStore(uri, 'marketlab', value), /Invalid acceptance/);
   } finally { await main.close(); await isolated.close(); }
 });
+
+test('active admission has conservative defaults and rejects invalid configured limits',()=>{
+  const previous={...process.env};
+  try{
+    process.env.MONGODB_URI='mongodb://127.0.0.1:27017';process.env.RESEARCH_SERVICE_SECRET='fictional-test-secret-at-least-32-characters';delete process.env.PORT;delete process.env.RESEARCH_PORT;delete process.env.RESEARCH_ACTIVE_LIMIT;delete process.env.RESEARCH_OWNER_ACTIVE_LIMIT;
+    assert.deepEqual(configFromEnv().admission,{global:64,perOwner:4});
+    for(const [global,owner] of [['0','4'],['257','4'],['64','31'],['2','4'],['NaN','4']]){process.env.RESEARCH_ACTIVE_LIMIT=global;process.env.RESEARCH_OWNER_ACTIVE_LIMIT=owner;assert.throws(configFromEnv,/admission limits/);}
+  }finally{process.env=previous;}
+});

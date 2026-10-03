@@ -15,7 +15,7 @@ export async function stopProcess(child: ChildProcess, graceful = false) {
   if (!stopped) { child.kill('SIGKILL'); await exited; }
 }
 
-export async function startMongo(binary: string) {
+export async function startMongo(binary: string, authenticated=false) {
   const directory = await mkdtemp(join(tmpdir(), 'marketlab-benchmark-'));
   let child: ChildProcess | undefined;
   try {
@@ -23,7 +23,7 @@ export async function startMongo(binary: string) {
     await new Promise<void>((resolve, reject) => { reservation.once('error', reject); reservation.listen(0, '127.0.0.1', resolve); });
     const port = (reservation.address() as AddressInfo).port;
     await new Promise<void>(resolve => reservation.close(() => resolve()));
-    child = spawn(binary, ['--dbpath', directory, '--bind_ip', '127.0.0.1', '--port', String(port), '--nounixsocket', '--wiredTigerCacheSizeGB', '0.25', '--setParameter', 'diagnosticDataCollectionEnabled=false'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    child = spawn(binary, ['--dbpath', directory, '--bind_ip', '127.0.0.1', '--port', String(port), '--nounixsocket', '--wiredTigerCacheSizeGB', '0.25', '--setParameter', 'diagnosticDataCollectionEnabled=false',...(authenticated?['--auth']:[])], { stdio: ['ignore', 'pipe', 'pipe'] });
     child.stderr!.on('data', () => {});
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Disposable MongoDB startup timed out.')), 20000);
@@ -32,7 +32,7 @@ export async function startMongo(binary: string) {
       child!.once('exit', () => { clearTimeout(timer); reject(new Error('Disposable MongoDB exited during startup.')); });
       child!.stdout!.on('data', chunk => { tail = (tail + chunk.toString()).slice(-8192); if (tail.includes('Waiting for connections')) { clearTimeout(timer); resolve(); } });
     });
-    return { uri: `mongodb://127.0.0.1:${port}`, async close() { await stopProcess(child!); await rm(directory, { recursive: true, force: true }); } };
+    return { uri: `mongodb://127.0.0.1:${port}`, pid:child.pid!, async close() { await stopProcess(child!); await rm(directory, { recursive: true, force: true }); } };
   } catch (e) { if (child) await stopProcess(child); await rm(directory, { recursive: true, force: true }); throw e; }
 }
 

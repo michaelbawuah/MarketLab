@@ -1,0 +1,90 @@
+Python recomputed outcome and successful population accounting, nearest-rank scheduled/queue/generator p99, and all measured source hashes. All passed.
+{
+  "totals": {
+    "offered": 2700,
+    "dispatched": 2700,
+    "driverDropped": 0,
+    "admitted": 1362,
+    "capacityRejected": 1338,
+    "otherRejected": 0,
+    "transportAmbiguous": 0,
+    "completedAndVerified": 1362,
+    "terminalFailed": 0,
+    "invalidResults": 0,
+    "unresolved": 0
+  },
+  "trials": [
+    {
+      "trial": "baseline-1",
+      "counts": {
+        "offered": 300,
+        "dispatched": 300,
+        "driverDropped": 0,
+        "admitted": 300,
+        "capacityRejected": 0,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 300,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "sampledPeakRssMiB": {
+        "serviceRss": 275.9,
+        "driverRss": 225.0
+      },
+      "mongoRss": "unavailable",
+      "recoveredJobs": 0,
+      "recoveredMaxMs": null,
+      "restartToLastRecoveredObservedMs": null
+    },
+    {
+      "trial": "overload-1",
+      "counts": {
+        "offered": 1200,
+        "dispatched": 1200,
+        "driverDropped": 0,
+        "admitted": 529,
+        "capacityRejected": 671,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 529,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "sampledPeakRssMiB": {
+        "serviceRss": 419.0,
+        "driverRss": 427.2
+      },
+      "mongoRss": "unavailable",
+      "recoveredJobs": 0,
+      "recoveredMaxMs": null,
+      "restartToLastRecoveredObservedMs": null
+    },
+    {
+      "trial": "recovery",
+      "counts": {
+        "offered": 1200,
+        "dispatched": 1200,
+        "driverDropped": 0,
+        "admitted": 533,
+        "capacityRejected": 667,
+        "otherRejected": 0,
+        "transportAmbiguous": 0,
+        "completedAndVerified": 533,
+        "terminalFailed": 0,
+        "invalidResults": 0,
+        "unresolved": 0
+      },
+      "sampledPeakRssMiB": {
+        "serviceRss": 427.1,
+        "driverRss": 463.8
+      },
+      "mongoRss": "unavailable",
+      "recoveredJobs": 2,
+      "recoveredMaxMs": 62047.686023,
+      "restartToLastRecoveredObservedMs": 59893.789497000005
+    }
+  ]
+}

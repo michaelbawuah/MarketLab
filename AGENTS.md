@@ -1,5 +1,11 @@
 # MarketLab working direction
 
+- October 3 Quant SWE extension: bounded active research admission and an honest
+  fixed-arrival overload/recovery benchmark are authorized. Keep private data,
+  TypeScript ownership, exact accounting and the $0 paid cap. See
+  `docs/overload-handling.md`; the three-person pilot remains a separate real-user
+  acceptance gate.
+
 - September 28 ongoing-use extension: goals, manual multi-account aggregation,
   fee projections, allocation drift alerts, what-if scenarios, opt-in peer cohorts,
   and a verified strategy library are now authorized. Preserve private records,

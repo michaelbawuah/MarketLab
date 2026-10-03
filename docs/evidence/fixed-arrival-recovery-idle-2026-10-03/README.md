@@ -1,0 +1,1 @@
+Follow-up fixed-arrival attempt. Baseline and overload passed; recovery killed the service during a brief idle worker gap (62 queued, 0 running), so it did not exercise interrupted calculation and correctly failed its recovery gate. No financial or capacity failure occurred. Raw evidence retained; final local benchmark helper now pauses after a real calculation before SIGKILL.
