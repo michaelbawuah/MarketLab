@@ -5,6 +5,13 @@
   TypeScript ownership, exact accounting and the $0 paid cap. See
   `docs/overload-handling.md`; the three-person pilot remains a separate real-user
   acceptance gate.
+- October 3 operator boundary: automatic approval review rejected temporary Mongo
+  root credential references in the research service environment. They were not
+  written. Do not retry administrator access without explicit user authorization.
+  Both GitHub gates for 5910663 passed and the app gateway was published; the
+  hosted worker was restored to its prior build, deployment 95f19d0a-a6c6-4b34-ae9a-f657a2b8ddd6,
+  with normal start command and no migration variables. New queue bounds are not
+  active there. The prepared upgrade wrapper is a proposal pending that approval.
 
 - September 28 ongoing-use extension: goals, manual multi-account aggregation,
   fee projections, allocation drift alerts, what-if scenarios, opt-in peer cohorts,

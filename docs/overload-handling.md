@@ -204,6 +204,31 @@ retain the exact controlled interleaving. Subsequent benchmark fixture edits
 passed type checking/lint and the actual final load/recovery matrix; the runtime
 store and financial code were unchanged.
 
-Remote GitHub/container checks and staging deployment are separate release gates.
+Both code-release GitHub gates passed for `5910663861173bd86d48767af1fa85ad566422e6`:
+[Engineering verification](https://github.com/michaelbawuah/MarketLab/actions/runs/37145596051)
+and [Research container acceptance](https://github.com/michaelbawuah/MarketLab/actions/runs/37145596063).
+The latter exercises authenticated restricted-role startup, signed HTTP,
+native/Python replay, real process recovery and isolated 64/4 capacity checks.
+The hosted app gateway update was published successfully with environment
+revision 8. These results do not establish hosted activation of the new queue.
+
+### Hosted activation blocked
+
+Automatic approval review rejected referencing Mongo root credentials in the
+research environment, because that would persist broad administrator access
+beyond the user's explicit authorization. No migration credentials were written.
+The branch update was initially triggered before that rejection was checked;
+the ordinary start command was immediately restored and the prior successful
+worker build redeployed. Deployment `95f19d0a-a6c6-4b34-ae9a-f657a2b8ddd6`
+succeeded; logs confirm the normal native-verification service listening.
+No pending configuration changes or migration variables remain.
+
+**The hosted worker still runs its prior build; new admission bounds are not
+active there.** The prepared operator wrapper and exact 64/4 schema are reviewable,
+but running it with temporary administrator references requires explicit approval.
+After migration/acceptance, clear those references, restore the ordinary start
+command and verify restricted-role readiness. Do not infer that publishing source,
+container acceptance or the app gateway migrated the live database.
+
 The three real participant pilot sessions and fresh-account production browser
 acceptance remain outstanding; synthetic load jobs are not users or adoption.
