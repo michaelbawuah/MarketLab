@@ -28,6 +28,26 @@ Manual account aggregation is implemented. Bank connections, brokerage execution
 | --- | --- |
 | ![Fictional XDEMO report with result explanation, calculation checks, chronological segments, and an equity chart.](docs/evidence/consumer-report.jpg) | ![Narrow-screen backtest dialog with stock selection, starting cash, collapsed advanced settings, and input confirmation.](docs/evidence/consumer-narrow.jpg) |
 
+## Stock data pipelines
+
+Three ingestion paths converge on the same private price-snapshot model:
+
+| Input path | What crosses the boundary | Implementation |
+| --- | --- | --- |
+| **Alpha Vantage through the server** | A bounded daily-close response, fetched with the IBM demo key or a configured server secret. Provider notices stop the import instead of becoming prices. | [Provider route](app/api/provider/route.ts) · [Response normalizer](lib/finance/provider.ts) |
+| **Alpha Vantage from the browser** | A one-time key goes directly to the provider. Only normalized prices and provider metadata return to MarketLab, where the server validates them again. | [Browser client](lib/finance/browser-provider.ts) · [Reservation and save route](app/api/provider/browser/route.ts) |
+| **Historical CSV** | One symbol's dated USD prices, an explicit source, adjustment basis, and historical/synthetic declaration. Invalid dates, duplicate observations, and malformed quoting fail validation. | [CSV validator](lib/finance/market-data.ts) · [Dataset route](app/api/datasets/route.ts) |
+
+![MarketLab stock data paths: server and browser Alpha Vantage plus CSV converge on validation, immutable owner-scoped snapshots, exact backtests, and saved reports; background native checks, independent replay, and public sharing are separate owner-triggered branches.](docs/media/stock-data-pipeline.png)
+
+Validated observations become **immutable, owner-scoped D1 snapshots**. Their SHA-256 identity includes precision-preserving values and declared metadata; provider snapshots additionally bind origin, refresh date, and timezone. Saving identical inputs reuses the existing snapshot. `csv`, `alphavantage`, and `alphavantage-browser` remain distinct in storage and exports. [Snapshot persistence](lib/datasets.ts).
+
+Research binds those snapshots to complete declared split/dividend records, computes exact accounting and next-close backtests, then checks the preview fingerprint before saving frozen inputs and outputs. Separately, imported portfolio ledgers bind to saved prices for exact cash/share accounting and cash-flow-matched comparisons. [Saved research](app/api/research/route.ts) · [Portfolio accounting](lib/finance/historical-portfolio.ts).
+
+**Verification and sharing are separate branches.** A saved backtest can be copied into bounded, signed Node/MongoDB jobs for fenced recomputation and C++ risk checks, or sent to independent Python replay for a receipt bound to the exact report. Reviewed sharing publishes only an allowlisted, expiring, revocable summary. It does not require either verification action; the redacted summary cannot replay withheld raw prices. [Background jobs](app/api/research/jobs/route.ts) · [Replay receipts](lib/research-replay.ts) · [Redaction](lib/finance/shared-research.ts).
+
+These are user-triggered historical-data paths, not a streaming feed. Provider paths share one atomic per-account cooldown and do not retry provider requests automatically. A validated browser import is not server-authenticated market data; source coverage and adjustment assumptions stay visible. [Cooldown](lib/provider-runs.ts) · [Editable diagram](docs/media/stock-data-pipeline.svg).
+
 ## Why the results are reproducible
 
 ### Exact money, explicit execution

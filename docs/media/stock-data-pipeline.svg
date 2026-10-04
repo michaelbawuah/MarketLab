@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1160" viewBox="0 0 1320 1160" role="img" aria-labelledby="title description">
+  <title id="title">MarketLab stock data and research pipeline</title>
+  <desc id="description">Server Alpha Vantage requests, direct browser Alpha Vantage requests, and historical CSV imports converge on validation and immutable owner-scoped D1 price snapshots. Explicit corporate-action records feed exact accounting and backtests; the same saved price snapshots also support a separate portfolio-ledger accounting path. Saved private research reports support separate owner-triggered background recomputation with MongoDB leases and C++ checks, independent Python replay with report-bound receipts, or reviewed redacted public sharing.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9" fill="#267d6a"/></marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif}.title{font-size:30px;font-weight:700;fill:#17343a}.sub{font-size:18px;fill:#5d7175}.label{font-size:23px;font-weight:700;fill:#17343a}.detail{font-size:18px;fill:#46646a}.tag{font-size:14px;font-weight:700;fill:#267d6a;letter-spacing:1px}.card{fill:#fff;stroke:#c9dcda;stroke-width:1.5}.arrow{fill:none;stroke:#267d6a;stroke-width:2.3;marker-end:url(#arrow)}.join{fill:none;stroke:#267d6a;stroke-width:2.3}</style>
+  </defs>
+  <rect width="1320" height="1160" rx="24" fill="#f4f8f7"/>
+  <text x="48" y="55" class="title">From stock prices to an inspectable result</text>
+  <text x="48" y="87" class="sub">Three input paths. Frozen private records. Separate actions for verification and sharing.</text>
+  <rect x="48" y="127" width="380" height="158" rx="14" class="card"/>
+  <text x="70" y="158" class="tag">SERVER REQUEST</text>
+  <text x="70" y="193" class="label">Alpha Vantage daily closes</text>
+  <text x="70" y="226" class="detail">IBM demo or configured server key</text>
+  <text x="70" y="253" class="detail">Bounded fetch; no automatic retry</text>
+  <rect x="460" y="127" width="380" height="158" rx="14" class="card"/>
+  <text x="482" y="158" class="tag">BROWSER REQUEST</text>
+  <text x="482" y="193" class="label">Direct provider connection</text>
+  <text x="482" y="226" class="detail">One-time key stays with the browser</text>
+  <text x="482" y="253" class="detail">Only normalized prices reach the app</text>
+  <rect x="872" y="127" width="400" height="158" rx="14" class="card"/>
+  <text x="894" y="158" class="tag">FILE IMPORT</text>
+  <text x="894" y="193" class="label">Historical price CSV</text>
+  <text x="894" y="226" class="detail">Declared source and adjustment basis</text>
+  <text x="894" y="253" class="detail">Historical or explicitly synthetic</text>
+  <path d="M238 285V316H1072V285M650 285V316" class="join"/>
+  <path d="M345 316V354" class="arrow"/>
+  <rect x="34" y="353" width="1252" height="177" rx="18" fill="#e8f2ef"/>
+  <rect x="48" y="367" width="594" height="147" rx="12" class="card"/>
+  <text x="70" y="402" class="label">Validate before saving</text>
+  <text x="70" y="435" class="detail">Symbol, USD, dates, positive prices, duplicates, size</text>
+  <text x="70" y="465" class="detail">Adjustment basis retained; browser data revalidated</text>
+  <text x="70" y="494" class="detail">Provider paths share one atomic owner cooldown</text>
+  <rect x="708" y="367" width="564" height="147" rx="12" class="card"/>
+  <text x="730" y="402" class="label">Freeze price snapshots in D1</text>
+  <text x="730" y="435" class="detail">Owner + SHA-256 identity; identical saves reuse it</text>
+  <text x="730" y="465" class="detail">Source, basis, origin, coverage and provider metadata</text>
+  <text x="730" y="494" class="detail">CSV and browser/provider provenance stay distinct</text>
+  <path d="M642 441H694" class="arrow"/>
+  <path d="M990 530V557H345V586" class="arrow"/>
+  <rect x="34" y="584" width="1252" height="201" rx="18" fill="#e8f2ef"/>
+  <rect x="48" y="598" width="594" height="173" rx="12" class="card"/>
+  <text x="70" y="633" class="label">Bind inputs; calculate explicitly</text>
+  <text x="70" y="666" class="detail">Complete declared split/dividend records are required</text>
+  <text x="70" y="696" class="detail">Exact cash, fees, shares and split fractions</text>
+  <text x="70" y="726" class="detail">Backtests: next-close signals, costs, matched dates</text>
+  <text x="70" y="755" class="detail">Missing or incompatible inputs stop the calculation</text>
+  <rect x="708" y="598" width="564" height="173" rx="12" class="card"/>
+  <text x="730" y="633" class="label">Save the private research report</text>
+  <text x="730" y="666" class="detail">Worker computes the canonical TypeScript result</text>
+  <text x="730" y="696" class="detail">D1 retains frozen settings, inputs and outputs</text>
+  <text x="730" y="726" class="detail">Preview fingerprint is checked again before save</text>
+  <text x="730" y="755" class="detail">Private JSON / CSV exports preserve the full report</text>
+  <path d="M642 684H694" class="arrow"/>
+  <path d="M990 785V817H238M990 817H1072" class="join"/>
+  <path d="M238 817V901" class="arrow"/>
+  <path d="M650 817V901" class="arrow"/>
+  <path d="M1072 817V901" class="arrow"/>
+  <rect x="385" y="835" width="550" height="35" rx="7" fill="#f4f8f7"/>
+  <text x="405" y="859" class="tag">SEPARATE OWNER-TRIGGERED ACTIONS</text>
+  <rect x="48" y="901" width="380" height="197" rx="14" fill="#e8eef3" stroke="#c9d7df"/>
+  <text x="70" y="936" class="label">Background recomputation</text>
+  <text x="70" y="970" class="detail">Signed snapshot copy → Node service</text>
+  <text x="70" y="999" class="detail">Bounded MongoDB jobs; fenced leases</text>
+  <text x="70" y="1028" class="detail">Workers; C++ in native-check mode</text>
+  <text x="70" y="1057" class="detail">Result remains in the research service</text>
+  <rect x="460" y="901" width="380" height="197" rx="14" fill="#e8eef3" stroke="#c9d7df"/>
+  <text x="482" y="936" class="label">Independent Python replay</text>
+  <text x="482" y="970" class="detail">Full saved report → bounded verifier</text>
+  <text x="482" y="999" class="detail">Accounting, trades, signals and risk</text>
+  <text x="482" y="1028" class="detail">Receipt bound to exact report bytes</text>
+  <text x="482" y="1057" class="detail">Matching receipt stored against D1 run</text>
+  <rect x="872" y="901" width="400" height="197" rx="14" fill="#e8eef3" stroke="#c9d7df"/>
+  <text x="894" y="936" class="label">Reviewed public summary</text>
+  <text x="894" y="970" class="detail">Explicit consent; allowlisted redaction</text>
+  <text x="894" y="999" class="detail">Expiring, replaceable, revocable link</text>
+  <text x="894" y="1028" class="detail">Raw prices and private labels withheld</text>
+  <text x="894" y="1057" class="detail">Sharing does not require either verifier</text>
+  <text x="48" y="1137" class="sub">Daily historical data, not a live feed. Validation does not authenticate browser-supplied prices.</text>
+</svg>
