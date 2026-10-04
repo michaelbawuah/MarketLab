@@ -10,7 +10,7 @@ Portfolio planning and reproducible research, with the inputs and accounting beh
 
 The welcome screen gives you a result before asking for an account: change the costs on the same fictional investment and see what changes. From there, create a private workspace, review an imported portfolio, or run a saved research experiment.
 
-The screenshots here are captures of local browser fixtures using fictional data. They show implemented screens; they are not real customer portfolios or evidence of production adoption.
+The welcome image and the two short-tour screenshots below use local browser fixtures with fictional data. Those three captures show implemented screens; they are not real customer portfolios or evidence of production adoption.
 
 ## A short tour
 
@@ -29,6 +29,12 @@ Manual account aggregation is implemented. Bank connections, brokerage execution
 | ![Fictional XDEMO report with result explanation, calculation checks, chronological segments, and an equity chart.](docs/evidence/consumer-report.jpg) | ![Narrow-screen backtest dialog with stock selection, starting cash, collapsed advanced settings, and input confirmation.](docs/evidence/consumer-narrow.jpg) |
 
 ## Stock data pipelines
+
+Explore a stock's saved daily closes as a chart, with its coverage dates, currency, adjustment basis, and change from the previous close visible. Load Alpha Vantage prices on demand or import historical CSVs to work with your own recorded data.
+
+![MarketLab's saved IBM daily-price history from May 4 through September 24, 2026, with a green historical price chart, USD closing price, adjustment basis, and on-demand provider controls.](docs/media/stock-price-history.png)
+
+*User-provided capture of MarketLab's saved IBM history, May 4–September 24, 2026. It shows historical closing prices rather than a live quote.*
 
 Three ingestion paths converge on the same private price-snapshot model:
 
